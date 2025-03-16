@@ -2,8 +2,15 @@ package com.tnp.tnpbackend.model;
 
 import java.time.LocalDate;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+
+
+@Document(collation = "department")
 public class Department {
 
+    @Id
     private int departmentId;
     private String departmentName;
     private TPODeptHead tpoDeptHead;

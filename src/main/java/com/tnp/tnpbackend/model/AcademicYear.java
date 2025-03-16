@@ -2,8 +2,13 @@ package com.tnp.tnpbackend.model;
 
 import java.time.LocalDate;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection  = "academicYear")
 public class AcademicYear {
 
+    @Id
     private String academicYearId;
     private String yearName;
     private boolean isActive;

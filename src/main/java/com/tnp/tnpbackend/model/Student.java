@@ -3,19 +3,15 @@ package com.tnp.tnpbackend.model;
 import java.time.LocalDate;
 import java.util.List;
 
-
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.annotation.Generated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+
 
 @Document(collation = "student")
-
 public class Student {
 
     @Id
-    @GeneratedValue()
     private int studentId;
     private String studentName;
     private String userName;
@@ -31,23 +27,27 @@ public class Student {
     private String contactNumber;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+    
+    private String role;
 
     public Student() {
     }
 
-    public Student(int studentId, String studentName, String userName, String password, String email, double cGPA,
-            Department department, List<String> skills, String resumeURL, AcademicYear academicYear, int backlogs,
+
+    public Student(int studentId,String role, String studentName, String userName, String password, String email, double cGPA,
+            List<String> skills, String resumeURL, int backlogs,
             int graduationYear, String contactNumber, LocalDate createdAt, LocalDate updatedAt) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.userName = userName;
         this.password = password;
         this.email = email;
+        this.role=role;
         this.cgpa = cGPA;
-        this.department = department;
+        // this.department = department;
         this.skills = skills;
         this.resumeURL = resumeURL;
-        this.academicYear = academicYear;
+        // this.academicYear = academicYear;
         this.backlogs = backlogs;
         this.graduationYear = graduationYear;
         this.contactNumber = contactNumber;
@@ -62,6 +62,16 @@ public class Student {
     public void setStudentId(int studentId) {
         this.studentId = studentId;
     }
+
+    public String getRole() {
+        return role;
+    }
+
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 
     public String getStudentName() {
         return studentName;
