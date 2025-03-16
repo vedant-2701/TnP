@@ -8,13 +8,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 
-@Document(collation = "student")
+@Document(collection = "student")
 public class Student {
 
     @Id
     private int studentId;
     private String studentName;
-    private String userName;
+    private String username;
     private String password;
     private String email;
     private double cgpa;
@@ -39,7 +39,7 @@ public class Student {
             int graduationYear, String contactNumber, LocalDate createdAt, LocalDate updatedAt) {
         this.studentId = studentId;
         this.studentName = studentName;
-        this.userName = userName;
+        this.username = userName;
         this.password = password;
         this.email = email;
         this.role=role;
@@ -81,12 +81,12 @@ public class Student {
         this.studentName = studentName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     public String getPassword() {
@@ -187,7 +187,7 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student [studentId=" + studentId + ", studentName=" + studentName + ", userName=" + userName
+        return "Student [studentId=" + studentId + ", studentName=" + studentName + ", userName=" + username
                 + ", password=" + password + ", email=" + email + ", cgpa=" + cgpa + ", department=" + department
                 + ", skills=" + skills + ", resumeURL=" + resumeURL + ", academicYear=" + academicYear + ", backlogs="
                 + backlogs + ", graduationYear=" + graduationYear + ", contactNumber=" + contactNumber + ", createdAt="

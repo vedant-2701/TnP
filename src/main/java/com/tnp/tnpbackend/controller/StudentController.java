@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.StudentService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -24,6 +27,12 @@ public class StudentController {
  public Student addStudent(@RequestBody Student student){
    student.toString();
     return studentService.addStudent(student);
+ }
+
+@GetMapping("/dashboard")
+ public String studentDashboard(){
+
+  return "Student logged in";
  }
 
     

@@ -11,8 +11,8 @@ import com.tnp.tnpbackend.model.Student;
 @Repository
 public interface StudentRepository extends MongoRepository<Student, Integer> {
 
-    Optional<Student> findByUserName(String username);
+    Optional<Student> findByUsername(String username);
 
-    Boolean existsByUserName(String username);
+    Boolean existsByUsername(String username);
     
 }
