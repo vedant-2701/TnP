@@ -11,30 +11,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 @RestController
 @RequestMapping("/tnp/v1/api")
 public class StudentController {
 
+  @Autowired
+  private StudentService studentService;
 
- @Autowired
- private StudentService studentService;
-
-
-
- @PostMapping("/addStudent")
- public Student addStudent(@RequestBody Student student){
-   student.toString();
+  @PostMapping("/addStudent")
+  public Student addStudent(@RequestBody Student student) {
+    student.toString();
     return studentService.addStudent(student);
- }
+  }
 
-@GetMapping("/dashboard")
- public String studentDashboard(){
+  @GetMapping("/dashboard")
+  public String studentDashboard() {
 
-  return "Student logged in";
- }
+    return "Student logged in";
+  }
 
-    
-    
 }

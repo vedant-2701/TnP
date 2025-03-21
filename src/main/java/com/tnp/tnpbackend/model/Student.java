@@ -191,7 +191,7 @@ public class Student {
                 + ", password=" + password + ", email=" + email + ", cgpa=" + cgpa + ", department=" + department
                 + ", skills=" + skills + ", resumeURL=" + resumeURL + ", academicYear=" + academicYear + ", backlogs="
                 + backlogs + ", graduationYear=" + graduationYear + ", contactNumber=" + contactNumber + ", createdAt="
-                + createdAt + ", updatedAt=" + updatedAt + "]";
+                + createdAt + ", updatedAt=" + updatedAt + "]" + "Role: " + role;
     }
 
 }
