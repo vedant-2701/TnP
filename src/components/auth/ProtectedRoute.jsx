@@ -9,6 +9,7 @@ export default function ProtectedRoute({ children }) {
     const checkAuth = async () => {
       try {
         const isValid = await validateToken();
+        // const isValid = true;
         setIsAuthenticated(isValid);
       } catch (error) {
         setIsAuthenticated(false);

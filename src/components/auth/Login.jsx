@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [prn, setPrn] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isValidating, setIsValidating] = useState(true);
@@ -31,22 +31,24 @@ function Login() {
 
   const handleInput = (e) => {
     const value = e.target.value;
-    if (/^\d{0,10}$/.test(value)) {
-      setPrn(value);
-    }
+    // if (/^\d{0,10}$/.test(value)) {
+    //   setPrn(value);
+    // }
+    setUsername(value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!prn || !password) {
+    if (!username || !password) {
       toast.error('Please fill in all fields');
       return;
     }
 
     try {
       setIsLoading(true);
-      const response = await login(prn, password);
+      const response = await login(username, password);
+      // console.log(response);
       
       localStorage.setItem('user', JSON.stringify({
         username: response.username,
@@ -110,22 +112,22 @@ function Login() {
           <div className="max-w-md mx-auto w-full">
             <h2 className="text-4xl font-serif mb-4">Welcome Back</h2>
             <p className="text-gray-600 mb-8">
-              Enter your PRN and password to access your account
+              Enter your Username and password to access your account
             </p>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  PRN
+                  Username
                 </label>
                 <input
                   type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
+                  // inputMode="numeric"
+                  // pattern="[0-9]*"
                   maxLength={10}
-                  value={prn}
+                  value={username}
                   onChange={handleInput}
-                  placeholder="Enter your PRN"
+                  placeholder="Enter your username"
                   className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
                 />
               </div>
