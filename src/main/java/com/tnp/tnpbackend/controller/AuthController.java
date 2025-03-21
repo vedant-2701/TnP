@@ -1,5 +1,8 @@
 package com.tnp.tnpbackend.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +53,7 @@ public class AuthController {
         AuthResponse response = new AuthResponse();
         response.setToken(token);
         response.setUsername(userDetails.getUsername());
-        
+
         // Remove "ROLE_" prefix for frontend consistency
         String role = student.getRole();
         if (role.startsWith("ROLE_")) {
@@ -58,5 +62,19 @@ public class AuthController {
         response.setRole(role);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/validate-token/{token}")
+    public ResponseEntity<?> validateToken(@PathVariable("token") String token) {
+        boolean isValid = jwtUtil.validateToken(token);
+        // Create a JSON-compatible response object
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("valid", isValid);
+
+        if (isValid) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }
