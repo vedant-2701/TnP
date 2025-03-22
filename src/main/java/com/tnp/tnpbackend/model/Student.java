@@ -6,13 +6,19 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "student")
 public class Student {
 
     @Id
-    private int studentId;
+    private String studentId;
     private String studentName;
     private String username;
     private String password;
@@ -30,168 +36,168 @@ public class Student {
     
     private String role;
 
-    public Student() {
-    }
+    // public Student() {
+    // }
 
 
-    public Student(int studentId,String role, String studentName, String userName, String password, String email, double cGPA,
-            List<String> skills, String resumeURL, int backlogs,
-            int graduationYear, String contactNumber, LocalDate createdAt, LocalDate updatedAt) {
-        this.studentId = studentId;
-        this.studentName = studentName;
-        this.username = userName;
-        this.password = password;
-        this.email = email;
-        this.role=role;
-        this.cgpa = cGPA;
-        // this.department = department;
-        this.skills = skills;
-        this.resumeURL = resumeURL;
-        // this.academicYear = academicYear;
-        this.backlogs = backlogs;
-        this.graduationYear = graduationYear;
-        this.contactNumber = contactNumber;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+    // public Student(int studentId,String role, String studentName, String userName, String password, String email, double cGPA,
+    //         List<String> skills, String resumeURL, int backlogs,
+    //         int graduationYear, String contactNumber, LocalDate createdAt, LocalDate updatedAt) {
+    //     this.studentId = studentId;
+    //     this.studentName = studentName;
+    //     this.username = userName;
+    //     this.password = password;
+    //     this.email = email;
+    //     this.role=role;
+    //     this.cgpa = cGPA;
+    //     // this.department = department;
+    //     this.skills = skills;
+    //     this.resumeURL = resumeURL;
+    //     // this.academicYear = academicYear;
+    //     this.backlogs = backlogs;
+    //     this.graduationYear = graduationYear;
+    //     this.contactNumber = contactNumber;
+    //     this.createdAt = createdAt;
+    //     this.updatedAt = updatedAt;
+    // }
 
-    public int getStudentId() {
-        return studentId;
-    }
+    // public int getStudentId() {
+    //     return studentId;
+    // }
 
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
-    }
+    // public void setStudentId(int studentId) {
+    //     this.studentId = studentId;
+    // }
 
-    public String getRole() {
-        return role;
-    }
-
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    // public String getRole() {
+    //     return role;
+    // }
 
 
-    public String getStudentName() {
-        return studentName;
-    }
+    // public void setRole(String role) {
+    //     this.role = role;
+    // }
 
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
 
-    public String getUsername() {
-        return username;
-    }
+    // public String getStudentName() {
+    //     return studentName;
+    // }
 
-    public void setUsername(String userName) {
-        this.username = userName;
-    }
+    // public void setStudentName(String studentName) {
+    //     this.studentName = studentName;
+    // }
 
-    public String getPassword() {
-        return password;
-    }
+    // public String getUsername() {
+    //     return username;
+    // }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    // public void setUsername(String userName) {
+    //     this.username = userName;
+    // }
 
-    public String getEmail() {
-        return email;
-    }
+    // public String getPassword() {
+    //     return password;
+    // }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    // public void setPassword(String password) {
+    //     this.password = password;
+    // }
 
-    public double getCGPA() {
-        return this.cgpa;
-    }
+    // public String getEmail() {
+    //     return email;
+    // }
 
-    public void setCGPA(double cGPA) {
-        this.cgpa = cGPA;
-    }
+    // public void setEmail(String email) {
+    //     this.email = email;
+    // }
 
-    public Department getDepartment() {
-        return department;
-    }
+    // public double getCGPA() {
+    //     return this.cgpa;
+    // }
 
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
+    // public void setCGPA(double cGPA) {
+    //     this.cgpa = cGPA;
+    // }
 
-    public List<String> getSkills() {
-        return skills;
-    }
+    // public Department getDepartment() {
+    //     return department;
+    // }
 
-    public void setSkills(List<String> skills) {
-        this.skills = skills;
-    }
+    // public void setDepartment(Department department) {
+    //     this.department = department;
+    // }
 
-    public String getResumeURL() {
-        return resumeURL;
-    }
+    // public List<String> getSkills() {
+    //     return skills;
+    // }
 
-    public void setResumeURL(String resumeURL) {
-        this.resumeURL = resumeURL;
-    }
+    // public void setSkills(List<String> skills) {
+    //     this.skills = skills;
+    // }
 
-    public AcademicYear getAcademicYear() {
-        return academicYear;
-    }
+    // public String getResumeURL() {
+    //     return resumeURL;
+    // }
 
-    public void setAcademicYear(AcademicYear academicYear) {
-        this.academicYear = academicYear;
-    }
+    // public void setResumeURL(String resumeURL) {
+    //     this.resumeURL = resumeURL;
+    // }
 
-    public int getBacklogs() {
-        return backlogs;
-    }
+    // public AcademicYear getAcademicYear() {
+    //     return academicYear;
+    // }
 
-    public void setBacklogs(int backlogs) {
-        this.backlogs = backlogs;
-    }
+    // public void setAcademicYear(AcademicYear academicYear) {
+    //     this.academicYear = academicYear;
+    // }
 
-    public int getGraduationYear() {
-        return graduationYear;
-    }
+    // public int getBacklogs() {
+    //     return backlogs;
+    // }
 
-    public void setGraduationYear(int graduationYear) {
-        this.graduationYear = graduationYear;
-    }
+    // public void setBacklogs(int backlogs) {
+    //     this.backlogs = backlogs;
+    // }
 
-    public String getContactNumber() {
-        return contactNumber;
-    }
+    // public int getGraduationYear() {
+    //     return graduationYear;
+    // }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
+    // public void setGraduationYear(int graduationYear) {
+    //     this.graduationYear = graduationYear;
+    // }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
+    // public String getContactNumber() {
+    //     return contactNumber;
+    // }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
+    // public void setContactNumber(String contactNumber) {
+    //     this.contactNumber = contactNumber;
+    // }
 
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
-    }
+    // public LocalDate getCreatedAt() {
+    //     return createdAt;
+    // }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    // public void setCreatedAt(LocalDate createdAt) {
+    //     this.createdAt = createdAt;
+    // }
 
-    @Override
-    public String toString() {
-        return "Student [studentId=" + studentId + ", studentName=" + studentName + ", userName=" + username
-                + ", password=" + password + ", email=" + email + ", cgpa=" + cgpa + ", department=" + department
-                + ", skills=" + skills + ", resumeURL=" + resumeURL + ", academicYear=" + academicYear + ", backlogs="
-                + backlogs + ", graduationYear=" + graduationYear + ", contactNumber=" + contactNumber + ", createdAt="
-                + createdAt + ", updatedAt=" + updatedAt + "]" + "Role: " + role;
-    }
+    // public LocalDate getUpdatedAt() {
+    //     return updatedAt;
+    // }
+
+    // public void setUpdatedAt(LocalDate updatedAt) {
+    //     this.updatedAt = updatedAt;
+    // }
+
+    // @Override
+    // public String toString() {
+    //     return "Student [studentId=" + studentId + ", studentName=" + studentName + ", userName=" + username
+    //             + ", password=" + password + ", email=" + email + ", cgpa=" + cgpa + ", department=" + department
+    //             + ", skills=" + skills + ", resumeURL=" + resumeURL + ", academicYear=" + academicYear + ", backlogs="
+    //             + backlogs + ", graduationYear=" + graduationYear + ", contactNumber=" + contactNumber + ", createdAt="
+    //             + createdAt + ", updatedAt=" + updatedAt + "]" + "Role: " + role;
+    // }
 
 }

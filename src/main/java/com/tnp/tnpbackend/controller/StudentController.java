@@ -9,10 +9,9 @@ import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.StudentService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("/tnp/v1/api")
+@RequestMapping("/tnp/student")
 public class StudentController {
 
   @Autowired
@@ -29,5 +28,4 @@ public class StudentController {
 
     return "Student logged in";
   }
-
 }

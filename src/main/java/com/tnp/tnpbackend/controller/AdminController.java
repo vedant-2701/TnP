@@ -48,6 +48,8 @@ public class AdminController {
             return ResponseEntity.ok("Successfully uploaded " + students.size() + " students.");
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Error processing file: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body("Error saving students: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }

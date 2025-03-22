@@ -9,7 +9,7 @@ import com.tnp.tnpbackend.model.Student;
 
 
 @Repository
-public interface StudentRepository extends MongoRepository<Student, Integer> {
+public interface StudentRepository extends MongoRepository<Student, String> {
 
     Optional<Student> findByUsername(String username);
 
