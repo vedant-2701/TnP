@@ -53,6 +53,7 @@ public class StudentController {
     existingStudent.setBacklogs(student.getBacklogs());
     existingStudent.setGraduationYear(student.getGraduationYear());
     existingStudent.setContactNumber(student.getContactNumber());
+    existingStudent.setSkills(student.getSkills());
 
     if (student.getPassword() != null && !student.getPassword().isBlank()) {
       existingStudent.setPassword(passwordEncoder.encode(student.getPassword()));
