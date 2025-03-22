@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/tnp/auth/**").permitAll()
-                        .requestMatchers("/tnp/v1/api/**").hasRole("STUDENT")
+                        .requestMatchers("/tnp/student/**").hasRole("STUDENT")
                         .requestMatchers("/tnp/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
