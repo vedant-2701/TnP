@@ -13,6 +13,7 @@ export const api = axios.create({
 // Add request interceptor to include token
 api.interceptors.request.use((config) => {
   const token = getToken();
+  // console.log(token);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -37,6 +38,8 @@ export const login = async (username, password) => {
       username,
       password,
     });
+
+    // console.log(response);
     
     if (response.data.token) {
       setToken(response.data.token);
@@ -51,7 +54,9 @@ export const login = async (username, password) => {
 export const validateToken = async () => {
   try {
     const token = getToken();
+    // console.log(token)
     if (!token) return false;
+
 
     // Check if token is expired
     const decodedToken = jwtDecode(token);
@@ -61,8 +66,10 @@ export const validateToken = async () => {
     }
 
     // Verify token with backend
-    const response = await api.post('/tnp/auth/validate-token');
+    const response = await api.post(`/tnp/auth/validate-token/${token}`);
+    // console.log(response);
     return response.data.valid;
+    // return token;
   } catch (error) {
     logout();
     return false;
