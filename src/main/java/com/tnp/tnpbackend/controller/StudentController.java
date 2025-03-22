@@ -28,4 +28,10 @@ public class StudentController {
 
     return "Student logged in";
   }
+
+  @PostMapping("/update-profile")
+  public boolean updateProfile() {
+    
+    return false;
+  }
 }

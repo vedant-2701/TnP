@@ -40,7 +40,7 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Invalid file format. Please upload an Excel file (.xlsx).");
         }
         try {
-            List<Student> students = adminHelper.convertExcelToListOfFacultyt(file.getInputStream());
+            List<Student> students = adminHelper.convertExcelToListOfStudents(file.getInputStream());
             if (students.isEmpty()) {
                 return ResponseEntity.ok("No valid student data found in the file.");
             }

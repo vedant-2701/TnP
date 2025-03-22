@@ -17,8 +17,6 @@ public class AdminExcelServiceImpl implements AdminExcelService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //private final Random random = new Random();
-
     @Override
     public void save(List<Student> students) {
         if (students == null || students.isEmpty()) {
