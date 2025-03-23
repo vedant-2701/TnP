@@ -9,17 +9,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tnp.tnpbackend.dto.AuthRequest;
 import com.tnp.tnpbackend.dto.AuthResponse;
-import com.tnp.tnpbackend.model.Student;
-import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.security.JwtUtil;
+import com.tnp.tnpbackend.service.AppUser;
+import com.tnp.tnpbackend.serviceImpl.UserDetailsServiceImpl;
 
 @RestController
 @RequestMapping("/tnp/auth")
@@ -29,7 +25,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private StudentRepository studentRepository;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -37,25 +33,31 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         System.out.println(request.toString());
+
+        // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails);
 
-        Student student = studentRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Fetch the user entity using the service
+        AppUser user = userDetailsService.findUserByUsername(userDetails.getUsername());
+        if (user == null) {
+            throw new RuntimeException("User not found after authentication");
+        }
 
         AuthResponse response = new AuthResponse();
         response.setToken(token);
         response.setUsername(userDetails.getUsername());
 
         // Remove "ROLE_" prefix for frontend consistency
-        String role = student.getRole();
-        if (role.startsWith("ROLE_")) {
+        String role = user.getRole();
+        if (role != null && role.startsWith("ROLE_")) {
             role = role.substring(5);
         }
-        response.setRole(role);
+        response.setRole(role != null ? role : "USER"); // Default to "USER" if role is null
 
         return ResponseEntity.ok(response);
     }
@@ -63,7 +65,6 @@ public class AuthController {
     @PostMapping("/validate-token/{token}")
     public ResponseEntity<?> validateToken(@PathVariable("token") String token) {
         boolean isValid = jwtUtil.validateToken(token);
-        // Create a JSON-compatible response object
         Map<String, Boolean> response = new HashMap<>();
         response.put("valid", isValid);
 

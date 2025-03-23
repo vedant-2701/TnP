@@ -31,7 +31,7 @@ public class AdminController {
     }
 
     @PostMapping("/upload-students")
-    public ResponseEntity<String> addStudents(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> addStudents(@RequestParam("file") MultipartFile file) {
         System.out.println("Received file: " + file.getOriginalFilename());
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("No file uploaded or file is empty.");

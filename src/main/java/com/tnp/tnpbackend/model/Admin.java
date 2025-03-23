@@ -2,9 +2,23 @@ package com.tnp.tnpbackend.model;
 
 import java.time.LocalDate;
 
-public class Admin {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-    private int adminId;
+import com.tnp.tnpbackend.service.AppUser;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "admin")
+public class Admin implements AppUser{
+
+    @Id
+    private String adminId;
     private String adminName;
     private String username;
     private String adminPassword;
@@ -14,102 +28,19 @@ public class Admin {
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
-    public Admin() {
-    }
-
-    public Admin(int adminId, String adminName, String adminEmail, String adminPassword, String role,
-            String phoneNumber, boolean isActive,LocalDate createdAt,LocalDate updatedAt) {
-        this.adminId = adminId;
-        this.adminName = adminName;
-        this.username = adminEmail;
-        this.adminPassword = adminPassword;
-        this.role = role;
-        this.phoneNumber = phoneNumber;
-        this.isActive = isActive;
-        this.createdAt=createdAt;
-        this.updatedAt=updatedAt;
-    }
-
-    public int getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(int adminId) {
-        this.adminId = adminId;
-    }
-
-    public String getAdminName() {
-        return adminName;
-    }
-
-    public void setAdminName(String adminName) {
-        this.adminName = adminName;
-    }
-
+    @Override
     public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getAdminPassword() {
-        return adminPassword;
-    }
-
-    public void setAdminPassword(String adminPassword) {
-        this.adminPassword = adminPassword;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
+        return this.username;
     }
 
     @Override
-    public String toString() {
-        return "Admin [adminId=" + adminId + ", adminName=" + adminName + ", adminEmail=" + username
-                + ", adminPassword=" + adminPassword + ", role=" + role + ", phoneNumber=" + phoneNumber + ", isActive="
-                + isActive + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+    public String getPassword() {
+        return this.adminPassword;
     }
-
-  
+    
+    @Override
+    public String getRole() {
+        return this.role;
+    }
 
 }
