@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { login, validateToken } from '../../services/api';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../Loading';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +43,9 @@ function Login() {
     e.preventDefault();
     
     if (!username || !password) {
-      toast.error('Please fill in all fields');
+      toast.error('Please fill in all fields', {
+        draggable: true,
+      });
       return;
     }
 
@@ -55,11 +59,16 @@ function Login() {
         role: response.role
       }));
 
-      toast.success('Login successful!');
+      toast.success('Login successful!', {
+        draggable: true,
+      });
+
       navigate('/dashboard', { replace: true });
       
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.', {
+        draggable: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -67,11 +76,12 @@ function Login() {
   
   if (isValidating) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-700 to-red-500 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <p className="text-gray-600">Validating session...</p>
-        </div>
-      </div>
+      // <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-700 to-red-500 flex items-center justify-center">
+      //   <div className="bg-white p-8 rounded-lg shadow-md">
+      //     <p className="text-gray-600">Validating session...</p>
+      //   </div>
+      // </div>
+      <Loading />
     );
   }
   

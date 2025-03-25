@@ -1,5 +1,5 @@
 "use client";;
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -62,11 +62,11 @@ export const DesktopSidebar = ({
   return (<>
     <motion.div
       className={cn(
-        "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0",
+        "h-full px-4 py-4 hidden  md:flex md:flex-col bg-white dark:bg-neutral-800 w-[300px] shrink-0",
         className
       )}
       animate={{
-        width: animate ? (open ? "300px" : "60px") : "300px",
+        width: animate ? (open ? "275px" : "75px") : "275px",
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -123,23 +123,42 @@ export const MobileSidebar = ({
 export const SidebarLink = ({
   link,
   className,
+  activeLink, // Receive activeLink from parent
+  setActiveLink, // Receive setActiveLink from parent
   ...props
 }) => {
   const { open, animate } = useSidebar();
+
   return (
-    (<Link
+    <Link
       to={link.href}
-      className={cn("flex items-center justify-start gap-2  group/sidebar py-2", className)}
-      {...props}>
-      {link.icon}
+      className={cn(
+        `flex items-center gap-2 group/sidebar px-2 py-4 transition-all duration-200 ease-in-out`,
+        open ? "px-4" : "", 
+        activeLink === link.label ? 'bg-gradient-to-b from-blue-300 to-blue-600 rounded-xl shadow-md text-white' : 'text-[#333333]',
+        className
+      )}
+      onClick={() => setActiveLink(link.label)} // Update active link in parent
+      {...props}
+    >
+      {React.cloneElement(link.icon, {
+        className: cn(
+          link.icon.props.className,
+          `${activeLink === link.label ? 'text-white' : 'text-[#333333]'}`,
+        )
+      })}
       <motion.span
         animate={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0">
+        className={cn(
+          "text-md drop-shadow-2xl group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0",
+          activeLink === link.label ? 'text-white' : 'text-[#333333]'
+        )}
+      >
         {link.label}
       </motion.span>
-    </Link>)
+    </Link>
   );
 };

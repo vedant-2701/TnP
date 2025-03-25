@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import toast from 'react-hot-toast';
+
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -8,6 +10,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Add request interceptor to include token
@@ -89,5 +92,6 @@ export const getToken = () => {
 export const logout = () => {
   document.cookie = 'jwt=; max-age=0; path=/;';
   localStorage.removeItem('user');
+  // console.log("Logout called");
   window.location.href = '/';
 };
