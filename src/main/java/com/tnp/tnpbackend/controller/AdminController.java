@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.helper.AdminHelper;
 import com.tnp.tnpbackend.model.Student;
+import com.tnp.tnpbackend.service.StudentService;
 import com.tnp.tnpbackend.serviceImpl.AdminExcelServiceImpl;
 
 import java.io.IOException;
@@ -25,11 +28,15 @@ public class AdminController {
     @Autowired
     private AdminExcelServiceImpl adminExcelServiceImpl;
 
+    @Autowired
+    private StudentService studentService;
+
     @GetMapping("/dashboard")
     public String adminDashboard() {
         return "Admin logged in";
     }
 
+    //for bulk data upload
     @PostMapping("/upload-students")
     public ResponseEntity<?> addStudents(@RequestParam("file") MultipartFile file) {
         System.out.println("Received file: " + file.getOriginalFilename());
@@ -53,5 +60,20 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
+    }
+
+    //for single student data upload
+    @PostMapping(value = "/upload-student", consumes = "application/x-www-form-urlencoded", produces = "application/json")
+    public ResponseEntity<?> addStudent(@RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam("graduationYear") String graduationYear, @RequestParam("department") String department) {
+        StudentDTO studentDTO = new StudentDTO();
+        studentDTO.setUserName(username);
+        studentDTO.setPassword(password);
+        studentDTO.setGraduationYear(graduationYear);
+        studentDTO.setDepartment(department);
+        System.out.println(studentDTO);
+        StudentDTO savedStudentDTO = studentService.addStudent(studentDTO);
+        return ResponseEntity.ok(savedStudentDTO);
     }
 }

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.tnp.tnpbackend.model.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,21 +20,19 @@ public class StudentDTO {
     private String studentId;
     private String studentName;
     private String userName;
+    @JsonIgnore
     private String password;
     private String email;
     private double cgpa;
-    private int department;
+    private String department;
     private List<String> skills;
     private String resumeURL;
     private String academicYear;
     private int backlogs;
-    private int graduationYear;
+    private String graduationYear;
     private String contactNumber;
     private LocalDate createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
     private String role;
-
-
-
 }

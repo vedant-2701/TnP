@@ -70,6 +70,12 @@ public class AdminHelper {
                         case 1:
                             student.setPassword(cellValue);
                             break;
+                        case 2:
+                            student.setDepartment(cellValue);
+                            break;
+                        case 3:
+                            student.setGraduationYear(cellValue);
+                            break;
                         default:
                             break;
                     }

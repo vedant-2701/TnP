@@ -27,12 +27,12 @@ public class Student implements AppUser{
     private String password;
     private String email;
     private double cgpa;
-    private Department department;
+    private String department;
     private List<String> skills;
     private String resumeURL;
-    private AcademicYear academicYear;
+    private String academicYear;
     private int backlogs;
-    private int graduationYear;
+    private String graduationYear;
     private String contactNumber;
     private LocalDate createdAt;
     private LocalDateTime updatedAt;

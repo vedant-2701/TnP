@@ -21,12 +21,13 @@ public class DTOMapper {
         studDto.setStudentId(student.getStudentId());
         studDto.setStudentName(student.getStudentName());
         studDto.setUserName(student.getUsername());
+        studDto.setPassword(student.getPassword());
         studDto.setEmail(student.getEmail());
         studDto.setCgpa(student.getCgpa());
-        studDto.setDepartment(student.getDepartment() != null ? student.getDepartment().getDepartmentId() : 0);
+        studDto.setDepartment(student.getDepartment());
         studDto.setSkills(student.getSkills());
         studDto.setResumeURL(student.getResumeURL());
-        studDto.setAcademicYear(student.getAcademicYear() != null ? student.getAcademicYear().getYearName() : null);
+        studDto.setAcademicYear(student.getAcademicYear());
         studDto.setBacklogs(student.getBacklogs());
         studDto.setGraduationYear(student.getGraduationYear());
         studDto.setContactNumber(student.getContactNumber());
@@ -47,6 +48,7 @@ public class DTOMapper {
         stud.setStudentId(dto.getStudentId());
         stud.setStudentName(dto.getStudentName());
         stud.setUsername(dto.getUserName());
+        stud.setPassword(dto.getPassword());
         stud.setEmail(dto.getEmail());
         stud.setCgpa(dto.getCgpa());
         //stud.setDepartment(dto.getDepartment());

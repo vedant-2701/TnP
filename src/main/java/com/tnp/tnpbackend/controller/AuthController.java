@@ -30,6 +30,7 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    //login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         System.out.println(request.toString());
@@ -62,6 +63,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    // Validate the token
     @PostMapping("/validate-token/{token}")
     public ResponseEntity<?> validateToken(@PathVariable("token") String token) {
         boolean isValid = jwtUtil.validateToken(token);
