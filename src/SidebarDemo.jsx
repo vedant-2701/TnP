@@ -1,25 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./components/shared/Sidebar";
-import {
-  IconArrowLeft,
-    IconBrandTabler,
-    IconSettings,
-    IconUsers,
-    IconChartBar,
-    IconFileText,
-    IconCalendar,
-    IconUserBolt,
-} from "@tabler/icons-react";
-import { Link } from "react-router-dom";
+import { IconArrowLeft } from "@tabler/icons-react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 // import Image from "next/image";
 import { cn } from "./lib/utils";
 import { logout } from "./services/api";
 import Loading from './components/Loading';
-import { useNavigate } from 'react-router-dom';
 import { getNavigationByRole } from './config/navigation';
-import AdminDashboard from "./components/admin/AdminDashboard";
+// import AdminDashboard from "./components/admin/AdminDashboard";
+import MainDashboard from "./components/main-dashboard/MainDashboard";
+// import Header from "./components/shared/Header";
 
 export function SidebarDemo() {
 
@@ -28,7 +20,7 @@ export function SidebarDemo() {
   
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-/*
+
   useEffect(() => {
     const userStr = localStorage.getItem('user');
     if (!userStr) {
@@ -48,9 +40,9 @@ export function SidebarDemo() {
   if (!user) {
     return <Loading />;
   }
-*/
-  // const links = getNavigationByRole(user.role);
-  const links = getNavigationByRole('ADMIN');
+
+  const links = getNavigationByRole(user.role);
+  // const links = getNavigationByRole('ADMIN');
 
   const handleLogout = () => {
     logout();
@@ -101,29 +93,34 @@ export function SidebarDemo() {
         // for your use case, use `h-screen` instead of `h-[60vh]`
         "h-screen"
       )}>
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} activeLink={activeLink} setActiveLink={setActiveLink} />
-              ))}
+      <Suspense fallback={<Loading />}>
+
+        <Sidebar open={open} setOpen={setOpen}>
+          <SidebarBody className="justify-between gap-10">
+            <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+              {open ? <Logo /> : <LogoIcon />}
+              <div className="mt-8 flex flex-col gap-2">
+                {links.map((link, idx) => (
+                  <SidebarLink key={idx} link={link} activeLink={activeLink} setActiveLink={setActiveLink} />
+                ))}
+              </div>
             </div>
-          </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Logout",
-                href: "#",
-                icon: <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />,
-              }} 
-              onClick={handleLogout}
-              />
-          </div>
-        </SidebarBody>
-      </Sidebar>
-      <AdminDashboard />
+            <div>
+              <SidebarLink
+                link={{
+                  label: "Logout",
+                  href: "#",
+                  icon: <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />,
+                }} 
+                onClick={handleLogout}
+                />
+            </div>
+          </SidebarBody>
+        </Sidebar>
+        {/* <Header /> */}
+        <MainDashboard role={user.role} />
+        
+      </Suspense>
     </div>)
   );
 }

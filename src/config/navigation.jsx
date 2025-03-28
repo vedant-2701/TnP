@@ -57,7 +57,7 @@ export const adminNavigationLinks = [
     },
     {
       label: "Users",
-      href: "#",
+      href: "/dashboard/users",
       icon: (
         <IconUsers className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
       ),
@@ -71,7 +71,7 @@ export const adminNavigationLinks = [
     },
     {
       label: "Upload Students",
-      href: "/dashboard/upload-students",
+      href: "/dashboard/upload",
       icon: (
         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
       ),

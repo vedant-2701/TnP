@@ -7,11 +7,38 @@
     --font-nunito: "Nunito", "sans-serif";
 }
 
+@theme inline {
+  --shadow-input:
+    0px 2px 3px -1px rgba(0, 0, 0, 0.1),
+    0px 1px 0px 0px rgba(25, 28, 33, 0.02),
+    0px 0px 0px 1px rgba(25, 28, 33, 0.08);
+}
+
+
+@layer base {
+  .scrollbar-thin {
+    &::-webkit-scrollbar {
+      width: 4px;
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    &.scrollable.scrolling::-webkit-scrollbar-thumb {
+      background-color: var(--color-neutral-300);
+      border-radius: 1rem;
+    }
+  }
+}
+
 * {
-    font-family: var(--font-nunito);
-    /* font-family:Verdana, Geneva, Tahoma, sans-serif; */
-    /* font-family: "Nunito", "sans-serif"; */
-    font-weight: 600;
+  font-family: var(--font-nunito);
+  /* font-family:Verdana, Geneva, Tahoma, sans-serif; */
+  /* font-family: "Nunito", "sans-serif"; */
+  font-weight: 600;
 }
 
 @keyframes slideUp {

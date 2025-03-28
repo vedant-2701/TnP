@@ -3,7 +3,7 @@ import React from 'react';
 // Separate component for the dashboard content (skeleton loading UI)
 const Dashboard = () => {
   return (
-    (<div className="flex flex-1 py-2 pr-2 bg-white">
+    (<div className="flex flex-1 py-2 pr-2">
       <div
         className="p-2 md:p-10 rounded-2xl bg-[#f8f9fd] dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full">
         <div className="flex gap-2">

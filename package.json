@@ -10,13 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.0.0",
+    "@radix-ui/react-label": "^2.1.2",
     "@tabler/icons-react": "^3.31.0",
     "@tailwindcss/vite": "^4.0.12",
     "axios": "^1.8.3",
     "clsx": "^2.1.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.479.0",
-    "motion": "^12.4.10",
+    "motion": "^12.6.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",

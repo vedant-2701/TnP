@@ -88,7 +88,7 @@ export default function FileUpload() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center p-4">
+    <div className="w-full bg-gray-50 flex items-center justify-center p-4 mt-20">
       <div className="w-1/3">
         <div 
           {...getRootProps()} 

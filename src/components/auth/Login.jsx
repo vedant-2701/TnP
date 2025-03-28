@@ -86,16 +86,16 @@ function Login() {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-700 to-red-500 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-100 to-blue-800 flex items-center justify-center p-6">
       <div className="w-full max-w-[1200px] bg-white rounded-[32px] flex overflow-hidden shadow-2xl">
         {/* Left Section */}
-        <div className="w-1/2 bg-black p-12 relative overflow-hidden">
+        <div className="w-1/2  p-12 relative overflow-hidden">
           <div className="relative z-10">
-            <p className="text-white/80 uppercase text-sm tracking-wider mb-4">A WISE QUOTE</p>
-            <h1 className="text-white text-6xl font-serif mb-6 leading-tight">
+            <p className="text-black/80 uppercase text-sm tracking-wider mb-4">A WISE QUOTE</p>
+            <h1 className="text-black text-6xl mb-6 leading-tight">
               Get<br />Everything<br />You Want
             </h1>
-            <p className="text-white/80 text-lg">
+            <p className="text-black/80 text-lg">
               You can get everything you want if you work hard,<br />
               trust the process, and stick to the plan.
             </p>
@@ -104,8 +104,7 @@ function Login() {
             className="absolute inset-0 z-0" 
             style={{
               background: 'url("https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2340&h=2340") center/cover',
-              mixBlendMode: 'color',
-              opacity: 0.8
+              opacity: 0.7,
             }}
           />
         </div>
@@ -114,7 +113,7 @@ function Login() {
         <div className="w-1/2 p-12 flex flex-col">
           <div className="flex justify-end mb-16">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
+              <div className="w-6 h-6 rounded-full bg-radial-[at_25%_25%] from-white to-zinc-900 to-75%" />
               <span className="text-xl font-medium">TnP</span>
             </div>
           </div>
@@ -165,10 +164,10 @@ function Login() {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2">
+                {/* <label className="flex items-center gap-2">
                   <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
                   <span className="text-sm text-gray-600">Remember me</span>
-                </label>
+                </label> */}
                 <a href="#" className="text-sm text-gray-600 hover:text-gray-900">
                   Forgot Password
                 </a>
