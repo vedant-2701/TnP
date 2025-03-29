@@ -2,11 +2,14 @@ package com.tnp.tnpbackend.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.tnp.tnpbackend.dto.StudentDTO;
+import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.model.Role;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.repository.StudentRepository;
@@ -24,7 +27,7 @@ public class StudentService {
     @Autowired
     private DTOMapper dtoMapper;
 
-    public StudentDTO addStudent(StudentDTO studentDTO) {  // Fixed typo: studentdDto -> studentDTO
+    public StudentDTO addStudent(StudentDTO studentDTO) {  
         Student student = dtoMapper.toStudent(studentDTO);
         // Encode the password before saving
         student.setPassword(passwordEncoder.encode(student.getPassword()));
@@ -40,7 +43,7 @@ public class StudentService {
         // Set creation timestamp
         student.setCreatedAt(LocalDate.now());
 
-        Student savedStudent = studentRepository.save(student);  // Fixed typo: savStudent -> savedStudent
+        Student savedStudent = studentRepository.save(student);
         return dtoMapper.toStudentDto(savedStudent);
     }
 
@@ -85,4 +88,34 @@ public class StudentService {
         System.out.println("Updated StudentDTO: " + updatedDTO);
         return updatedDTO;
     }
+
+    public List<StudentSummaryDTO> getAllStudents() {
+        List<Student> students = studentRepository.findAll();
+        if (students.isEmpty()) {
+            throw new RuntimeException("No students found");
+        }
+        return dtoMapper.toStudentSummaryDTOList(students);
+    }
+
+    public StudentDTO getStudentById(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new RuntimeException("Invalid ID provided");
+        }
+        Student student = studentRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Student not found with ID: " + id));
+        return dtoMapper.toStudentDto(student);
+    }
+
+    public List<StudentSummaryDTO> getStudentsByDepartment(String department) {
+        if (department == null || department.isEmpty()) {
+            throw new RuntimeException("Invalid department provided");
+        }
+        List<Student> students = studentRepository.findByDepartment(department);
+        if (students.isEmpty()) {
+            throw new RuntimeException("No students found in department: " + department);
+        }
+        return dtoMapper.toStudentSummaryDTOList(students);
+    }
+
+    
 }

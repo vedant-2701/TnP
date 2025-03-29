@@ -2,8 +2,8 @@ package com.tnp.tnpbackend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.StudentDTO;
+import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.helper.AdminHelper;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.StudentService;
@@ -21,7 +22,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tnp/admin")
-// @CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
 
     @Autowired
@@ -69,7 +69,8 @@ public class AdminController {
     public ResponseEntity<?> addStudent(@RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("graduationYear") String graduationYear, @RequestParam("department") String department) {
-        StudentDTO studentDTO = new StudentDTO();
+        try{
+            StudentDTO studentDTO = new StudentDTO();
         studentDTO.setUserName(username);
         studentDTO.setPassword(password);
         studentDTO.setGraduationYear(graduationYear);
@@ -77,5 +78,43 @@ public class AdminController {
         System.out.println(studentDTO);
         StudentDTO savedStudentDTO = studentService.addStudent(studentDTO);
         return ResponseEntity.ok(savedStudentDTO);
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().body("Invalid data: " + e.getMessage());
+        }
+        catch(Exception e){
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+        }
+    }
+
+    //for getting all students with specific fields
+    @GetMapping("/getAllStudents")
+    public ResponseEntity<?> getAllStudents() {
+        List<StudentSummaryDTO> students = studentService.getAllStudents();
+        System.out.println(students);
+        if(students.isEmpty() || students == null){
+            return ResponseEntity.status(404).body("No students found.");
+        }
+        return ResponseEntity.ok(students);
+    }
+
+    //for getting student by id
+    @GetMapping("/getStudent/{id}")
+    public ResponseEntity<?> getStudent(@PathVariable("id") String id){
+        if(id == null || id.isEmpty()){
+            return ResponseEntity.badRequest().body("Invalid ID provided.");
+        }
+        StudentDTO student = studentService.getStudentById(id);
+        return ResponseEntity.ok(student);
+    }
+
+    //for getting students by department
+    @GetMapping("/getStudentsByDepartment/{department}")
+    public ResponseEntity<?> getStudentsByDepartment(@PathVariable("department") String department) {
+        List<StudentSummaryDTO> students = studentService.getStudentsByDepartment(department);
+        if (students.isEmpty()) {
+            return ResponseEntity.status(404).body("No students found in the specified department.");
+        }
+        return ResponseEntity.ok(students);
     }
 }
