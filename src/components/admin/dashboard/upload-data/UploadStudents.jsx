@@ -20,11 +20,11 @@ export default function UploadStudents() {
                         component={Link}
                         to="/dashboard/upload/upload-students"
                         onClick={() => handleButtonClick('upload-students')}
-                        className={`!rounded-tl-xl !rounded-bl-xl !shadow-md !inset-shadow-sm !inset-shadow-blue-500/50
-                            !px-4 !py-3 text-sm font-medium transition-all duration-200 ease-in-out
-                            ${activeBtn === 'upload-students' ? 'bg-gradient-to-b from-blue-300 to-blue-600 !text-white' : 'text-black'}
-                            hover:bg-gray-200
-                        `}
+                                className={`!rounded-tl-xl !rounded-bl-xl !shadow-md !inset-shadow-sm !inset-shadow-blue-500/50
+                                    !px-4 !py-3 text-sm font-medium transition-all duration-200 ease-in-out
+                                    ${activeBtn === 'upload-students' ? 'bg-gradient-to-b from-blue-300 to-blue-600 !text-white' : 'text-black'}
+                                    hover:bg-gray-200
+                                `}
                     >
                         Upload Bulk Data
                     </Button>
