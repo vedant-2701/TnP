@@ -2,6 +2,7 @@ package com.tnp.tnpbackend.model;
 
 import java.time.LocalDate;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.tnp.tnpbackend.service.AppUser;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "tpoHead")
 public class TPOHead implements AppUser{
 
+    @Id
     private String id;
     private String username;
     private String password; 
