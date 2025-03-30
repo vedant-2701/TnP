@@ -117,4 +117,10 @@ public class AdminController {
         }
         return ResponseEntity.ok(students);
     }
+
+    @GetMapping("/getDepartment")
+    public ResponseEntity<?> getDepartment(){
+        List<String>departments = studentService.findDistinctDepartments();
+        return ResponseEntity.ok(departments);
+    }
 }

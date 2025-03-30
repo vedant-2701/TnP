@@ -18,5 +18,4 @@ public interface StudentRepository extends MongoRepository<Student, String> {
 
     List<Student> findByDepartment(String department);
 
-    
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,9 @@ public class StudentService {
 
     @Autowired
     private DTOMapper dtoMapper;
+
+    @Autowired
+    MongoTemplate mongoTemplate;
 
     public StudentDTO addStudent(StudentDTO studentDTO) {  
         Student student = dtoMapper.toStudent(studentDTO);
@@ -115,6 +119,11 @@ public class StudentService {
             throw new RuntimeException("No students found in department: " + department);
         }
         return dtoMapper.toStudentSummaryDTOList(students);
+    }
+
+    public List<String> findDistinctDepartments() {
+        List<String> departments = mongoTemplate.findDistinct("department", Student.class, String.class);
+        return departments.isEmpty() ? List.of() : departments;
     }
 
     
