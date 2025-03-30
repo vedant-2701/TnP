@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .requestMatchers("/tnp/auth/**").permitAll()
                 .requestMatchers("/tnp/student/**").hasRole("STUDENT")
                 .requestMatchers("/tnp/admin/**").hasRole("ADMIN")
+                .requestMatchers("/tnp/head/**").hasRole("HEAD")
                 .anyRequest().authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 

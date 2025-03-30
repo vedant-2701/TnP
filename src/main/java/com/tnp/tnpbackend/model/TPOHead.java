@@ -2,9 +2,21 @@ package com.tnp.tnpbackend.model;
 
 import java.time.LocalDate;
 
-public class TPOHead {
+import org.springframework.data.mongodb.core.mapping.Document;
 
-    private int id;
+import com.tnp.tnpbackend.service.AppUser;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "tpoHead")
+public class TPOHead implements AppUser{
+
+    private String id;
     private String username;
     private String password; 
     private String email;
@@ -12,75 +24,22 @@ public class TPOHead {
     private LocalDate createdAt;
     private LocalDate updatedAt;
     private boolean isActive;
+    private String role;
     
-    public TPOHead() {
-    }
-    public TPOHead(int id, String username, String password, String email, String contactNumber, LocalDate createdAt,
-            LocalDate updatedAt, boolean isActive) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.contactNumber = contactNumber;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.isActive = isActive;
-    }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getContactNumber() {
-        return contactNumber;
-    }
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
-    }
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-    public boolean isActive() {
-        return isActive;
-    }
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
     @Override
-    public String toString() {
-        return "TPOHead [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
-                + ", contactNumber=" + contactNumber + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
-                + ", isActive=" + isActive + "]";
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getRole() {
+        return this.role;
     }
     
-    
-    
+
 }

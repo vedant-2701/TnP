@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.tnp.tnpbackend.repository.AdminRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
+import com.tnp.tnpbackend.repository.TnpHeadRepository;
 import com.tnp.tnpbackend.service.AppUser;
 
 import java.util.Collections;
@@ -22,6 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private TnpHeadRepository tnpHeadRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -37,26 +41,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         return new org.springframework.security.core.userdetails.User(
-            user.getUsername(),
-            user.getPassword(),
-            Collections.singleton(new SimpleGrantedAuthority(role))
-        );
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority(role)));
     }
-
-    
 
     @Cacheable("users") // Cache the user object
     public AppUser findUserByUsername(String username) {
         if (username.startsWith("admin")) {
-            return adminRepository.findByUsername(username).orElse(null); 
+            return adminRepository.findByUsername(username).orElse(null);
         } else if (username.matches("\\d+")) { // Numeric usernames = students
             return studentRepository.findByUsername(username).orElse(null);
+        } else if (username.startsWith("head")) {
+            return tnpHeadRepository.findByUsername(username).orElse(null);
         }
         return null;
     }
 }
 
 // else if (username.startsWith("tnp_")) {
-//     return tpoHeadRepository.findByUsername(username).orElse(null);
+// return tpoHeadRepository.findByUsername(username).orElse(null);
 // } else if (username.startsWith("tnpdept_")) {
-//     return deptTpoRepository.findByUsername(username).orElse(null);
+// return deptTpoRepository.findByUsername(username).orElse(null);
