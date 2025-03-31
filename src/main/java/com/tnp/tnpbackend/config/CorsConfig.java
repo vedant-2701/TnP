@@ -8,8 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowedOrigins("https://69c6-223-233-80-123.ngrok-free.app") // Your Vite dev server
+        registry.addMapping("/**")// Your Vite dev server
+            .allowedOrigins("http://localhost:5173") // Your Vite dev server
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true);
