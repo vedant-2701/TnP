@@ -1,6 +1,5 @@
 package com.tnp.tnpbackend.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class Student implements AppUser{
     private int backlogs;
     private String graduationYear;
     private String contactNumber;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
     private String role;

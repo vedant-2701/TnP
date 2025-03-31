@@ -2,6 +2,7 @@ package com.tnp.tnpbackend.helper;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -82,7 +83,7 @@ public class AdminHelper {
                     cellId++;
                 }
 
-                student.setCreatedAt(LocalDate.now());
+                student.setCreatedAt(LocalDateTime.now());
                 student.setRole("ROLE_STUDENT");
 
                 if (username != null && !username.isBlank() &&

@@ -46,7 +46,7 @@ public class StudentService {
         }
 
         // Set creation timestamp
-        student.setCreatedAt(LocalDate.now());
+        student.setCreatedAt(LocalDateTime.now());
 
         Student savedStudent = studentRepository.save(student);
         return dtoMapper.toStudentDto(savedStudent);

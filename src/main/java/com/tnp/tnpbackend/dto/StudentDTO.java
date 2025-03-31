@@ -1,6 +1,5 @@
 package com.tnp.tnpbackend.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,8 +30,8 @@ public class StudentDTO {
     private int backlogs;
     private String graduationYear;
     private String contactNumber;
-    private LocalDate createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDateTime createdAt;
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
     private String role;
 }
