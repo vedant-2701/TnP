@@ -114,7 +114,7 @@ public class DTOMapper {
         dto.setStudentId(student.getStudentId());
         dto.setUsername(student.getUsername());
         dto.setStudentName(student.getStudentName());
-        dto.setCgpa(student.getCgpa());
+        dto.setContactNumber(student.getContactNumber());
         dto.setEmail(student.getEmail());
         return dto;
     }

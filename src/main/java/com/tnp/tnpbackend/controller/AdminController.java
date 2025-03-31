@@ -123,4 +123,16 @@ public class AdminController {
         List<String>departments = studentService.findDistinctDepartments();
         return ResponseEntity.ok(departments);
     }
+
+    @GetMapping("/getStudentByDepartmentAndId/{department}/{id}")
+    public ResponseEntity<?> getStudentByDepartmentAndId(
+            @PathVariable("department") String department,
+            @PathVariable("id") String id) {
+        try {
+            StudentDTO student = studentService.getStudentByDepartmentAndId(department, id);
+            return ResponseEntity.ok(student);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 }

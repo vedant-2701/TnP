@@ -3,6 +3,7 @@ package com.tnp.tnpbackend.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -126,5 +127,16 @@ public class StudentService {
         return departments.isEmpty() ? List.of() : departments;
     }
 
-    
+    public StudentDTO getStudentByDepartmentAndId(String department, String studentId) {
+        if (studentId == null || studentId.isEmpty()) {
+            throw new RuntimeException("Invalid student ID provided");
+        }
+        if (department == null || department.isEmpty()) {
+            throw new RuntimeException("Invalid department provided");
+        }
+
+        Optional<Student> student = studentRepository.findByDepartmentAndStudentId(department, studentId);
+        return student.map(dtoMapper::toStudentDto)
+                     .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId + " in department: " + department));
+    }
 }

@@ -38,6 +38,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/tnp/admin/**").permitAll() // Permit OPTIONS for /tnp/admin/**
+                .requestMatchers("/actuator/**").permitAll()  // Allows access to all Actuator endpoints
                 .requestMatchers("/tnp/auth/**").permitAll()
                 .requestMatchers("/tnp/student/**").hasRole("STUDENT")
                 .requestMatchers("/tnp/admin/**").hasRole("ADMIN")

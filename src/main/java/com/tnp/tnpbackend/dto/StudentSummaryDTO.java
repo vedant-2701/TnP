@@ -7,6 +7,6 @@ public class StudentSummaryDTO {
     private String studentId;
     private String username;
     private String studentName;
-    private double cgpa;
+    private String contactNumber;
     private String email;
 }
