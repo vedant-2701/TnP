@@ -71,7 +71,7 @@ public class AdminController {
             @RequestParam("graduationYear") String graduationYear, @RequestParam("department") String department) {
         try{
             StudentDTO studentDTO = new StudentDTO();
-        studentDTO.setUserName(username);
+        studentDTO.setUsername(username);
         studentDTO.setPassword(password);
         studentDTO.setGraduationYear(graduationYear);
         studentDTO.setDepartment(department);

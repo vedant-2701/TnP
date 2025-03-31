@@ -33,6 +33,9 @@ public class Student implements AppUser{
     private int backlogs;
     private String graduationYear;
     private String contactNumber;
+    private double tenMarks;
+    private double higherSecondaryMarks;
+    private String studentType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     

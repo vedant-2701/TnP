@@ -22,7 +22,7 @@ public class DTOMapper {
 
         studDto.setStudentId(student.getStudentId());
         studDto.setStudentName(student.getStudentName());
-        studDto.setUserName(student.getUsername());
+        studDto.setUsername(student.getUsername());
         studDto.setPassword(student.getPassword());
         studDto.setEmail(student.getEmail());
         studDto.setCgpa(student.getCgpa());
@@ -33,6 +33,9 @@ public class DTOMapper {
         studDto.setBacklogs(student.getBacklogs());
         studDto.setGraduationYear(student.getGraduationYear());
         studDto.setContactNumber(student.getContactNumber());
+        studDto.setTenMarks(student.getTenMarks());
+        studDto.setHigherSecondaryMarks(student.getHigherSecondaryMarks());
+        studDto.setStudentType(student.getStudentType());
         // Convert UTC to IST
         studDto.setCreatedAt(DateTimeConverter.convertToIST(student.getCreatedAt()));
         studDto.setUpdatedAt(DateTimeConverter.convertToIST(student.getUpdatedAt()));
@@ -51,7 +54,7 @@ public class DTOMapper {
 
         stud.setStudentId(dto.getStudentId());
         stud.setStudentName(dto.getStudentName());
-        stud.setUsername(dto.getUserName());
+        stud.setUsername(dto.getUsername());
         stud.setPassword(dto.getPassword());
         stud.setEmail(dto.getEmail());
         stud.setCgpa(dto.getCgpa());
@@ -62,6 +65,9 @@ public class DTOMapper {
         stud.setBacklogs(dto.getBacklogs());
         stud.setGraduationYear(dto.getGraduationYear());
         stud.setContactNumber(dto.getContactNumber());
+        stud.setTenMarks(dto.getTenMarks());
+        stud.setHigherSecondaryMarks(dto.getHigherSecondaryMarks());
+        stud.setStudentType(dto.getStudentType());
         // Store as is (assumed UTC from frontend or default)
         stud.setCreatedAt(dto.getCreatedAt());
         stud.setUpdatedAt(dto.getUpdatedAt());

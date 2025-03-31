@@ -1,12 +1,13 @@
 package com.tnp.tnpbackend.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,12 +57,21 @@ public class StudentService {
         // Log incoming DTO for debugging
         System.out.println("Incoming StudentDTO: " + studentDTO);
 
-        boolean exists = studentRepository.existsByUsername(studentDTO.getUserName());
-        if (!exists) {
-            throw new RuntimeException("Student with username " + studentDTO.getUserName() + " does not exist");
+        String autheticatedUsername = getAuthenticatedUsername();
+
+        if (studentDTO.getUsername() == null || studentDTO.getUsername().isBlank()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        if (!autheticatedUsername.equals(studentDTO.getUsername())) {
+            throw new SecurityException("You are not authorized to update another student's profile");
         }
 
-        Student existingStudent = studentRepository.findByUsername(studentDTO.getUserName())
+        boolean exists = studentRepository.existsByUsername(studentDTO.getUsername());
+        if (!exists) {
+            throw new RuntimeException("Student with username " + studentDTO.getUsername() + " does not exist");
+        }
+
+        Student existingStudent = studentRepository.findByUsername(studentDTO.getUsername())
             .orElseThrow(() -> new RuntimeException("Student not found despite existence check"));
 
         // Map DTO to Student with new values
@@ -69,14 +79,29 @@ public class StudentService {
 
         // Preserve critical fields from existing student
         updatedStudent.setStudentId(existingStudent.getStudentId());
+        updatedStudent.setUsername(existingStudent.getUsername());
         updatedStudent.setRole(existingStudent.getRole());
         updatedStudent.setCreatedAt(existingStudent.getCreatedAt()); // Preserve original creation date
+        updatedStudent.setDepartment(existingStudent.getDepartment());
 
-        // Handle password: update only if provided
+        //update only if provided
         if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
             updatedStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
         } else {
             updatedStudent.setPassword(existingStudent.getPassword());
+        }
+
+        //maintainng persistency of studeent type 
+        if (existingStudent.getStudentType() != null) {
+            updatedStudent.setStudentType(existingStudent.getStudentType());
+        } else if (updatedStudent.getStudentType() != null) {
+            String studentType = updatedStudent.getStudentType().toUpperCase();
+            if (!"REGULAR".equals(studentType) && !"DIPLOMA".equals(studentType)) {
+                throw new IllegalArgumentException("Student type must be REGULAR or DIPLOMA");
+            }
+            if (updatedStudent.getHigherSecondaryMarks() == 0.0) {
+                throw new IllegalArgumentException("Higher secondary marks are required when student type is specified");
+            }
         }
 
         // Set update timestamp
@@ -138,5 +163,14 @@ public class StudentService {
         Optional<Student> student = studentRepository.findByDepartmentAndStudentId(department, studentId);
         return student.map(dtoMapper::toStudentDto)
                      .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId + " in department: " + department));
+    }
+
+    private String getAuthenticatedUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString(); // Fallback for custom principal
+        }
     }
 }

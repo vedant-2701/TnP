@@ -3,7 +3,6 @@ package com.tnp.tnpbackend.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +17,7 @@ public class StudentDTO {
 
     private String studentId;
     private String studentName;
-    private String userName;
+    private String username;
     @JsonIgnore
     private String password;
     private String email;
@@ -31,7 +30,9 @@ public class StudentDTO {
     private String graduationYear;
     private String contactNumber;
     private LocalDateTime createdAt;
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private double tenMarks;
+    private double higherSecondaryMarks;
+    private String studentType;
     private LocalDateTime updatedAt;
     private String role;
 }
