@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentExcelDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Student;
 
 @Component
@@ -128,5 +130,70 @@ public class DTOMapper {
     public List<StudentSummaryDTO> toStudentSummaryDTOList(List<Student> students) {
         if (students == null) return null;
         return students.stream().map(this::toStudentSummaryDto).collect(Collectors.toList());
+    }
+
+
+
+    public RecruiterDTO toRecruiterDTO(Recruiter recruiter) {
+        if (recruiter == null) {
+            return null;
+        }
+
+        RecruiterDTO dto = new RecruiterDTO();
+        dto.setRecruiterId(recruiter.getRecruiterId());
+        dto.setCompanyName(recruiter.getCompanyName());
+        dto.setJobRole(recruiter.getJobRole());
+        dto.setJobDescription(recruiter.getJobDescription());
+        dto.setActive(recruiter.isActive());
+        dto.setDeadline(recruiter.getDeadline());
+        dto.setCompanyLocation(recruiter.getCompanyLocation());
+        dto.setCriteria(recruiter.getCriteria());
+        dto.setIndustryType(recruiter.getIndustryType());
+        dto.setCreatedAt(recruiter.getCreatedAt());
+        dto.setUpdatedAt(recruiter.getUpdatedAt());
+
+        return dto;
+    }
+
+    // Convert RecruiterDTO to Recruiter
+    public Recruiter toRecruiter(RecruiterDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        Recruiter recruiter = new Recruiter();
+        recruiter.setRecruiterId(dto.getRecruiterId());
+        recruiter.setCompanyName(dto.getCompanyName());
+        recruiter.setJobRole(dto.getJobRole());
+        recruiter.setJobDescription(dto.getJobDescription());
+        recruiter.setActive(dto.isActive());
+        recruiter.setDeadline(dto.getDeadline());
+        recruiter.setCompanyLocation(dto.getCompanyLocation());
+        recruiter.setCriteria(dto.getCriteria());
+        recruiter.setIndustryType(dto.getIndustryType());
+        recruiter.setCreatedAt(dto.getCreatedAt());
+        recruiter.setUpdatedAt(dto.getUpdatedAt());
+
+        return recruiter;
+    }
+
+    // Convert List<Recruiter> to List<RecruiterDTO>
+    public List<RecruiterDTO> toRecruiterDTOList(List<Recruiter> recruiters) {
+        if (recruiters == null) {
+            return null;
+        }
+        return recruiters.stream()
+            .map(this::toRecruiterDTO)
+            .collect(Collectors.toList());
+    }
+
+    // Convert List<RecruiterDTO> to List<Recruiter>
+    public List<Recruiter> toRecruiterList(List<RecruiterDTO> dtos) {
+        if (dtos == null) {
+            return null;
+        }
+        return dtos.stream()
+            .map(this::toRecruiter)
+            .collect(Collectors.toList());
     }
 }

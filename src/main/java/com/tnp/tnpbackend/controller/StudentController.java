@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tnp.tnpbackend.dto.ApplicationRequest;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.PlacementService;
+import com.tnp.tnpbackend.service.RecruiterService;
 import com.tnp.tnpbackend.service.StudentService;
 
 @RestController
@@ -27,6 +27,9 @@ public class StudentController {
 
   @Autowired
   private PlacementService placementService;
+
+  @Autowired
+  private RecruiterService recruiterService;
 
   @PostMapping("/addStudent")
   public ResponseEntity<?> addStudent(@RequestBody StudentDTO studentDTO) {
@@ -55,5 +58,10 @@ public class StudentController {
   @GetMapping("/recruiter/{recruiterId}/students")
   public ResponseEntity<List<Student>> getStudentsForRecruiter(@PathVariable String recruiterId) {
     return ResponseEntity.ok(placementService.getStudentsForRecruiter(recruiterId));
+  }
+
+  @GetMapping("/all-companies")
+  public ResponseEntity<List<?>> getAllCompanies() {
+    return ResponseEntity.ok(recruiterService.getAllRecruiters());
   }
 }
