@@ -29,6 +29,7 @@ public class Student implements AppUser{
     private String department;
     private List<String> skills;
     private String resumeURL;
+    private String profileImageURL; 
     private String academicYear;
     private int backlogs;
     private String graduationYear;

@@ -25,6 +25,7 @@ public class StudentDTO {
     private String department;
     private List<String> skills;
     private String resumeURL;
+    private String profileImageURL; // New field
     private String academicYear;
     private int backlogs;
     private String graduationYear;
@@ -35,4 +36,5 @@ public class StudentDTO {
     private String studentType;
     private LocalDateTime updatedAt;
     private String role;
+    
 }

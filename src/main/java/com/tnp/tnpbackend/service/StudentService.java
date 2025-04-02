@@ -1,5 +1,6 @@
 package com.tnp.tnpbackend.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
@@ -29,6 +31,9 @@ public class StudentService {
 
     @Autowired
     private DTOMapper dtoMapper;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -53,7 +58,7 @@ public class StudentService {
         return dtoMapper.toStudentDto(savedStudent);
     }
 
-    public StudentDTO updateProfile(StudentDTO studentDTO) {
+    public StudentDTO updateProfile(StudentDTO studentDTO,MultipartFile profileImage) {
         // Log incoming DTO for debugging
         System.out.println("Incoming StudentDTO: " + studentDTO);
 
@@ -83,6 +88,17 @@ public class StudentService {
         updatedStudent.setRole(existingStudent.getRole());
         updatedStudent.setCreatedAt(existingStudent.getCreatedAt()); // Preserve original creation date
         updatedStudent.setDepartment(existingStudent.getDepartment());
+       
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(profileImage);
+                updatedStudent.setProfileImageURL(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload profile image: " + e.getMessage());
+            }
+        } else {
+            updatedStudent.setProfileImageURL(existingStudent.getProfileImageURL()); // Retain existing URL if no new image
+        }
 
         //update only if provided
         if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {

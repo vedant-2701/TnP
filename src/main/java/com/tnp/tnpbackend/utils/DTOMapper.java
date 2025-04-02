@@ -31,6 +31,7 @@ public class DTOMapper {
         studDto.setDepartment(student.getDepartment());
         studDto.setSkills(student.getSkills());
         studDto.setResumeURL(student.getResumeURL());
+        studDto.setProfileImageURL(student.getProfileImageURL()); // Added
         studDto.setAcademicYear(student.getAcademicYear());
         studDto.setBacklogs(student.getBacklogs());
         studDto.setGraduationYear(student.getGraduationYear());
@@ -64,6 +65,7 @@ public class DTOMapper {
         stud.setSkills(dto.getSkills());
         stud.setResumeURL(dto.getResumeURL());
         stud.setAcademicYear(dto.getAcademicYear());
+        stud.setProfileImageURL(dto.getProfileImageURL()); // Added
         stud.setBacklogs(dto.getBacklogs());
         stud.setGraduationYear(dto.getGraduationYear());
         stud.setContactNumber(dto.getContactNumber());
