@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
@@ -63,11 +64,11 @@ public class TnpController {
         return ResponseEntity.ok(departments);
     }
 
-    @PostMapping("/job-posting")
+   @PostMapping("/job-posting")
     public ResponseEntity<?> addRecruiter(@RequestBody RecruiterDTO recruiterDTO) {
         try {
-            RecruiterDTO savedRecruiter = recruiterService.addRecruiter(recruiterDTO);
-            return ResponseEntity.ok(savedRecruiter);
+            AddRecruiterResponse response = recruiterService.addRecruiter(recruiterDTO);
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

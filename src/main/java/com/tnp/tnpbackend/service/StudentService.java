@@ -20,6 +20,8 @@ import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.utils.DTOMapper;
 
+import io.jsonwebtoken.io.IOException;
+
 @Service
 public class StudentService {
 
@@ -80,8 +82,9 @@ public class StudentService {
             .orElseThrow(() -> new RuntimeException("Student not found despite existence check"));
 
         // Map DTO to Student with new values
-        Student updatedStudent = dtoMapper.toStudent(studentDTO);
+        // Student updatedStudent = dtoMapper.toStudent(studentDTO);
 
+<<<<<<< HEAD
         // Preserve critical fields from existing student
         updatedStudent.setStudentId(existingStudent.getStudentId());
         updatedStudent.setUsername(existingStudent.getUsername());
@@ -99,40 +102,118 @@ public class StudentService {
         } else {
             updatedStudent.setProfileImageURL(existingStudent.getProfileImageURL()); // Retain existing URL if no new image
         }
+=======
+        // // Preserve critical fields from existing student
+        // updatedStudent.setStudentId(existingStudent.getStudentId());
+        // updatedStudent.setUsername(existingStudent.getUsername());
+        // updatedStudent.setRole(existingStudent.getRole());
+        // updatedStudent.setCreatedAt(existingStudent.getCreatedAt()); // Preserve original creation date
+        // updatedStudent.setDepartment(existingStudent.getDepartment());
+>>>>>>> 8ece429 (Added profile-upload and dynamic filtering for student)
 
-        //update only if provided
-        if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
-            updatedStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
-        } else {
-            updatedStudent.setPassword(existingStudent.getPassword());
+        
+
+
+       
+        // //update only if provided
+        // if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
+        //     updatedStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+        // } else {
+        //     updatedStudent.setPassword(existingStudent.getPassword());
+        // }
+
+        // //maintainng persistency of studeent type 
+        // if (existingStudent.getStudentType() != null) {
+        //     updatedStudent.setStudentType(existingStudent.getStudentType());
+        // } else if (updatedStudent.getStudentType() != null) {
+        //     String studentType = updatedStudent.getStudentType().toUpperCase();
+        //     if (!"REGULAR".equals(studentType) && !"DIPLOMA".equals(studentType)) {
+        //         throw new IllegalArgumentException("Student type must be REGULAR or DIPLOMA");
+        //     }
+        //     if (updatedStudent.getHigherSecondaryMarks() == 0.0) {
+        //         throw new IllegalArgumentException("Higher secondary marks are required when student type is specified");
+        //     }
+        // }
+
+        // // Set update timestamp
+        // System.out.println(LocalDateTime.now());
+        // updatedStudent.setUpdatedAt(LocalDateTime.now());
+
+        // // Log mapped student for debugging
+        // System.out.println("Mapped Student: " + updatedStudent);
+
+        // // Save and return updated DTO
+        // Student savedStudent = studentRepository.save(updatedStudent);
+        // StudentDTO updatedDTO = dtoMapper.toStudentDto(savedStudent);
+        Student updatedStudent = existingStudent;
+
+        // Selectively update fields from DTO
+        if (studentDTO.getStudentName() != null) {
+            updatedStudent.setStudentName(studentDTO.getStudentName());
+        }
+        if (studentDTO.getEmail() != null) {
+            updatedStudent.setEmail(studentDTO.getEmail());
+        }
+        if (studentDTO.getContactNumber() != null) {
+            updatedStudent.setContactNumber(studentDTO.getContactNumber());
+        }
+        if (studentDTO.getCgpa() != 0.0) {
+            updatedStudent.setCgpa(studentDTO.getCgpa());
+        }
+        if (studentDTO.getHigherSecondaryMarks() != 0.0) {
+            updatedStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
+        }
+        if (studentDTO.getTenMarks() != 0.0) {
+            updatedStudent.setTenMarks(studentDTO.getTenMarks());
         }
 
-        //maintainng persistency of studeent type 
+        // Password update
+        if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
+            updatedStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+        }
+
+        // Student type logic
         if (existingStudent.getStudentType() != null) {
             updatedStudent.setStudentType(existingStudent.getStudentType());
-        } else if (updatedStudent.getStudentType() != null) {
-            String studentType = updatedStudent.getStudentType().toUpperCase();
+        } else if (studentDTO.getStudentType() != null) {
+            String studentType = studentDTO.getStudentType().toUpperCase();
             if (!"REGULAR".equals(studentType) && !"DIPLOMA".equals(studentType)) {
                 throw new IllegalArgumentException("Student type must be REGULAR or DIPLOMA");
             }
-            if (updatedStudent.getHigherSecondaryMarks() == 0.0) {
+            if (studentDTO.getHigherSecondaryMarks() == 0.0) {
                 throw new IllegalArgumentException("Higher secondary marks are required when student type is specified");
             }
+            updatedStudent.setStudentType(studentType);
+            updatedStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
         }
 
-        // Set update timestamp
-        System.out.println(LocalDateTime.now());
         updatedStudent.setUpdatedAt(LocalDateTime.now());
+       
 
-        // Log mapped student for debugging
-        System.out.println("Mapped Student: " + updatedStudent);
-
-        // Save and return updated DTO
         Student savedStudent = studentRepository.save(updatedStudent);
         StudentDTO updatedDTO = dtoMapper.toStudentDto(savedStudent);
-        
         System.out.println("Updated StudentDTO: " + updatedDTO);
         return updatedDTO;
+    }
+
+    public StudentDTO updateProfilePicture(MultipartFile profileImage) throws java.io.IOException {
+        String authenticatedUsername = getAuthenticatedUsername();
+        Student existingStudent = studentRepository.findByUsername(authenticatedUsername)
+            .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        if (profileImage == null || profileImage.isEmpty()) {
+            throw new IllegalArgumentException("Profile image cannot be null or empty");
+        }
+
+        try {
+            String imageUrl = cloudinaryService.uploadImage(profileImage);
+            existingStudent.setProfileImageURL(imageUrl);
+            existingStudent.setUpdatedAt(LocalDateTime.now());
+            Student savedStudent = studentRepository.save(existingStudent);
+            return dtoMapper.toStudentDto(savedStudent);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload profile picture: " + e.getMessage());
+        }
     }
 
     public List<StudentSummaryDTO> getAllStudents() {
