@@ -20,8 +20,6 @@ import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.utils.DTOMapper;
 
-import io.jsonwebtoken.io.IOException;
-
 @Service
 public class StudentService {
 
@@ -60,7 +58,7 @@ public class StudentService {
         return dtoMapper.toStudentDto(savedStudent);
     }
 
-    public StudentDTO updateProfile(StudentDTO studentDTO,MultipartFile profileImage) {
+    public StudentDTO updateProfile(StudentDTO studentDTO) {
         // Log incoming DTO for debugging
         System.out.println("Incoming StudentDTO: " + studentDTO);
 
@@ -84,32 +82,12 @@ public class StudentService {
         // Map DTO to Student with new values
         // Student updatedStudent = dtoMapper.toStudent(studentDTO);
 
-<<<<<<< HEAD
-        // Preserve critical fields from existing student
-        updatedStudent.setStudentId(existingStudent.getStudentId());
-        updatedStudent.setUsername(existingStudent.getUsername());
-        updatedStudent.setRole(existingStudent.getRole());
-        updatedStudent.setCreatedAt(existingStudent.getCreatedAt()); // Preserve original creation date
-        updatedStudent.setDepartment(existingStudent.getDepartment());
-       
-        if (profileImage != null && !profileImage.isEmpty()) {
-            try {
-                String imageUrl = cloudinaryService.uploadImage(profileImage);
-                updatedStudent.setProfileImageURL(imageUrl);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload profile image: " + e.getMessage());
-            }
-        } else {
-            updatedStudent.setProfileImageURL(existingStudent.getProfileImageURL()); // Retain existing URL if no new image
-        }
-=======
         // // Preserve critical fields from existing student
         // updatedStudent.setStudentId(existingStudent.getStudentId());
         // updatedStudent.setUsername(existingStudent.getUsername());
         // updatedStudent.setRole(existingStudent.getRole());
         // updatedStudent.setCreatedAt(existingStudent.getCreatedAt()); // Preserve original creation date
         // updatedStudent.setDepartment(existingStudent.getDepartment());
->>>>>>> 8ece429 (Added profile-upload and dynamic filtering for student)
 
         
 

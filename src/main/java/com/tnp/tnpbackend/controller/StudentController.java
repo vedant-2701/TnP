@@ -49,14 +49,8 @@ public class StudentController {
   }
 
   @PatchMapping("/update-profile")
-<<<<<<< HEAD
-  public ResponseEntity<?> updateProfile(@RequestBody StudentDTO studentDTO,
-  @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
-    StudentDTO updatedstudentDTO = studentService.updateProfile(studentDTO,profileImage);
-=======
   public ResponseEntity<?> updateProfile(@RequestBody StudentDTO studentDTO) {
     StudentDTO updatedstudentDTO = studentService.updateProfile(studentDTO);
->>>>>>> 8ece429 (Added profile-upload and dynamic filtering for student)
     return ResponseEntity.ok(updatedstudentDTO);
 
   }
