@@ -2,7 +2,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./components/shared/Sidebar";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 // import Image from "next/image";
 import { cn } from "./lib/utils";
@@ -16,10 +16,11 @@ import MainDashboard from "./components/main-dashboard/MainDashboard";
 export function SidebarDemo() {
 
   const [open, setOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState('Home');
+  const [activeLink, setActiveLink] = useState('');
   
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to get current URL
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -36,6 +37,23 @@ export function SidebarDemo() {
       navigate('/', { replace: true });
     }
   }, [navigate]);
+
+  // Sync activeLink with current URL path
+  useEffect(() => {
+    const currentPath = location.pathname; // eg/ /dashboard/home
+
+    // If the path is exactly "/dashboard", redirect to "/dashboard/home"
+    if (currentPath === '/dashboard' || currentPath === '/dashboard/') {
+      navigate('/dashboard/home', { replace: true }); // Replace to avoid adding to history
+      return;
+    }
+
+    const links = getNavigationByRole(user?.role || 'USER'); // Default role if user is not yet loaded
+    const matchingLink = links.find(link => link.href === currentPath);
+    if (matchingLink) {
+      setActiveLink(matchingLink.label); // Set the active link based on the current path
+    } 
+  }, [location.pathname, user]); // Run when path or user changes
 
   if (!user) {
     return <Loading />;
