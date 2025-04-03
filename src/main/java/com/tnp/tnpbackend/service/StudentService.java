@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Role;
 import com.tnp.tnpbackend.model.Student;
+import com.tnp.tnpbackend.repository.RecruiterRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.utils.DTOMapper;
 
@@ -34,6 +37,9 @@ public class StudentService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private RecruiterRepository recruiterRepository;
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -247,5 +253,17 @@ public class StudentService {
         } else {
             return principal.toString(); // Fallback for custom principal
         }
+    }
+
+    public List<Recruiter> getMyHistory(String studentId) {
+        if (studentId == null || studentId.isEmpty()) {
+            throw new RuntimeException("Invalid student ID provided");
+        }
+        Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+        List<Recruiter> recruiters = student.getShortlistedFor().stream()
+            .map(recruiterId -> recruiterRepository.findById(recruiterId).orElse(null))
+            .collect(Collectors.toList());
+        return recruiters;
     }
 }

@@ -49,4 +49,6 @@ public class PlacementServiceImpl implements PlacementService {
                 .map(StudentRecruiterRelation::getStudent)
                 .collect(Collectors.toList());
     }
+
+   
 }

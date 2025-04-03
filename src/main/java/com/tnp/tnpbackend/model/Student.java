@@ -38,7 +38,7 @@ public class Student implements AppUser{
     private double tenMarks;
     private double higherSecondaryMarks;
     private String studentType;
-    private List<String> shortlistedFor; // List of recruiterIds
+    private List<String> shortlistedFor = new ArrayList<>(); // List of recruiterIds
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     

@@ -3,14 +3,12 @@ package com.tnp.tnpbackend.controller;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -19,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.ApplicationRequest;
 import com.tnp.tnpbackend.dto.StudentDTO;
+import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.PlacementService;
 import com.tnp.tnpbackend.service.RecruiterService;
@@ -84,5 +83,15 @@ public class StudentController {
   @GetMapping("/all-companies")
   public ResponseEntity<List<?>> getAllCompanies() {
     return ResponseEntity.ok(recruiterService.getAllRecruiters());
+ 
+  }
+
+  @GetMapping("/my-history/{studentId}")
+  public ResponseEntity<List<?>> getMyHistory(@PathVariable String studentId) {
+    List<Recruiter> recruiters = studentService.getMyHistory(studentId);
+    if (recruiters.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(recruiters);
   }
 }
