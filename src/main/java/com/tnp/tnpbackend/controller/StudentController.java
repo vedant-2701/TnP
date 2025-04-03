@@ -116,18 +116,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tnp.tnpbackend.dto.ApplicationRequest;
 import com.tnp.tnpbackend.dto.StudentApplicationHistoryDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
-import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.PlacementService;
 import com.tnp.tnpbackend.service.RecruiterService;
-import com.tnp.tnpbackend.service.StudentService;
+import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 
 @RestController
 @RequestMapping("/tnp/student")
 public class StudentController {
 
     @Autowired
-    private StudentService studentService;
+    private StudentServiceImpl studentService;
 
     @Autowired
     private PlacementService placementService;

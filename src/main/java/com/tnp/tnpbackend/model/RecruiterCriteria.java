@@ -1,6 +1,5 @@
 package com.tnp.tnpbackend.model;
 
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

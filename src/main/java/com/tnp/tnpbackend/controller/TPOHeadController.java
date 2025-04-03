@@ -16,8 +16,8 @@ import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.helper.AdminHelper;
 import com.tnp.tnpbackend.model.Student;
-import com.tnp.tnpbackend.service.StudentService;
 import com.tnp.tnpbackend.serviceImpl.AdminExcelServiceImpl;
+import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 
 @RestController
 @RequestMapping("/tnp/tpo-head")
@@ -30,7 +30,7 @@ public class TPOHeadController {
     private AdminExcelServiceImpl adminExcelServiceImpl;
 
     @Autowired
-    private StudentService studentService;
+    private StudentServiceImpl studentService;
 
     public ResponseEntity<?> addCompany(@RequestBody RecruiterDTO recruiterDTO) {
         if (recruiterDTO == null)

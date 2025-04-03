@@ -1,5 +1,5 @@
 package com.tnp.tnpbackend.controller;
-
+import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,20 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.helper.AdminHelper;
-import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Student;
-import com.tnp.tnpbackend.model.StudentRecruiterRelation;
-import com.tnp.tnpbackend.repository.RecruiterRepository;
-import com.tnp.tnpbackend.repository.StudentRecruiterRelationRepository;
-import com.tnp.tnpbackend.repository.StudentRepository;
-import com.tnp.tnpbackend.service.StudentService;
 import com.tnp.tnpbackend.serviceImpl.AdminExcelServiceImpl;
+import com.tnp.tnpbackend.serviceImpl.AdminServiceImpl;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tnp/admin")
@@ -39,16 +32,13 @@ public class AdminController {
     private AdminExcelServiceImpl adminExcelServiceImpl;
 
     @Autowired
-    private StudentService studentService;
+    private StudentServiceImpl studentService;
 
     @Autowired
-    private StudentRecruiterRelationRepository relationRepository;
+    private AdminServiceImpl adminService;
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private RecruiterRepository recruiterRepository;
+    AdminController(StudentServiceImpl studentServiceImpl) {
+    }
 
     @GetMapping("/dashboard")
     public String adminDashboard() {
@@ -153,98 +143,34 @@ public class AdminController {
 
     // analytics code
 
-    // pie chart - status wise applied, interviewed, hired
+    // Pie chart - status wise applied, interviewed, hired
     @GetMapping("/analytics/application-status")
     public ResponseEntity<Map<String, Long>> getApplicationStatusAnalytics() {
-        List<StudentRecruiterRelation> relations = relationRepository.findAll();
-        Map<String, Long> statusCounts = new HashMap<>();
-
-        statusCounts.put("APPLIED", relations.stream().filter(r -> "APPLIED".equals(r.getStatus())).count());
-        statusCounts.put("INTERVIEWED", relations.stream().filter(r -> "INTERVIEWED".equals(r.getStatus())).count());
-        statusCounts.put("HIRED", relations.stream().filter(r -> "HIRED".equals(r.getStatus())).count());
-
-        return ResponseEntity.ok(statusCounts);
+        return ResponseEntity.ok(adminService.getApplicationStatusAnalytics());
     }
 
-    // bar chart - number of students per department
+    // Bar chart - number of students per department
     @GetMapping("/analytics/students-by-department")
     public ResponseEntity<Map<String, Long>> getStudentsByDepartmentAnalytics() {
-        List<String> departments = studentService.findDistinctDepartments();
-        Map<String, Long> departmentCounts = new HashMap<>();
-
-        for (String dept : departments) {
-            long count = studentRepository.findByDepartment(dept).size();
-            departmentCounts.put(dept, count);
-        }
-
-        return ResponseEntity.ok(departmentCounts);
+        return ResponseEntity.ok(adminService.getStudentsByDepartmentAnalytics());
     }
 
     // Placement Success Rate by Department
     @GetMapping("/analytics/placement-success-rate")
     public ResponseEntity<Map<String, Double>> getPlacementSuccessRateAnalytics() {
-        List<String> departments = studentService.findDistinctDepartments();
-        Map<String, Double> successRates = new HashMap<>();
-
-        for (String dept : departments) {
-            List<Student> deptStudents = studentRepository.findByDepartment(dept);
-            long totalStudents = deptStudents.size();
-            if (totalStudents == 0)
-                continue;
-
-            long hiredCount = relationRepository.findAll().stream()
-                    .filter(r -> "HIRED".equals(r.getStatus()) && dept.equals(r.getStudent().getDepartment()))
-                    .count();
-
-            double successRate = (double) hiredCount / totalStudents * 100;
-            successRates.put(dept, Math.round(successRate * 100.0) / 100.0); // Round to 2 decimals
-        }
-
-        return ResponseEntity.ok(successRates);
+        return ResponseEntity.ok(adminService.getPlacementSuccessRateAnalytics());
     }
 
-    // This endpoint lists the top recruiters based on the number of students hired,
-    // useful for identifying the most active companies.
+    // Top recruiters based on number of students hired
     @GetMapping("/analytics/top-recruiters")
     public ResponseEntity<List<Map<String, Object>>> getTopRecruitersAnalytics() {
-        Map<Recruiter, Long> hireCounts = relationRepository.findAll().stream()
-                .filter(r -> "HIRED".equals(r.getStatus()))
-                .collect(Collectors.groupingBy(StudentRecruiterRelation::getRecruiter, Collectors.counting()));
-
-        List<Map<String, Object>> topRecruiters = hireCounts.entrySet().stream()
-                .sorted(Map.Entry.<Recruiter, Long>comparingByValue().reversed())
-                .limit(5) // Top 5 recruiters
-                .map(entry -> {
-                    Map<String, Object> recruiterData = new HashMap<>();
-                    recruiterData.put("companyName", entry.getKey().getCompanyName());
-                    recruiterData.put("hiredCount", entry.getValue());
-                    return recruiterData;
-                })
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(topRecruiters);
+        return ResponseEntity.ok(adminService.getTopRecruitersAnalytics());
     }
 
-    // This endpoint provides the number of applications (APPLIED, INTERVIEWED,
-    // HIRED) per recruiter/company.
+    // Number of applications (APPLIED, INTERVIEWED, HIRED) per recruiter/company
     @GetMapping("/analytics/recruiter-applications")
     public ResponseEntity<Map<String, Map<String, Long>>> getRecruiterApplicationAnalytics() {
-        List<Recruiter> recruiters = recruiterRepository.findAll();
-        Map<String, Map<String, Long>> recruiterStats = new HashMap<>();
-
-        for (Recruiter recruiter : recruiters) {
-            List<StudentRecruiterRelation> relations = relationRepository.findByRecruiter(recruiter);
-            Map<String, Long> statusCounts = new HashMap<>();
-
-            statusCounts.put("APPLIED", relations.stream().filter(r -> "APPLIED".equals(r.getStatus())).count());
-            statusCounts.put("INTERVIEWED",
-                    relations.stream().filter(r -> "INTERVIEWED".equals(r.getStatus())).count());
-            statusCounts.put("HIRED", relations.stream().filter(r -> "HIRED".equals(r.getStatus())).count());
-
-            recruiterStats.put(recruiter.getCompanyName(), statusCounts);
-        }
-
-        return ResponseEntity.ok(recruiterStats);
+        return ResponseEntity.ok(adminService.getRecruiterApplicationAnalytics());
     }
 
 }

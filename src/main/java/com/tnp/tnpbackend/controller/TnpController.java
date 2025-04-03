@@ -16,15 +16,15 @@ import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.service.RecruiterService;
-import com.tnp.tnpbackend.service.StudentService;
+import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 
 @RestController
 @RequestMapping("/tnp/head")
 public class TnpController {
 
     @Autowired
-    private StudentService studentService;
-
+    private StudentServiceImpl studentService;
+    
     @Autowired
     private RecruiterService recruiterService;;
 
