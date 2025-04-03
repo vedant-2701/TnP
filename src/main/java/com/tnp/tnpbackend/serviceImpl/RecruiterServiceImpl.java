@@ -82,24 +82,23 @@ public class RecruiterServiceImpl implements RecruiterService {
     }
 
     private List<StudentSummaryDTO> filterAndNotifyEligibleStudents(Recruiter recruiter) {
-        // Create criteria object
-        RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria());
-
-        // Get all students
+        RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
         List<Student> allStudents = studentRepository.findAll();
-
-        // Filter eligible (selected) students
         List<Student> selectedStudents = new ArrayList<>();
+
         for (Student student : allStudents) {
             if (criteria.isStudentEligible(student)) {
+                // Add recruiterId to student's shortlistedFor list
+                if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
+                    student.getShortlistedFor().add(recruiter.getRecruiterId());
+                    studentRepository.save(student); // Update student in DB
+                }
                 selectedStudents.add(student);
             }
         }
 
-        // Notify selected students
         notifyStudents(selectedStudents, recruiter);
 
-        // Return as DTOs for visibility
         return dtoMapper.toStudentSummaryDTOList(selectedStudents);
     }
 

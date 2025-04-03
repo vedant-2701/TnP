@@ -1,6 +1,7 @@
 package com.tnp.tnpbackend.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -37,6 +38,7 @@ public class Student implements AppUser{
     private double tenMarks;
     private double higherSecondaryMarks;
     private String studentType;
+    private List<String> shortlistedFor; // List of recruiterIds
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -56,4 +58,6 @@ public class Student implements AppUser{
     public String getRole() {
         return this.role;
     }
+
+    
 }
