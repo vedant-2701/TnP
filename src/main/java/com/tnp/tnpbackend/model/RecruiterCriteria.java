@@ -39,7 +39,7 @@ public class RecruiterCriteria {
         Matcher matcher = pattern.matcher(jobDescription);
         return matcher.find() ? matcher.group(1) : null;
     }
-
+    
     private String parseAcademicYear(String jobDescription) {
         Pattern pattern = Pattern.compile("(TY|SY|FY)\\s+(\\d{4}-\\d{2})", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(jobDescription);
