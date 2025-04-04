@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.exception.NoDataFoundException;
 import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.RecruiterCriteria;
 import com.tnp.tnpbackend.model.Student;
@@ -84,6 +85,9 @@ public class RecruiterServiceImpl implements RecruiterService {
     private List<StudentSummaryDTO> filterAndNotifyEligibleStudents(Recruiter recruiter) {
         RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
         List<Student> allStudents = studentRepository.findAll();
+        if (allStudents.isEmpty()) {
+            throw new NoDataFoundException("No Student data found");
+        }
         List<Student> selectedStudents = new ArrayList<>();
 
         for (Student student : allStudents) {

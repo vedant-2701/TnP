@@ -15,7 +15,7 @@ import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
-import com.tnp.tnpbackend.service.RecruiterService;
+import com.tnp.tnpbackend.serviceImpl.RecruiterServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 
 @RestController
@@ -24,9 +24,9 @@ public class TnpController {
 
     @Autowired
     private StudentServiceImpl studentService;
-    
+
     @Autowired
-    private RecruiterService recruiterService;;
+    private RecruiterServiceImpl recruiterService;;
 
     @GetMapping("/getAllStudents")
     public ResponseEntity<?> getAllStudents() {
@@ -64,13 +64,11 @@ public class TnpController {
         return ResponseEntity.ok(departments);
     }
 
-   @PostMapping("/job-posting")
+    @PostMapping("/job-posting")
     public ResponseEntity<?> addRecruiter(@RequestBody RecruiterDTO recruiterDTO) {
         try {
             AddRecruiterResponse response = recruiterService.addRecruiter(recruiterDTO);
             return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while adding the recruiter: " + e.getMessage());
         }

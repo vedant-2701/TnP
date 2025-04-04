@@ -1,5 +1,6 @@
 package com.tnp.tnpbackend.serviceImpl;
 
+import com.tnp.tnpbackend.exception.NoDataFoundException;
 import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.model.StudentRecruiterRelation;
@@ -32,6 +33,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Long> getApplicationStatusAnalytics() {
         List<StudentRecruiterRelation> relations = relationRepository.findAll();
+        if (relations.isEmpty()) {
+            throw new NoDataFoundException("No application data found for analytics");
+        }
         Map<String, Long> statusCounts = new HashMap<>();
 
         statusCounts.put("APPLIED", relations.stream().filter(r -> "APPLIED".equals(r.getStatus())).count());
@@ -44,6 +48,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Long> getStudentsByDepartmentAnalytics() {
         List<String> departments = studentService.findDistinctDepartments();
+        if(departments.isEmpty()){
+            throw new NoDataFoundException("No application data found for analytics");
+        }
         Map<String, Long> departmentCounts = new HashMap<>();
 
         for (String dept : departments) {
@@ -57,10 +64,16 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Double> getPlacementSuccessRateAnalytics() {
         List<String> departments = studentService.findDistinctDepartments();
+        if(departments.isEmpty()){
+            throw new NoDataFoundException("No application data found for analytics");
+        }
         Map<String, Double> successRates = new HashMap<>();
 
         for (String dept : departments) {
             List<Student> deptStudents = studentRepository.findByDepartment(dept);
+            if (deptStudents.isEmpty()) {
+                throw new NoDataFoundException("No application data found for placement success rate analytics");
+            }
             long totalStudents = deptStudents.size();
             if (totalStudents == 0) {
                 continue;
@@ -98,6 +111,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Map<String, Long>> getRecruiterApplicationAnalytics() {
         List<Recruiter> recruiters = recruiterRepository.findAll();
+        if (recruiters.isEmpty()) {
+            throw new NoDataFoundException("No application data found for analytics");
+        }
         Map<String, Map<String, Long>> recruiterStats = new HashMap<>();
 
         for (Recruiter recruiter : recruiters) {
