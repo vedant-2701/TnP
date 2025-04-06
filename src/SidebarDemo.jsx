@@ -44,7 +44,7 @@ export function SidebarDemo() {
 
     // If the path is exactly "/dashboard", redirect to "/dashboard/home"
     if (currentPath === '/dashboard' || currentPath === '/dashboard/') {
-      navigate('/dashboard/home', { replace: true }); // Replace to avoid adding to history
+      navigate('/dashboard/users', { replace: true }); // Replace to avoid adding to history
       return;
     }
 
@@ -60,49 +60,10 @@ export function SidebarDemo() {
   }
 
   const links = getNavigationByRole(user.role);
-  // const links = getNavigationByRole('ADMIN');
 
   const handleLogout = () => {
     logout();
   };
-  
-  // const links = [
-  //   {
-  //     label: "Home",
-  //     href: "#",
-  //     icon: (
-  //       <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-  //     ),
-  //   },
-  //   {
-  //     label: "Upcoming Drives",
-  //     href: "#",
-  //     icon: (
-  //       <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-  //     ),
-  //   },
-  //   {
-  //     label: "View Applications",
-  //     href: "#",
-  //     icon: (
-  //       <IconSettings className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-  //     ),
-  //   },
-  //   {
-  //     label: "Profile",
-  //     href: "#",
-  //     icon: (
-  //       <IconSettings className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-  //     ),
-  //   },
-  //   {
-  //     label: "Logout(other)",
-  //     href: "#",
-  //     icon: (
-  //       <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-  //     ),
-  //   },
-  // ];
   
   return (
     (<div
@@ -135,7 +96,7 @@ export function SidebarDemo() {
             </div>
           </SidebarBody>
         </Sidebar>
-        {/* <Header /> */}
+        
         <MainDashboard role={user.role} />
         
       </Suspense>
@@ -147,14 +108,16 @@ export const Logo = () => {
     (<Link
       to="#"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <div
-        className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre">
-        Acet Labs
-      </motion.span>
+      <div className="flex space-x-2 items-center">
+        <img src="/logo.png" alt="logo" className="h-14 w-14" />
+        <motion.span
+          initial={{ opacity: 0, x: -20, display: "none" }}
+          animate={{ opacity: 1, x: 0, display: "block" }}
+          transition={{ delay: 0.2 }}
+          className="text-lg text-black dark:text-white">
+          Walchand Institute of Technology
+        </motion.span>
+      </div>
     </Link>)
   );
 };
@@ -162,9 +125,8 @@ export const LogoIcon = () => {
   return (
     (<Link
       to="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <div
-        className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />
+      className="font-normal flex justify-center items-center text-sm text-black py-1 relative z-20">
+        <img src="/logo.png" alt="logo" className="h-12 w-12" />
     </Link>)
   );
 };

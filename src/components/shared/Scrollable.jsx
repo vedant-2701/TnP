@@ -51,7 +51,7 @@ const Scrollable = ({ children }) => {
   return (
     <div
       ref={divRef}
-      className={`overflow-y-scroll scrollbar-thin flex flex-1 py-2 pr-2 ${isScrollable ? 'scrollable' : ''} ${
+      className={`w-full overflow-x-hidden overflow-y-scroll scrollbar-thin flex flex-1 py-2 pr-2 ${isScrollable ? 'scrollable' : ''} ${
         isScrolling ? 'scrolling' : ''
       }`}
     >

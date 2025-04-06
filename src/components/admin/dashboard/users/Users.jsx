@@ -1,5 +1,4 @@
 "use client";
-// import Image from "next/image";
 import React, { useEffect, useRef, useState, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
@@ -47,19 +46,6 @@ export function Users() {
       }
     }
   };
-
-  // useEffect(() => {
-  //   const fetchInitialStudents = async () => {
-  //     // const response = await getAllStudents();
-  //     const response = await getStudentsByDepartment(selectedDept);
-  //     if (response.success) {
-  //       setCards(mapStudentData(response.data));
-  //     }
-  //   };
-  //   if (!selectedDept) {
-  //     fetchInitialStudents();
-  //   }
-  // }, [selectedDept]);
 
   useEffect(() => {
     if (active && typeof active === "object") {

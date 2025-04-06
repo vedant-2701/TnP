@@ -7,10 +7,10 @@ import { Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
 import { getToken } from '../../../../services/api';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import 'react-toastify/dist/ReactToastify.css';
 import { useMotionTemplate, useMotionValue, motion } from "motion/react";
 
-export function SingleUserUpload() {
+export default function SingleUserUpload() {
     const [showPassword, setShowPassword] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

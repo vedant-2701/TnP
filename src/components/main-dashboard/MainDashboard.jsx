@@ -4,7 +4,7 @@ import Loading from "../Loading";
 import Scrollable from "../shared/Scrollable";
 
 const dashboardComponent = {
-    'ADMIN' : lazy(() => import ("../admin/AdminDashboard")),
+    'ADMIN' : lazy(() => import ("../../pages/admin/AdminDashboardPage")),
     // 'STUDENT' : lazy(() => import ("../student/StudentDashboard")),
 }
 
