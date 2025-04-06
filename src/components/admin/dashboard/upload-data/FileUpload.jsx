@@ -116,7 +116,7 @@ export default function FileUpload() {
               <>
                 <p className="mt-2 text-gray-600">
                   Drop your <span className="text-blue-500">.xlsx</span> or{' '}
-                  <span class="text-blue-500">.xls</span> file here
+                  <span className="text-blue-500">.xls</span> file here
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
                   or{' '}
