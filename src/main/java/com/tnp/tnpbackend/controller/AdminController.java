@@ -5,11 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tnp.tnpbackend.dto.DeactivationRequestDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.helper.AdminHelper;
@@ -173,4 +175,29 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getRecruiterApplicationAnalytics());
     }
 
+    @PostMapping("/deactivate-warning")
+    public ResponseEntity<String> sendDeactivationWarning(@RequestBody DeactivationRequestDTO request) {
+        try {
+            if (request.getUsername() == null || request.getUsername().isEmpty()) {
+                return ResponseEntity.badRequest().body("Username is required");
+            }
+            adminService.sendDeactivationWarning(request.getUsername(), request.getReason(), request.isNotifyUser());
+            return ResponseEntity.ok("Deactivation warning sent to " + request.getUsername());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error sending deactivation warning: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/deactivate")
+    public ResponseEntity<String> deactivateUser(@RequestBody DeactivationRequestDTO request) {
+        try {
+            if (request.getUsername() == null || request.getUsername().isEmpty()) {
+                return ResponseEntity.badRequest().body("Username is required");
+            }
+            adminService.deactivateUser(request.getUsername());
+            return ResponseEntity.ok("User " + request.getUsername() + " deactivated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Account is Deactivated or not found: " + e.getMessage());
+        }
+    }
 }

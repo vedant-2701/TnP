@@ -1,6 +1,7 @@
 package com.tnp.tnpbackend.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.serviceImpl.AdminServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.RecruiterServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 
@@ -26,7 +28,10 @@ public class TnpController {
     private StudentServiceImpl studentService;
 
     @Autowired
-    private RecruiterServiceImpl recruiterService;;
+    private RecruiterServiceImpl recruiterService;
+
+    @Autowired
+    private AdminServiceImpl adminService;
 
     @GetMapping("/getAllStudents")
     public ResponseEntity<?> getAllStudents() {
@@ -73,4 +78,37 @@ public class TnpController {
             return ResponseEntity.status(500).body("An error occurred while adding the recruiter: " + e.getMessage());
         }
     }
+
+    // analytics code
+
+    // Pie chart - status wise applied, interviewed, hired
+    @GetMapping("/analytics/application-status")
+    public ResponseEntity<Map<String, Long>> getApplicationStatusAnalytics() {
+        return ResponseEntity.ok(adminService.getApplicationStatusAnalytics());
+    }
+
+    // Bar chart - number of students per department
+    @GetMapping("/analytics/students-by-department")
+    public ResponseEntity<Map<String, Long>> getStudentsByDepartmentAnalytics() {
+        return ResponseEntity.ok(adminService.getStudentsByDepartmentAnalytics());
+    }
+
+    // Placement Success Rate by Department
+    @GetMapping("/analytics/placement-success-rate")
+    public ResponseEntity<Map<String, Double>> getPlacementSuccessRateAnalytics() {
+        return ResponseEntity.ok(adminService.getPlacementSuccessRateAnalytics());
+    }
+
+    // Top recruiters based on number of students hired
+    @GetMapping("/analytics/top-recruiters")
+    public ResponseEntity<List<Map<String, Object>>> getTopRecruitersAnalytics() {
+        return ResponseEntity.ok(adminService.getTopRecruitersAnalytics());
+    }
+
+    // Number of applications (APPLIED, INTERVIEWED, HIRED) per recruiter/company
+    @GetMapping("/analytics/recruiter-applications")
+    public ResponseEntity<Map<String, Map<String, Long>>> getRecruiterApplicationAnalytics() {
+        return ResponseEntity.ok(adminService.getRecruiterApplicationAnalytics());
+    }
+
 }

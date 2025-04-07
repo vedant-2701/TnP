@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.repository.AdminRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.repository.TnpHeadRepository;
@@ -32,6 +33,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         AppUser user = findUserByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        
+        if (user instanceof Student && !((Student) user).isActive()) {
+            throw new UsernameNotFoundException("User account is deactivated: " + username);
         }
         String role = user.getRole();
         if (role == null || role.isEmpty()) {

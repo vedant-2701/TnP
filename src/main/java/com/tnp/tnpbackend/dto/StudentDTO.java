@@ -35,6 +35,6 @@ public class StudentDTO {
     private double higherSecondaryMarks;
     private String studentType;
     private LocalDateTime updatedAt;
+    private boolean isActive = true;
     private String role;
-    
 }

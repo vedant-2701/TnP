@@ -19,4 +19,8 @@ public interface AdminService {
 
     // Number of applications (APPLIED, INTERVIEWED, HIRED) per recruiter/company
     Map<String, Map<String, Long>> getRecruiterApplicationAnalytics();
+
+    //Account deactivating methods
+    void sendDeactivationWarning(String username, String reason, boolean notifyUser);
+    void deactivateUser(String username);
 }

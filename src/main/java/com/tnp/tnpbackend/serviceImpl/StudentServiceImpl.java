@@ -13,6 +13,7 @@ import com.tnp.tnpbackend.service.CloudinaryService;
 import com.tnp.tnpbackend.service.StudentService;
 import com.tnp.tnpbackend.utils.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,6 +62,7 @@ public class StudentServiceImpl implements StudentService {
             student.setRole("ROLE_" + role);
         }
         student.setCreatedAt(LocalDateTime.now());
+        student.setActive(true);
         Student savedStudent = studentRepository.save(student);
         return dtoMapper.toStudentDto(savedStudent);
     }
@@ -127,6 +129,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Cacheable(value = "students", key = "'allStudents'")
     public List<StudentSummaryDTO> getAllStudents() {
         List<Student> students = studentRepository.findAll();
         if (students.isEmpty()) throw new NoDataFoundException("No students found");

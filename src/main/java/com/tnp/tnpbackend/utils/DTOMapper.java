@@ -239,6 +239,7 @@ public class DTOMapper {
         studDto.setStudentType(student.getStudentType());
         studDto.setCreatedAt(DateTimeConverter.convertToIST(student.getCreatedAt()));
         studDto.setUpdatedAt(DateTimeConverter.convertToIST(student.getUpdatedAt()));
+        studDto.setActive(student.isActive());
         studDto.setRole(student.getRole());
         return studDto;
     }
@@ -265,6 +266,7 @@ public class DTOMapper {
         stud.setStudentType(dto.getStudentType());
         stud.setCreatedAt(dto.getCreatedAt());
         stud.setUpdatedAt(dto.getUpdatedAt());
+        stud.setActive(dto.isActive());
         stud.setRole(dto.getRole());
         return stud;
     }

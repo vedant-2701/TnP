@@ -41,7 +41,7 @@ public class Student implements AppUser{
     private List<String> shortlistedFor = new ArrayList<>(); // List of recruiterIds
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
+    private boolean isActive = true;
     private String role;
 
     @Override

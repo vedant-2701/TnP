@@ -8,7 +8,10 @@ import com.tnp.tnpbackend.repository.RecruiterRepository;
 import com.tnp.tnpbackend.repository.StudentRecruiterRelationRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.service.AdminService;
+import com.tnp.tnpbackend.service.AppUser;
 import com.tnp.tnpbackend.service.StudentService;
+import com.tnp.tnpbackend.utils.EmailService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public Map<String, Long> getApplicationStatusAnalytics() {
         List<StudentRecruiterRelation> relations = relationRepository.findAll();
@@ -48,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Long> getStudentsByDepartmentAnalytics() {
         List<String> departments = studentService.findDistinctDepartments();
-        if(departments.isEmpty()){
+        if (departments.isEmpty()) {
             throw new NoDataFoundException("No application data found for analytics");
         }
         Map<String, Long> departmentCounts = new HashMap<>();
@@ -64,7 +70,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Double> getPlacementSuccessRateAnalytics() {
         List<String> departments = studentService.findDistinctDepartments();
-        if(departments.isEmpty()){
+        if (departments.isEmpty()) {
             throw new NoDataFoundException("No application data found for analytics");
         }
         Map<String, Double> successRates = new HashMap<>();
@@ -129,5 +135,38 @@ public class AdminServiceImpl implements AdminService {
         }
 
         return recruiterStats;
+    }
+
+    @Override
+    public void sendDeactivationWarning(String username, String reason, boolean notifyUser) {
+        AppUser user = studentRepository.findByUsername(username)
+                .orElseThrow(() -> new NoDataFoundException("User not found with username: " + username));
+        String email = getEmailForUser(user);
+        if (email == null || email.isEmpty()) {
+            throw new IllegalStateException("User has no email address");
+        }
+        String subject = "Account Deactivation Warning";
+        String body = String.format(
+                "Dear %s,\n\nYour account is scheduled for deactivation. Please contact the admin if you believe this is an error.\n\nRegards,\nTNP Team",
+                username);
+        emailService.sendEmail(email, subject, body);
+    }
+
+    @Override
+    public void deactivateUser(String username) {
+        AppUser user = studentRepository.findByUsername(username)
+                .orElseThrow(() -> new NoDataFoundException("User not found with username: " + username));
+        if (user instanceof Student) {
+            Student student = (Student) user;
+            student.setActive(false);
+            studentRepository.save(student);
+        }
+    }
+
+    private String getEmailForUser(AppUser user) {
+        if (user instanceof Student) {
+            return ((Student) user).getEmail();
+        }
+        return "Email not available for this user type";
     }
 }
