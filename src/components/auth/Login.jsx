@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { login, validateToken } from '../../services/api';
-// import toast from 'react-hot-toast';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Loading';
@@ -33,9 +32,6 @@ function Login() {
 
   const handleInput = (e) => {
     const value = e.target.value;
-    // if (/^\d{0,10}$/.test(value)) {
-    //   setPrn(value);
-    // }
     setUsername(value);
   };
 
@@ -52,7 +48,6 @@ function Login() {
     try {
       setIsLoading(true);
       const response = await login(username, password);
-      // console.log(response);
       
       localStorage.setItem('user', JSON.stringify({
         username: response.username,
@@ -76,41 +71,32 @@ function Login() {
   
   if (isValidating) {
     return (
-      // <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-700 to-red-500 flex items-center justify-center">
-      //   <div className="bg-white p-8 rounded-lg shadow-md">
-      //     <p className="text-gray-600">Validating session...</p>
-      //   </div>
-      // </div>
       <Loading />
     );
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-100 to-blue-800 flex items-center justify-center p-6">
-      <div className="w-full max-w-[1200px] bg-white rounded-[32px] flex overflow-hidden shadow-2xl">
-        {/* Left Section */}
-        <div className="w-1/2  p-12 relative overflow-hidden">
+    <div 
+      className="min-h-screen flex items-center justify-center p-6 bg-[url(/bg.jpg)] bg-cover bg-center"
+    >
+      <div className="w-full max-w-[1200px] rounded-4xl flex overflow-hidden shadow-2xl">
+        {/* Left Section with White Border and Curved Corners */}
+        <div 
+          className="w-1/2 p-12 relative bg-transparent rounded-tl-4xl rounded-bl-4xl border-8 border-white"
+        >
+          {/* Content with padding */}
           <div className="relative z-10">
-            <p className="text-black/80 uppercase text-sm tracking-wider mb-4">A WISE QUOTE</p>
-            <h1 className="text-black text-6xl mb-6 leading-tight">
-              Get<br />Everything<br />You Want
-            </h1>
-            <p className="text-black/80 text-lg">
-              You can get everything you want if you work hard,<br />
-              trust the process, and stick to the plan.
+            <h5 className="text-white text-5xl lg:text-6xl mb-10 text-wrap  leading-tight">
+              Perseverance Defines True Worth
+            </h5>
+            <p className="text-white/80 text-lg text-wrap">
+            The true worth of a person shines through their steady persistence, rising above challenges with quiet strength and resolve.
             </p>
           </div>
-          <div 
-            className="absolute inset-0 z-0" 
-            style={{
-              background: 'url("https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2340&h=2340") center/cover',
-              opacity: 0.7,
-            }}
-          />
         </div>
 
         {/* Right Section */}
-        <div className="w-1/2 p-12 flex flex-col">
+        <div className="w-1/2 p-12 flex flex-col bg-white">
           <div className="flex justify-end mb-16">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-radial-[at_25%_25%] from-white to-zinc-900 to-75%" />
@@ -131,8 +117,6 @@ function Login() {
                 </label>
                 <input
                   type="text"
-                  // inputMode="numeric"
-                  // pattern="[0-9]*"
                   maxLength={10}
                   value={username}
                   onChange={handleInput}
@@ -164,10 +148,6 @@ function Login() {
               </div>
 
               <div className="flex items-center justify-between">
-                {/* <label className="flex items-center gap-2">
-                  <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
-                  <span className="text-sm text-gray-600">Remember me</span>
-                </label> */}
                 <a href="#" className="text-sm text-gray-600 hover:text-gray-900">
                   Forgot Password
                 </a>
