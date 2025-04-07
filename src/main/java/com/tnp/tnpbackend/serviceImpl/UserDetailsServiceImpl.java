@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.tnp.tnpbackend.exception.AccountAlreadyDeactivatedException;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.repository.AdminRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
@@ -36,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         
         if (user instanceof Student && !((Student) user).isActive()) {
-            throw new UsernameNotFoundException("User account is deactivated: " + username);
+            throw new AccountAlreadyDeactivatedException("User account is deactivated: " + username);
         }
         String role = user.getRole();
         if (role == null || role.isEmpty()) {

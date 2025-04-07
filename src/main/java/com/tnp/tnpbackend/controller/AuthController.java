@@ -3,9 +3,11 @@ package com.tnp.tnpbackend.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.tnp.tnpbackend.dto.AuthRequest;
 import com.tnp.tnpbackend.dto.AuthResponse;
+import com.tnp.tnpbackend.exception.AccountAlreadyDeactivatedException;
 import com.tnp.tnpbackend.security.JwtUtil;
 import com.tnp.tnpbackend.service.AppUser;
 import com.tnp.tnpbackend.serviceImpl.UserDetailsServiceImpl;
@@ -33,7 +36,8 @@ public class AuthController {
     //login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        System.out.println(request.toString());
+        try{
+            System.out.println(request.toString());
 
         // Authenticate the user
         Authentication authentication = authenticationManager.authenticate(
@@ -61,6 +65,15 @@ public class AuthController {
         response.setRole(role != null ? role : "USER"); // Default to "USER" if role is null
 
         return ResponseEntity.ok(response);
+        }
+        catch(InternalAuthenticationServiceException e){
+            Throwable cause = e.getCause();
+            if (cause instanceof AccountAlreadyDeactivatedException) {
+                throw new AccountAlreadyDeactivatedException("User account is deactivated: " + request.getUsername(), cause);
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Authentication service error: " + e.getMessage());
+        }
     }
 
     // Validate the token
