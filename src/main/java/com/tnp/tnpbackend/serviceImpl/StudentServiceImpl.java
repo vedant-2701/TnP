@@ -81,19 +81,26 @@ public class StudentServiceImpl implements StudentService {
             throw new StudentNotFoundException("Student with username " + studentDTO.getUsername() + " does not exist");
         }
         Student existingStudent = studentRepository.findByUsername(studentDTO.getUsername())
-            .orElseThrow(() -> new StudentNotFoundException("Student not found with username: " + studentDTO.getUsername()));
+                .orElseThrow(() -> new StudentNotFoundException(
+                        "Student not found with username: " + studentDTO.getUsername()));
 
         Student updatedStudent = existingStudent;
-        if (studentDTO.getStudentName() != null) updatedStudent.setStudentName(studentDTO.getStudentName());
-        if (studentDTO.getEmail() != null) updatedStudent.setEmail(studentDTO.getEmail());
-        if (studentDTO.getContactNumber() != null) updatedStudent.setContactNumber(studentDTO.getContactNumber());
-        if (studentDTO.getCgpa() != 0.0) updatedStudent.setCgpa(studentDTO.getCgpa());
-        if (studentDTO.getHigherSecondaryMarks() != 0.0) updatedStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
-        if (studentDTO.getTenMarks() != 0.0) updatedStudent.setTenMarks(studentDTO.getTenMarks());
+        if (studentDTO.getStudentName() != null)
+            updatedStudent.setStudentName(studentDTO.getStudentName());
+        if (studentDTO.getEmail() != null)
+            updatedStudent.setEmail(studentDTO.getEmail());
+        if (studentDTO.getContactNumber() != null)
+            updatedStudent.setContactNumber(studentDTO.getContactNumber());
+        if (studentDTO.getCgpa() != 0.0)
+            updatedStudent.setCgpa(studentDTO.getCgpa());
+        if (studentDTO.getHigherSecondaryMarks() != 0.0)
+            updatedStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
+        if (studentDTO.getTenMarks() != 0.0)
+            updatedStudent.setTenMarks(studentDTO.getTenMarks());
         if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
             updatedStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
         }
-        if(studentDTO.getStudentType() != null) {
+        if (studentDTO.getStudentType() != null) {
             String studentType = studentDTO.getStudentType().toUpperCase();
             if (!"REGULAR".equals(studentType) && !"DIPLOMA".equals(studentType)) {
                 throw new InvalidInputException("Student type must be REGULAR or DIPLOMA");
@@ -113,7 +120,8 @@ public class StudentServiceImpl implements StudentService {
     public StudentDTO updateProfilePicture(MultipartFile profileImage) throws IOException {
         String authenticatedUsername = getAuthenticatedUsername();
         Student existingStudent = studentRepository.findByUsername(authenticatedUsername)
-            .orElseThrow(() -> new StudentNotFoundException("Student not found with username: " + authenticatedUsername));
+                .orElseThrow(() -> new StudentNotFoundException(
+                        "Student not found with username: " + authenticatedUsername));
         if (profileImage == null || profileImage.isEmpty()) {
             throw new InvalidInputException("Profile image cannot be null or empty");
         }
@@ -132,40 +140,66 @@ public class StudentServiceImpl implements StudentService {
     @Cacheable(value = "students", key = "'allStudents'")
     public List<StudentSummaryDTO> getAllStudents() {
         List<Student> students = studentRepository.findAll();
-        if (students.isEmpty()) throw new NoDataFoundException("No students found");
+        if (students.isEmpty())
+            throw new NoDataFoundException("No students found");
         return dtoMapper.toStudentSummaryDTOList(students);
     }
 
     @Override
     public StudentDTO getStudentById(String id) {
-        if (id == null || id.isEmpty()) throw new InvalidInputException("Invalid student ID provided");
+        if (id == null || id.isEmpty())
+            throw new InvalidInputException("Invalid student ID provided");
         Student student = studentRepository.findById(id)
-            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + id));
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + id));
         return dtoMapper.toStudentDto(student);
     }
 
     @Override
     public List<StudentSummaryDTO> getStudentsByDepartment(String department) {
-        if (department == null || department.isEmpty()) throw new InvalidInputException("Invalid department provided");
+        if (department == null || department.isEmpty())
+            throw new InvalidInputException("Invalid department provided");
         List<Student> students = studentRepository.findByDepartment(department);
-        if (students.isEmpty()) throw new NoDataFoundException("No students found in department: " + department);
+        if (students.isEmpty())
+            throw new NoDataFoundException("No students found in department: " + department);
         return dtoMapper.toStudentSummaryDTOList(students);
     }
 
     @Override
     public List<String> findDistinctDepartments() {
         List<String> departments = mongoTemplate.findDistinct("department", Student.class, String.class);
-        if (departments.isEmpty()) throw new NoDataFoundException("No departments found");
+        if (departments.isEmpty())
+            throw new NoDataFoundException("No departments found");
         return departments;
     }
 
     @Override
+    public List<String> findGraduationYears() {
+        List<String> graduationYears = mongoTemplate.findDistinct("graduationYear", Student.class, String.class);
+        if (graduationYears.isEmpty())
+            throw new NoDataFoundException("No graduation years found");
+        return graduationYears;
+    }
+
+    @Override
     public StudentDTO getStudentByDepartmentAndId(String department, String studentId) {
-        if (studentId == null || studentId.isEmpty()) throw new InvalidInputException("Invalid student ID provided");
-        if (department == null || department.isEmpty()) throw new InvalidInputException("Invalid department provided");
+        if (studentId == null || studentId.isEmpty())
+            throw new InvalidInputException("Invalid student ID provided");
+        if (department == null || department.isEmpty())
+            throw new InvalidInputException("Invalid department provided");
         Optional<Student> student = studentRepository.findByDepartmentAndStudentId(department, studentId);
         return student.map(dtoMapper::toStudentDto)
-                     .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId + " in department: " + department));
+                .orElseThrow(() -> new StudentNotFoundException(
+                        "Student not found with ID: " + studentId + " in department: " + department));
+    }
+
+    @Override
+    public List<Student> getStudentByGraduationYear(String year) {
+        if (year == null)
+            throw new InvalidInputException("Invalid graduation year provided");
+        if (year == null || year.isEmpty())
+            throw new InvalidInputException("Invalid graduation year provided");
+        List<Student> students = studentRepository.findByGraduationYear(year);
+        return students;
     }
 
     @Override
@@ -174,10 +208,11 @@ public class StudentServiceImpl implements StudentService {
             throw new InvalidInputException("Invalid student ID provided");
         }
         Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
-        
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
+
         List<StudentRecruiterRelation> relations = relationRepository.findByStudent(student);
-        if (relations.isEmpty()) throw new NoDataFoundException("No application history found for student with ID: " + studentId);
+        if (relations.isEmpty())
+            throw new NoDataFoundException("No application history found for student with ID: " + studentId);
         return relations.stream().map(relation -> {
             StudentApplicationHistoryDTO dto = new StudentApplicationHistoryDTO();
             dto.setRelationId(relation.getId());
@@ -199,7 +234,8 @@ public class StudentServiceImpl implements StudentService {
             throw new InvalidStatusException("Invalid status: " + newStatus);
         }
         StudentRecruiterRelation relation = relationRepository.findById(relationId)
-            .orElseThrow(() -> new ApplicationNotFoundException("Application relation not found with ID: " + relationId));
+                .orElseThrow(() -> new ApplicationNotFoundException(
+                        "Application relation not found with ID: " + relationId));
         relation.setStatus(newStatus);
         relationRepository.save(relation);
     }

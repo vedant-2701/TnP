@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.tnp.tnpbackend.model.Student;
 
-
 @Repository
 public interface StudentRepository extends MongoRepository<Student, String> {
 
@@ -22,6 +21,9 @@ public interface StudentRepository extends MongoRepository<Student, String> {
     @Query("{ 'department': ?0, '_id': ?1 }")
     Optional<Student> findByDepartmentAndStudentId(String department, String studentId);
 
+    @Query("{ 'graduationYear': ?0 }")
+    List<Student> findByGraduationYear(String graduationYear);
+
 }
 
-//"nested_object_keys.tag": { $all: ["some_tag", "some_other_tag"] }
+// "nested_object_keys.tag": { $all: ["some_tag", "some_other_tag"] }

@@ -1,6 +1,8 @@
 package com.tnp.tnpbackend.controller;
+
 import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,8 @@ import com.tnp.tnpbackend.serviceImpl.AdminExcelServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.AdminServiceImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -131,6 +135,23 @@ public class AdminController {
         return ResponseEntity.ok(departments);
     }
 
+    @GetMapping("/getGraduationYears")
+    public ResponseEntity<?> getGraduationYears() {
+        List<String> graduationYears = studentService.findGraduationYears();
+        return ResponseEntity.ok(graduationYears);
+    }
+
+    @GetMapping("/getStudentByGraduationYear/{year}")
+    public ResponseEntity<?> getStudentByGraduationYear(
+            @PathVariable("year") String year) {
+        try {
+            List<Student> students = studentService.getStudentByGraduationYear(year);
+            return ResponseEntity.ok(students);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/getStudentByDepartmentAndId/{department}/{id}")
     public ResponseEntity<?> getStudentByDepartmentAndId(
             @PathVariable("department") String department,
@@ -200,4 +221,42 @@ public class AdminController {
             return ResponseEntity.status(403).body("Account is Deactivated or not found: " + e.getMessage());
         }
     }
+
+    @PostMapping("/deactivate-all")
+    public ResponseEntity<?> deactivateAll(@RequestBody List<DeactivationRequestDTO> requests) {
+        if (requests == null || requests.isEmpty()) {
+            return ResponseEntity.badRequest().body("At least one username is required");
+        }
+
+        List<String> successfulDeactivations = new ArrayList<>();
+        Map<String, String> failedDeactivations = new HashMap<>();
+
+        for (DeactivationRequestDTO request : requests) {
+            try {
+                if (request.getUsername() == null || request.getUsername().isEmpty()) {
+                    failedDeactivations.put("unknown", "Username is required");
+                    continue;
+                }
+
+                adminService.deactivateUser(request.getUsername());
+                successfulDeactivations.add(request.getUsername());
+
+            } catch (Exception e) {
+                failedDeactivations.put(request.getUsername(), e.getMessage());
+            }
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("successfulDeactivations", successfulDeactivations);
+        response.put("failedDeactivations", failedDeactivations);
+
+        if (failedDeactivations.isEmpty()) {
+            return ResponseEntity.ok(response);
+        } else if (successfulDeactivations.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(response);
+        }
+    }
+
 }
