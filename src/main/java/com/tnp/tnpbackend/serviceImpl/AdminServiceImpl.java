@@ -169,4 +169,13 @@ public class AdminServiceImpl implements AdminService {
         }
         return "Email not available for this user type";
     }
+
+    // private String getAuthenticatedUsername() {
+    //     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    //     if (principal instanceof UserDetails) {
+    //         return ((UserDetails) principal).getUsername();
+    //     } else {
+    //         return principal.toString();
+    //     }
+    // }
 }
