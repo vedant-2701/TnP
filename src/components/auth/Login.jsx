@@ -1,65 +1,50 @@
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { login, validateToken } from '../../services/api';
+import { login } from '../../services/api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Loading';
+import useAuth from '../../hooks/useAuth';
+import { setUser } from '../../utils/userStorage';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isValidating, setIsValidating] = useState(true);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const isValid = await validateToken();
-      if (isValid) {
-        navigate('/dashboard', { replace: true });
-      }
-    } catch (error) {
-      console.error('Token validation failed:', error);
-    } finally {
-      setIsValidating(false);
+    if (isAuthenticated === true) {
+      navigate('/dashboard', { replace: true });
     }
-  };
+  }, [isAuthenticated, navigate]);
 
   const handleInput = (e) => {
-    const value = e.target.value;
-    setUsername(value);
+    setUsername(e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!username || !password) {
-      toast.error('Please fill in all fields', {
-        draggable: true,
-      });
+      toast.error('Please fill in all fields', { draggable: true });
       return;
     }
 
     try {
       setIsLoading(true);
       const response = await login(username, password);
-      
-      localStorage.setItem('user', JSON.stringify({
-        username: response.username,
-        role: response.role
-      }));
 
-      toast.success('Login successful!', {
-        draggable: true,
+      // Use utility to set user
+      setUser({
+        username: response.username,
+        role: response.role,
       });
 
+      toast.success('Login successful!', { draggable: true });
       navigate('/dashboard', { replace: true });
-      
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed. Please try again.', {
         draggable: true,
@@ -68,11 +53,9 @@ function Login() {
       setIsLoading(false);
     }
   };
-  
-  if (isValidating) {
-    return (
-      <Loading />
-    );
+
+  if (isAuthenticated === null) {
+    return <Loading />;
   }
   
   return (

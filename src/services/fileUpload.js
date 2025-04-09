@@ -1,15 +1,7 @@
 import axios from 'axios';
 import { getToken } from './api';
+import { api } from '../helper/createApi';
 
-const API_BASE_URL = 'http://localhost:8080';
-
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Authorization': `Bearer ${getToken()}`
-  },
-//   withCredentials: true,
-});
 
 export const excelUpload = async (
   file,
@@ -20,7 +12,7 @@ export const excelUpload = async (
 
   try {
     console.log(getToken());
-    const response = await api.post('/tnp/admin/upload-students', formData, {
+    const response = await api.post('/upload-students', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },

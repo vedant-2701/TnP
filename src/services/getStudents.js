@@ -2,7 +2,7 @@ import { api } from "../helper/createApi";
 
 export const getDepartment = async () => {
     try {
-        const response = await api.get('/tnp/admin/getDepartment');
+        const response = await api.get('/getDepartment');
         console.log(response);
         return {
             success: true,
@@ -19,7 +19,7 @@ export const getDepartment = async () => {
 
 export const getAllStudents = async () => {
     try {
-        const response = await api.get('/tnp/admin/getAllStudents');
+        const response = await api.get('/getAllStudents');
         // console.log(response);
         return {
             success: true,
@@ -37,7 +37,7 @@ export const getAllStudents = async () => {
 
 export const getStudentById = async (studentId) => {
     try {
-        const response = await api.get(`/tnp/admin/getStudent/${studentId}`);
+        const response = await api.get(`/getStudent/${studentId}`);
         console.log(response);
         return {
             success: true,
@@ -55,9 +55,10 @@ export const getStudentById = async (studentId) => {
 
 export const getStudentsByDepartment = async (deptCode) => {
     try {
-        // const response = await api.get(`/tnp/admin/getStudents?department=${deptCode}`);
-        const response = await api.get(`tnp/admin/getStudentsByDepartment/${deptCode}`);
+        // const response = await api.get(`/getStudents?department=${deptCode}`);
+        const response = await api.get(`/getStudentsByDepartment/${deptCode}`);
         console.log(response);
+        console.log(deptCode);
         return {
             success: true,
             data: response.data,
@@ -73,8 +74,9 @@ export const getStudentsByDepartment = async (deptCode) => {
 
 export const getStudentByDepartmentAndId = async (deptCode, studentId) => {
     try {
-        // const response = await api.get(`/tnp/admin/getStudents?department=${deptCode}`);
-        const response = await api.get(`tnp/admin/getStudentByDepartmentAndId/${deptCode}/${studentId}`);
+        // const response = await api.get(`/getStudents?department=${deptCode}`);
+        console.log(deptCode);
+        const response = await api.get(`/getStudentByDepartmentAndId/${deptCode}/${studentId}`);
         console.log(response);
         return {
             success: true,

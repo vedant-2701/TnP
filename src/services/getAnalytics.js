@@ -2,7 +2,7 @@ import { api } from "../helper/createApi";
 
 export const applicationStatus = async () => {
     try {
-        const response = await api.get('/tnp/admin/analytics/application-status');
+        const response = await api.get('/analytics/application-status');
         console.log(response);
 
         return {
@@ -21,7 +21,7 @@ export const applicationStatus = async () => {
 
 export const studentsByDepartment = async () => {
     try {
-        const response = await api.get('/tnp/admin/analytics/students-by-department');
+        const response = await api.get('/analytics/students-by-department');
 
         return {
             success: true,
@@ -38,7 +38,7 @@ export const studentsByDepartment = async () => {
 
 export const placementSuccessRate = async ()  => {
     try {
-        const response = await api.get('/tnp/admin/analytics/placement-success-rate');
+        const response = await api.get('/analytics/placement-success-rate');
 
         return {
             success: true,
@@ -55,7 +55,7 @@ export const placementSuccessRate = async ()  => {
 
 export const topRecruiters = async ()  => {
     try {
-        const response = await api.get('/tnp/admin/analytics/top-recruiters');
+        const response = await api.get('/analytics/top-recruiters');
 
         return {
             success: true,
@@ -72,7 +72,7 @@ export const topRecruiters = async ()  => {
 
 export const recruiterApplications = async ()  => {
     try {
-        const response = await api.get('/tnp/admin/analytics/recruiter-applications');
+        const response = await api.get('/analytics/recruiter-applications');
 
         return {
             success: true,

@@ -17,8 +17,9 @@ export function SidebarDemo() {
 
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('');
-  
   const [user, setUser] = useState(null);
+  const [links, setLinks] = useState(null);
+  
   const navigate = useNavigate();
   const location = useLocation(); // Hook to get current URL
 
@@ -31,7 +32,10 @@ export function SidebarDemo() {
 
     try {
       const userData = JSON.parse(userStr);
+      // console.log(userData);
       setUser(userData);
+      setLinks(getNavigationByRole(userData.role));
+      // console.log(getNavigationByRole(userData.role));
     } catch (error) {
       console.error('Error parsing user data:', error);
       navigate('/', { replace: true });
@@ -40,26 +44,30 @@ export function SidebarDemo() {
 
   // Sync activeLink with current URL path
   useEffect(() => {
-    const currentPath = location.pathname; // eg/ /dashboard/home
-
-    // If the path is exactly "/dashboard", redirect to "/dashboard/home"
-    if (currentPath === '/dashboard' || currentPath === '/dashboard/') {
-      navigate('/dashboard/users', { replace: true }); // Replace to avoid adding to history
-      return;
+    if(!user || !links) {
+      <Loading />
+    } else {
+      const currentPath = location.pathname; // eg/ /dashboard/home
+      
+      // const links = getNavigationByRole(user?.role || 'USER'); // Default role if user is not yet loaded
+      // console.log(links);
+      
+      // If the path is exactly "/dashboard", redirect to "/dashboard/home"
+      if (currentPath === '/dashboard' || currentPath === '/dashboard/') {
+        navigate(`${links[0].href}`, { replace: true }); // Replace to avoid adding to history
+        return;
+      }
+      
+      const matchingLink = links.find(link => link.href === currentPath);
+      if (matchingLink) {
+        setActiveLink(matchingLink.label); // Set the active link based on the current path
+      } 
     }
-
-    const links = getNavigationByRole(user?.role || 'USER'); // Default role if user is not yet loaded
-    const matchingLink = links.find(link => link.href === currentPath);
-    if (matchingLink) {
-      setActiveLink(matchingLink.label); // Set the active link based on the current path
-    } 
   }, [location.pathname, user]); // Run when path or user changes
 
   if (!user) {
     return <Loading />;
   }
-
-  const links = getNavigationByRole(user.role);
 
   const handleLogout = () => {
     logout();

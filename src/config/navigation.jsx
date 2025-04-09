@@ -9,6 +9,9 @@ import {
     IconUserBolt,
   } from "@tabler/icons-react";
 
+import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { HiOutlinePencilAlt } from "react-icons/hi";
+
 export const studentNavigationLinks = [
     {
         label: "Home",
@@ -38,13 +41,6 @@ export const studentNavigationLinks = [
             <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
         ),
     },
-    // {
-    //     label: "Logout",
-    //     href: "#",
-    //     icon: (
-    //         <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-    //     ),
-    // },
 ];
 
 export const adminNavigationLinks = [
@@ -55,13 +51,6 @@ export const adminNavigationLinks = [
         <IconUsers className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
       ),
     },
-    // {
-    //   label: "Home",
-    //   href: "/dashboard/home",
-    //   icon: (
-    //     <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-    //   ),
-    // },
     {
       label: "Analytics",
       href: "/dashboard/analytics",
@@ -85,6 +74,37 @@ export const adminNavigationLinks = [
     },
 ];
 
+export const tnpHeadNavigationLinks = [
+    {
+      label: "Job Postings",
+      href: "/dashboard/job-postings",
+      icon: (
+        <BriefcaseIcon className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
+      ),
+    },
+    {
+      label: "Add Job",
+      href: "/dashboard/add-job",
+      icon: (
+        <HiOutlinePencilAlt className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
+      ),
+    },
+    {
+      label: "Students",
+      href: "/dashboard/students",
+      icon: (
+        <IconUsers className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
+      ),
+    },
+    {
+      label: "Analytics",
+      href: "/dashboard/analytics",
+      icon: (
+        <IconChartBar className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
+      ),
+    },
+];
+
 
 export function getNavigationByRole(role) {
     switch (role) {
@@ -94,8 +114,8 @@ export function getNavigationByRole(role) {
         case 'STUDENT':  
             return studentNavigationLinks;
     
-        case 'TNPHEAD':
-            return [];
+        case 'HEAD':
+            return tnpHeadNavigationLinks;
     
         case 'TNPDEPARTMENTHEAD': 
             return [];
