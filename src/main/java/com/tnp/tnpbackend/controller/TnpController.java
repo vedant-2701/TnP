@@ -16,6 +16,7 @@ import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.serviceImpl.AdminServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.RecruiterServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
@@ -61,6 +62,35 @@ public class TnpController {
             return ResponseEntity.status(404).body("No students found in the specified department.");
         }
         return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/getStudentByDepartmentAndId/{department}/{id}")
+    public ResponseEntity<?> getStudentByDepartmentAndId(
+            @PathVariable("department") String department,
+            @PathVariable("id") String id) {
+        try {
+            StudentDTO student = studentService.getStudentByDepartmentAndId(department, id);
+            return ResponseEntity.ok(student);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+     @GetMapping("/getGraduationYears")
+    public ResponseEntity<?> getGraduationYears() {
+        List<String> graduationYears = studentService.findGraduationYears();
+        return ResponseEntity.ok(graduationYears);
+    }
+
+    @GetMapping("/getStudentByGraduationYear/{year}")
+    public ResponseEntity<?> getStudentByGraduationYear(
+            @PathVariable("year") String year) {
+        try {
+            List<Student> students = studentService.getStudentByGraduationYear(year);
+            return ResponseEntity.ok(students);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
     @GetMapping("/getDepartment")
