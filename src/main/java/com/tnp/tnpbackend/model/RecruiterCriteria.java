@@ -40,7 +40,7 @@ public class RecruiterCriteria {
     }
     
     private String parseAcademicYear(String jobDescription) {
-        Pattern pattern = Pattern.compile("(TY|SY|FY)\\s+(\\d{4}-\\d{2})", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile("(FE|TY|SY|FY)\\s+(\\d{4}-\\d{2})", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(jobDescription);
         return matcher.find() ? matcher.group(1) + " " + matcher.group(2) : null;
     }
