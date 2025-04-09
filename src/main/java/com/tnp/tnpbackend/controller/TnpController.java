@@ -16,6 +16,7 @@ import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.serviceImpl.AdminServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.RecruiterServiceImpl;
@@ -91,6 +92,15 @@ public class TnpController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/get-companies")    
+    public ResponseEntity<?> getAllRecruiters() {
+        List<Recruiter> recruiters = recruiterService.getAllRecruiters();
+        if (recruiters.isEmpty()) {
+            return ResponseEntity.status(404).body("No recruiters found.");
+        }
+        return ResponseEntity.ok(recruiters);
     }
 
     @GetMapping("/getDepartment")

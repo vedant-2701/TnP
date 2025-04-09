@@ -121,6 +121,10 @@ public class RecruiterServiceImpl implements RecruiterService {
         }
     }
     public List<Recruiter> getAllRecruiters() {
-        return recruiterRepository.findAll();
+        List<Recruiter> recruiters = recruiterRepository.findAll();
+        if(recruiters.isEmpty()) {
+            throw new NoDataFoundException("No Recruiter data found");
+        }
+        return recruiters;
     }
 }
