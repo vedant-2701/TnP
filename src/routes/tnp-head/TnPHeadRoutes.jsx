@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import Dashboard from "../../components/shared/Dashboard";
 import { Suspense, lazy } from 'react';
 import Loading from '../../components/Loading';
+import AddNewJob from '../../components/tpo-head/dashboard/addJob/AddNewJob'
+
 
 const UsersPage = lazy(() => import ('../../pages/tnp-head/dashboard/students/StudentsPage'));
 const AnalyticsDashboardPage = lazy(() => import ('../../pages/tnp-head/dashboard/analytics/AnalyticsDashboardPage'));
@@ -11,6 +13,7 @@ export default function TnPHeadRoutes() {
     return (
         <Suspense fallback={<Loading />}>
             <Routes>
+                <Route path="add-job" element={<AddNewJob />} />
                 <Route path="students" element={<UsersPage />} />
                 <Route path="analytics" element={<AnalyticsDashboardPage />} />
                 {/* <Route path="upload/*" element={<UploadDataPage />} /> */}
