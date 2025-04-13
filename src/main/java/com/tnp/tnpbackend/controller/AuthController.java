@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import com.tnp.tnpbackend.dto.AuthRequest;
 import com.tnp.tnpbackend.dto.AuthResponse;
 import com.tnp.tnpbackend.exception.AccountAlreadyDeactivatedException;
+import com.tnp.tnpbackend.exception.StudentNotFoundException;
 import com.tnp.tnpbackend.security.JwtUtil;
 import com.tnp.tnpbackend.service.AppUser;
+import com.tnp.tnpbackend.serviceImpl.OTPServiceImpl;
+import com.tnp.tnpbackend.serviceImpl.StudentServiceImpl;
 import com.tnp.tnpbackend.serviceImpl.UserDetailsServiceImpl;
 
 @RestController
@@ -32,6 +35,12 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private OTPServiceImpl otpService; 
+
+    @Autowired
+    private StudentServiceImpl studentService;
 
     //login
     @PostMapping("/login")
@@ -87,6 +96,44 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/request-otp")
+    public ResponseEntity<String> requestOTP(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        try {
+            otpService.generateAndSendOTP(email);
+            return ResponseEntity.ok("OTP sent to " + email);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Failed to send OTP: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Map<String, Object>> verifyOTP(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        String email = request.get("email");
+        String otp = request.get("otp");
+        try {
+            boolean isValid = otpService.verifyOTP(email, otp);
+            response.put("verified", isValid);
+            if (isValid) {
+                studentService.markEmailVerified(email);
+                response.put("message", "Email verified successfully");
+            } else {
+                response.put("message", "Invalid or expired OTP");
+            }
+            return ResponseEntity.ok(response);
+        } catch (StudentNotFoundException e) {
+            response.put("verified", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            response.put("verified", false);
+            response.put("message", "Error verifying OTP: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 }

@@ -24,6 +24,8 @@ public interface StudentRepository extends MongoRepository<Student, String> {
     @Query("{ 'graduationYear': ?0 }")
     List<Student> findByGraduationYear(String graduationYear);
 
+    Optional<Student> findByEmail(String email);
+
 }
 
 // "nested_object_keys.tag": { $all: ["some_tag", "some_other_tag"] }

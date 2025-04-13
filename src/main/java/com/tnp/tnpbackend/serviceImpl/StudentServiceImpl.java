@@ -248,5 +248,12 @@ public class StudentServiceImpl implements StudentService {
             return principal.toString();
         }
     }
+
+    public void markEmailVerified(String email) {
+        Student student = studentRepository.findByEmail(email)
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with email: " + email));
+        student.setEmailVerified(true);
+        studentRepository.save(student);
+    }
 }
 

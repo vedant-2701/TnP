@@ -37,4 +37,5 @@ public class StudentDTO {
     private LocalDateTime updatedAt;
     private boolean isActive = true;
     private String role;
+    private boolean emailVerified;
 }

@@ -43,6 +43,7 @@ public class Student implements AppUser{
     private LocalDateTime updatedAt;
     private boolean isActive = true;
     private String role;
+    private boolean emailVerified = false;
 
     @Override
     public String getUsername() {

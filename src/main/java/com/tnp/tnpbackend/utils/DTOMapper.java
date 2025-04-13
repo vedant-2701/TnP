@@ -241,6 +241,7 @@ public class DTOMapper {
         studDto.setUpdatedAt(DateTimeConverter.convertToIST(student.getUpdatedAt()));
         studDto.setActive(student.isActive());
         studDto.setRole(student.getRole());
+        studDto.setEmailVerified(student.isEmailVerified());
         return studDto;
     }
 
@@ -268,6 +269,7 @@ public class DTOMapper {
         stud.setUpdatedAt(dto.getUpdatedAt());
         stud.setActive(dto.isActive());
         stud.setRole(dto.getRole());
+        stud.setEmailVerified(dto.isEmailVerified());
         return stud;
     }
 
@@ -310,6 +312,7 @@ public class DTOMapper {
         dto.setStudentName(student.getStudentName());
         dto.setContactNumber(student.getContactNumber());
         dto.setEmail(student.getEmail());
+        dto.setEmailVerified(student.isEmailVerified());
         return dto;
     }
 

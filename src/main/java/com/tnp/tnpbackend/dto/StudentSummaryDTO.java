@@ -9,4 +9,5 @@ public class StudentSummaryDTO {
     private String studentName;
     private String contactNumber;
     private String email;
+    private boolean emailVerified;
 }
