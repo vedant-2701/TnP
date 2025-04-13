@@ -83,6 +83,9 @@ public class StudentServiceImpl implements StudentService {
         Student existingStudent = studentRepository.findByUsername(studentDTO.getUsername())
                 .orElseThrow(() -> new StudentNotFoundException(
                         "Student not found with username: " + studentDTO.getUsername()));
+        if(existingStudent.isEmailVerified() == false) {
+            throw new InvalidInputException("Email not verified. Please verify your email before updating profile.");
+        }
 
         Student updatedStudent = existingStudent;
         if (studentDTO.getStudentName() != null)
