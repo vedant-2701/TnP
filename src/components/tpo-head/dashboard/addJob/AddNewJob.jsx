@@ -7,6 +7,7 @@ import { cn } from "../../../../lib/utils";
 import axios from "axios";
 import { getToken } from "../../../../services/api";
 import { ToastContainer, toast } from "react-toastify";
+import {DatePicker} from "@heroui/date-picker";
 
 export default function JobPostingForm() {
   const [formData, setFormData] = useState({
@@ -112,8 +113,8 @@ export default function JobPostingForm() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md">
-      <form className="my-8" onSubmit={handleSubmit}>
+    <div className="mx-auto w-full p-8">
+      <form className="my-8 grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
         <LabelInputContainer className="mb-8">
           <Label htmlFor="companyName">Company Name</Label>
           <Input
@@ -140,7 +141,7 @@ export default function JobPostingForm() {
           />
         </LabelInputContainer>
 
-        <LabelInputContainer className="mb-8">
+        <LabelInputContainer className="mb-8 col-span-2">
           <Label htmlFor="jobDescription">Job Description</Label>
           <Textarea
             id="jobDescription"
@@ -156,7 +157,7 @@ export default function JobPostingForm() {
           <Label htmlFor="deadline">
             Deadline <span className="text-red-500">*</span>
           </Label>
-          <Input
+          {/* <Input
             id="deadline"
             name="deadline"
             type="date"
@@ -164,7 +165,8 @@ export default function JobPostingForm() {
             onChange={handleDateChange}
             className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
             required
-          />
+          /> */}
+          <DatePicker isRequired showMonthAndYearPickers className="w-full rounded-xl" label="" variant="bordered" labelPlacement="outside" />
           {deadlineError && <span className="text-red-500 text-sm">{deadlineError}</span>}
         </LabelInputContainer>
 
@@ -245,7 +247,7 @@ export default function JobPostingForm() {
         </LabelInputContainer>
 
         <button
-          className="group/btn relative block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-md disabled:opacity-50"
+          className="group/btn relative block h-10 w-fit px-12 mx-auto cursor-pointer rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-md disabled:opacity-50 col-start-2"
           type="submit"
           disabled={isLoading}
         >
