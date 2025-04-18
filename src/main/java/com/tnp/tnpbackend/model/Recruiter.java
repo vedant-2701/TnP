@@ -18,6 +18,8 @@ public class Recruiter {
     @Id
     private String recruiterId;
     private String companyName;
+    private String companyWebsite;
+    private String companyLogoUrl;
     private String jobRole;
     private String jobDescription;
     private boolean isActive;

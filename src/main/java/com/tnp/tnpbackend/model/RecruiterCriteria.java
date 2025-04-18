@@ -55,7 +55,7 @@ public class RecruiterCriteria {
 
     public boolean isStudentEligible(Student student) {
         if (minCgpa != null && (student.getCgpa() < minCgpa)) return false;
-        if (minTenMarks != null && (student.getTenMarks() < minTenMarks)) return false;
+        if (minTenMarks != null && (student.getTenthMarks() < minTenMarks)) return false;
         if (minHigherSecondaryMarks != null && (student.getHigherSecondaryMarks() < minHigherSecondaryMarks)) return false;
         // if (requiredSkills != null && student.getSkills() != null) {
         //     for (String skill : requiredSkills) {

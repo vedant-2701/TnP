@@ -19,6 +19,8 @@ public interface StudentService {
 
     StudentDTO updateProfilePicture(MultipartFile profileImage) throws IOException;
 
+    StudentDTO updateProfileComplete(StudentDTO studentDTO, MultipartFile profileImage) throws IOException;
+
     List<StudentSummaryDTO> getAllStudents();
 
     StudentDTO getStudentById(String id);
@@ -37,4 +39,6 @@ public interface StudentService {
 
     void updateApplicationStatus(String relationId, String newStatus)
             throws InvalidStatusException, ApplicationNotFoundException;
+
+    StudentDTO getStudentByUsername(String username);
 }

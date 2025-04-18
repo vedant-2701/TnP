@@ -234,7 +234,9 @@ public class DTOMapper {
         studDto.setBacklogs(student.getBacklogs());
         studDto.setGraduationYear(student.getGraduationYear());
         studDto.setContactNumber(student.getContactNumber());
-        studDto.setTenMarks(student.getTenMarks());
+        studDto.setGender(student.getGender());
+        studDto.setDateOfBirth(student.getDateOfBirth());
+        studDto.setTenthMarks(student.getTenthMarks());
         studDto.setHigherSecondaryMarks(student.getHigherSecondaryMarks());
         studDto.setStudentType(student.getStudentType());
         studDto.setCreatedAt(DateTimeConverter.convertToIST(student.getCreatedAt()));
@@ -262,7 +264,9 @@ public class DTOMapper {
         stud.setBacklogs(dto.getBacklogs());
         stud.setGraduationYear(dto.getGraduationYear());
         stud.setContactNumber(dto.getContactNumber());
-        stud.setTenMarks(dto.getTenMarks());
+        stud.setGender(dto.getGender());
+        stud.setDateOfBirth(dto.getDateOfBirth());
+        stud.setTenthMarks(dto.getTenthMarks());
         stud.setHigherSecondaryMarks(dto.getHigherSecondaryMarks());
         stud.setStudentType(dto.getStudentType());
         stud.setCreatedAt(dto.getCreatedAt());
@@ -333,6 +337,7 @@ public class DTOMapper {
         dto.setCompanyLocation(recruiter.getCompanyLocation());
         dto.setCriteria(recruiter.getCriteria());
         dto.setIndustryType(recruiter.getIndustryType());
+        dto.setCompanyWebsite(recruiter.getCompanyWebsite());
         dto.setCreatedAt(recruiter.getCreatedAt());
         dto.setUpdatedAt(recruiter.getUpdatedAt());
         return dto;
@@ -350,6 +355,7 @@ public class DTOMapper {
         recruiter.setCompanyLocation(dto.getCompanyLocation());
         recruiter.setCriteria(dto.getCriteria());
         recruiter.setIndustryType(dto.getIndustryType());
+        recruiter.setCompanyWebsite(dto.getCompanyWebsite());
         recruiter.setCreatedAt(dto.getCreatedAt());
         recruiter.setUpdatedAt(dto.getUpdatedAt());
         return recruiter;

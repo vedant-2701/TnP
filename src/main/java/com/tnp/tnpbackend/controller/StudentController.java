@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tnp.tnpbackend.dto.ApplicationRequest;
 import com.tnp.tnpbackend.dto.StudentApplicationHistoryDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
+import com.tnp.tnpbackend.exception.InvalidInputException;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.service.PlacementService;
 import com.tnp.tnpbackend.service.RecruiterService;
@@ -36,6 +38,9 @@ public class StudentController {
     @Autowired
     private RecruiterService recruiterService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @PostMapping("/addStudent")
     public ResponseEntity<StudentDTO> addStudent(@RequestBody StudentDTO studentDTO) {
         StudentDTO savedStudentDTO = studentService.addStudent(studentDTO);
@@ -47,6 +52,23 @@ public class StudentController {
         return "Student logged in";
     }
 
+    // @GetMapping("/getStudent/{id}")
+    // public ResponseEntity<StudentDTO> getStudent(@PathVariable("id") String id) {
+    //     if (id == null || id.isEmpty()) {
+    //         return ResponseEntity.badRequest().body(null);
+    //     }
+    //     StudentDTO student = studentService.getStudentById(id);
+    //     return ResponseEntity.ok(student);
+    // }
+    
+    @GetMapping("/getStudent/{username}")
+    public ResponseEntity<StudentDTO> getStudentByUsername(@PathVariable("username") String username) {
+        if (username == null || username.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        StudentDTO student = studentService.getStudentByUsername(username);
+        return ResponseEntity.ok(student);
+    }
     @PatchMapping("/update-profile")
     public ResponseEntity<StudentDTO> updateProfile(@RequestBody StudentDTO studentDTO) {
         StudentDTO updatedStudentDTO = studentService.updateProfile(studentDTO);
@@ -57,6 +79,30 @@ public class StudentController {
     public ResponseEntity<StudentDTO> uploadProfilePic(
             @RequestPart(value = "profileImage", required = true) MultipartFile profileImage) throws IOException {
         StudentDTO updatedStudentDTO = studentService.updateProfilePicture(profileImage);
+        return ResponseEntity.ok(updatedStudentDTO);
+    }
+
+    // @PostMapping(value = "/update-profile-complete", consumes = "multipart/form-data")
+    // public ResponseEntity<StudentDTO> updateProfileComplete(
+    //         @RequestPart(value = "studentDTO", required = false) StudentDTO studentDTO,
+    //         @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
+    //     StudentDTO updatedStudentDTO = studentService.updateProfileComplete(studentDTO, profileImage);
+    //     return ResponseEntity.ok(updatedStudentDTO);
+    // }
+
+    @PostMapping(value = "/update-profile-complete", consumes = "multipart/form-data")
+    public ResponseEntity<StudentDTO> updateProfileComplete(
+            @RequestPart(value = "studentDTO", required = false) String studentDTOJson,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
+        StudentDTO studentDTO = null;
+        if (studentDTOJson != null && !studentDTOJson.isEmpty()) {
+            studentDTO = objectMapper.readValue(studentDTOJson, StudentDTO.class);
+        }
+        if ((studentDTO == null || studentDTO.getUsername() == null || studentDTO.getUsername().isBlank()) &&
+                (profileImage == null || profileImage.isEmpty())) {
+            throw new InvalidInputException("At least one of profile data or profile image must be provided");
+        }
+        StudentDTO updatedStudentDTO = studentService.updateProfileComplete(studentDTO, profileImage);
         return ResponseEntity.ok(updatedStudentDTO);
     }
 

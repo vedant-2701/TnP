@@ -1,5 +1,6 @@
 package com.tnp.tnpbackend.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,9 @@ public class Student implements AppUser{
     private int backlogs;
     private String graduationYear;
     private String contactNumber;
-    private double tenMarks;
+    private String gender;
+    private LocalDate dateOfBirth;
+    private double tenthMarks;
     private double higherSecondaryMarks;
     private String studentType;
     private List<String> shortlistedFor = new ArrayList<>(); // List of recruiterIds

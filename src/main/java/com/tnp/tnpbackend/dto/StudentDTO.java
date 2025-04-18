@@ -1,5 +1,6 @@
 package com.tnp.tnpbackend.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +32,9 @@ public class StudentDTO {
     private String graduationYear;
     private String contactNumber;
     private LocalDateTime createdAt;
-    private double tenMarks;
+     private String gender;
+    private LocalDate dateOfBirth;
+    private double tenthMarks;
     private double higherSecondaryMarks;
     private String studentType;
     private LocalDateTime updatedAt;

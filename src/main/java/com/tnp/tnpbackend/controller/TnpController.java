@@ -92,7 +92,7 @@ public class TnpController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
-    }
+    } 
 
     @GetMapping("/get-companies")    
     public ResponseEntity<?> getAllRecruiters() {

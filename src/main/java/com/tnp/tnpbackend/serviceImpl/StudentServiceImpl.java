@@ -98,10 +98,16 @@ public class StudentServiceImpl implements StudentService {
             updatedStudent.setCgpa(studentDTO.getCgpa());
         if (studentDTO.getHigherSecondaryMarks() != 0.0)
             updatedStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
-        if (studentDTO.getTenMarks() != 0.0)
-            updatedStudent.setTenMarks(studentDTO.getTenMarks());
+        if (studentDTO.getTenthMarks() != 0.0)
+            updatedStudent.setTenthMarks(studentDTO.getTenthMarks());
         if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
             updatedStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+        }
+        if(studentDTO.getDateOfBirth()!= null){
+            updatedStudent.setDateOfBirth(studentDTO.getDateOfBirth());
+        }
+        if(studentDTO.getGender() != null){
+            updatedStudent.setGender(studentDTO.getGender());
         }
         if (studentDTO.getStudentType() != null) {
             String studentType = studentDTO.getStudentType().toUpperCase();
@@ -137,6 +143,68 @@ public class StudentServiceImpl implements StudentService {
         } catch (IOException e) {
             throw new FileProcessingException("Failed to upload profile picture", e);
         }
+    }
+
+    @Override
+    public StudentDTO updateProfileComplete(StudentDTO studentDTO, MultipartFile profileImage) throws IOException {
+        String authenticatedUsername = getAuthenticatedUsername();
+        if ((studentDTO == null || studentDTO.getUsername() == null || studentDTO.getUsername().isBlank()) &&
+                (profileImage == null || profileImage.isEmpty())) {
+            throw new InvalidInputException("At least one of profile data or profile image must be provided");
+        }
+        if (studentDTO != null && !authenticatedUsername.equals(studentDTO.getUsername())) {
+            throw new UnauthorizedAccessException("You are not authorized to update another student's profile");
+        }
+        Student existingStudent = studentRepository.findByUsername(authenticatedUsername)
+                .orElseThrow(() -> new StudentNotFoundException(
+                        "Student not found with username: " + authenticatedUsername));
+        if (!existingStudent.isEmailVerified()) {
+            throw new InvalidInputException("Email not verified. Please verify your email before updating profile.");
+        }
+
+        // Update profile data if provided
+        if (studentDTO != null) {
+            if (studentDTO.getStudentName() != null)
+                existingStudent.setStudentName(studentDTO.getStudentName());
+            if (studentDTO.getEmail() != null)
+                existingStudent.setEmail(studentDTO.getEmail());
+            if (studentDTO.getContactNumber() != null)
+                existingStudent.setContactNumber(studentDTO.getContactNumber());
+            if (studentDTO.getCgpa() != 0.0)
+                existingStudent.setCgpa(studentDTO.getCgpa());
+            if (studentDTO.getHigherSecondaryMarks() != 0.0)
+                existingStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
+            if (studentDTO.getTenthMarks() != 0.0)
+                existingStudent.setTenthMarks(studentDTO.getTenthMarks());
+            if (studentDTO.getPassword() != null && !studentDTO.getPassword().isBlank()) {
+                existingStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+            }
+            if (studentDTO.getStudentType() != null) {
+                String studentType = studentDTO.getStudentType().toUpperCase();
+                if (!"REGULAR".equals(studentType) && !"DIPLOMA".equals(studentType)) {
+                    throw new InvalidInputException("Student type must be REGULAR or DIPLOMA");
+                }
+                if (studentDTO.getHigherSecondaryMarks() == 0.0) {
+                    throw new InvalidInputException("Higher secondary marks are required when student type is specified");
+                }
+                existingStudent.setStudentType(studentType);
+                existingStudent.setHigherSecondaryMarks(studentDTO.getHigherSecondaryMarks());
+            }
+        }
+
+        // Update profile picture if provided
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(profileImage);
+                existingStudent.setProfileImageURL(imageUrl);
+            } catch (IOException e) {
+                throw new FileProcessingException("Failed to upload profile picture", e);
+            }
+        }
+
+        existingStudent.setUpdatedAt(LocalDateTime.now());
+        Student savedStudent = studentRepository.save(existingStudent);
+        return dtoMapper.toStudentDto(savedStudent);
     }
 
     @Override
@@ -257,6 +325,12 @@ public class StudentServiceImpl implements StudentService {
             .orElseThrow(() -> new StudentNotFoundException("Student not found with email: " + email));
         student.setEmailVerified(true);
         studentRepository.save(student);
+    }
+
+    public StudentDTO getStudentByUsername(String username) {
+       Student student = studentRepository.findByUsername(username)
+               .orElseThrow(() -> new StudentNotFoundException("Student not found with username: " + username));
+       return dtoMapper.toStudentDto(student);
     }
 }
 
