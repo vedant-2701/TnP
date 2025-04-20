@@ -109,6 +109,24 @@ public class StudentServiceImpl implements StudentService {
         if(studentDTO.getGender() != null){
             updatedStudent.setGender(studentDTO.getGender());
         }
+        if(studentDTO.getResumeURL()!=null){
+            updatedStudent.setResumeURL(studentDTO.getResumeURL());
+        }
+        if(studentDTO.getAcademicYear()!=null){
+            updatedStudent.setAcademicYear(studentDTO.getAcademicYear());
+        }
+        if(studentDTO.getBacklogs()!=0){
+            updatedStudent.setBacklogs(studentDTO.getBacklogs());
+        }
+        if(studentDTO.getGraduationYear()!=null){
+            updatedStudent.setGraduationYear(studentDTO.getGraduationYear());
+        }
+        if(studentDTO.getDepartment()!=null){
+            updatedStudent.setDepartment(studentDTO.getDepartment());
+        }
+        if(studentDTO.getSkills()!=null){
+            updatedStudent.setSkills(studentDTO.getSkills());
+        }
         if (studentDTO.getStudentType() != null) {
             String studentType = studentDTO.getStudentType().toUpperCase();
             if (!"REGULAR".equals(studentType) && !"DIPLOMA".equals(studentType)) {
