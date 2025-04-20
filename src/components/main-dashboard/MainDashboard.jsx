@@ -5,7 +5,7 @@ import Scrollable from "../shared/Scrollable";
 
 const dashboardComponent = {
     'ADMIN' : lazy(() => import ("../../pages/admin/AdminDashboardPage")),
-    // 'STUDENT' : lazy(() => import ("../student/StudentDashboard")),
+    'STUDENT' : lazy(() => import ("../student/StudentDashboard")),
     'HEAD' : lazy(() => import ("../../pages/tnp-head/TnPHeadDashboardPage")),
 }
 

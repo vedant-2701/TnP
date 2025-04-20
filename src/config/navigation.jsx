@@ -13,34 +13,34 @@ import { BriefcaseIcon } from "@heroicons/react/24/outline";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 
 export const studentNavigationLinks = [
-    {
-        label: "Home",
-        href: "#",
-        icon: (
-            <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-        ),
-    },
-    {
-        label: "Upcoming Drives",
-        href: "#",
-        icon: (
-            <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-        ),
-    },
-    {
-        label: "View Applications",
-        href: "#",
-        icon: (
-            <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-        ),
-    },
-    {
-        label: "Profile",
-        href: "#",
-        icon: (
-            <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-        ),
-    },
+  {
+    label: 'Home',
+    href: '/dashboard/home',
+    icon: (
+      <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+    ),
+  },
+  {
+    label: 'Upcoming Drives',
+    href: '/dashboard/drives', // Update with actual route when implemented
+    icon: (
+      <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+    ),
+  },
+  {
+    label: 'View Applications',
+    href: '/dashboard/applications', // Update with actual route when implemented
+    icon: (
+      <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+    ),
+  },
+  {
+    label: 'Profile',
+    href: '/dashboard/profile', // Update with actual route when implemented
+    icon: (
+      <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+    ),
+  },
 ];
 
 export const adminNavigationLinks = [
