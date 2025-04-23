@@ -71,7 +71,9 @@ public class StudentController {
     }
     @PatchMapping("/update-profile")
     public ResponseEntity<StudentDTO> updateProfile(@RequestBody StudentDTO studentDTO) {
+        System.out.println(studentDTO);
         StudentDTO updatedStudentDTO = studentService.updateProfile(studentDTO);
+        System.out.println(updatedStudentDTO);
         return ResponseEntity.ok(updatedStudentDTO);
     }
 
@@ -103,6 +105,7 @@ public class StudentController {
             throw new InvalidInputException("At least one of profile data or profile image must be provided");
         }
         StudentDTO updatedStudentDTO = studentService.updateProfileComplete(studentDTO, profileImage);
+        System.out.println(updatedStudentDTO);
         return ResponseEntity.ok(updatedStudentDTO);
     }
 
