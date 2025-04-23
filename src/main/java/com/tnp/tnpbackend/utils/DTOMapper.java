@@ -244,6 +244,7 @@ public class DTOMapper {
         studDto.setActive(student.isActive());
         studDto.setRole(student.getRole());
         studDto.setEmailVerified(student.isEmailVerified());
+
         return studDto;
     }
 
@@ -317,6 +318,7 @@ public class DTOMapper {
         dto.setContactNumber(student.getContactNumber());
         dto.setEmail(student.getEmail());
         dto.setEmailVerified(student.isEmailVerified());
+        dto.setProfileImageURL(student.getProfileImageURL());
         return dto;
     }
 

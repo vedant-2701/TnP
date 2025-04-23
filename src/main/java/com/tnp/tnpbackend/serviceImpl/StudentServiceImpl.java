@@ -115,7 +115,7 @@ public class StudentServiceImpl implements StudentService {
         if(studentDTO.getAcademicYear()!=null){
             updatedStudent.setAcademicYear(studentDTO.getAcademicYear());
         }
-        if(studentDTO.getBacklogs()!=0){
+        if(studentDTO.getBacklogs()!= 0){
             updatedStudent.setBacklogs(studentDTO.getBacklogs());
         }
         if(studentDTO.getGraduationYear()!=null){
