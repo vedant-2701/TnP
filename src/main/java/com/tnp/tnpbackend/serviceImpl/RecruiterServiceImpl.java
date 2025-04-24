@@ -127,4 +127,28 @@ public class RecruiterServiceImpl implements RecruiterService {
         }
         return recruiters;
     }
+
+    public List<StudentSummaryDTO> getAppliedStudents(String recruiterId) {
+        List<Student> students = studentRepository.findByShortlistedFor(recruiterId);
+        if (students.isEmpty()) {
+            throw new NoDataFoundException("No students have applied for this recruiter.");
+        }
+        return dtoMapper.toStudentSummaryDTOList(students);
+    }
+
+    public List<StudentSummaryDTO> getNotappliedStudents(String recruiterId) {
+        List<Student> students = studentRepository.findAll();
+        List<Student> notAppliedStudents = new ArrayList<>();
+
+        for (Student student : students) {
+            if (!student.getShortlistedFor().contains(recruiterId)) {
+                notAppliedStudents.add(student);
+            }
+        }
+
+        if (notAppliedStudents.isEmpty()) {
+            throw new NoDataFoundException("All students have applied for this recruiter.");
+        }
+        return  dtoMapper.toStudentSummaryDTOList(students);
+    }
 }

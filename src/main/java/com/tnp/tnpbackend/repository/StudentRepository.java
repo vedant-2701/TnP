@@ -26,6 +26,8 @@ public interface StudentRepository extends MongoRepository<Student, String> {
 
     Optional<Student> findByEmail(String email);
 
+    List<Student> findByShortlistedFor(String recruiterId);
+
 }
 
 // "nested_object_keys.tag": { $all: ["some_tag", "some_other_tag"] }

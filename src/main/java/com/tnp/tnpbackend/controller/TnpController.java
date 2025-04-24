@@ -151,4 +151,21 @@ public class TnpController {
         return ResponseEntity.ok(adminService.getRecruiterApplicationAnalytics());
     }
 
+    @GetMapping("/getAppliedStudents/{recruiterId}")
+    public ResponseEntity<?> getAppliedStudents(@PathVariable("recruiterId") String recruiterId) {
+        List<StudentSummaryDTO> students = recruiterService.getAppliedStudents(recruiterId);
+        if (students.isEmpty()) {
+            return ResponseEntity.status(404).body("No students found for the specified recruiter.");
+        }
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/getNotappliedStudents/{recruiterId}")
+    public ResponseEntity<?> getNotappliedStudents(@PathVariable("recruiterId") String recruiterId) {
+        List<StudentSummaryDTO> students = recruiterService.getNotappliedStudents(recruiterId);
+        if (students.isEmpty()) {
+            return ResponseEntity.status(404).body("No students found for the specified recruiter.");
+        }
+        return ResponseEntity.ok(students);
+    }
 }
