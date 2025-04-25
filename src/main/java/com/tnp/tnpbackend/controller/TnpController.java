@@ -142,7 +142,6 @@ public class TnpController {
         return ResponseEntity.ok(recruiter);
     }
     // analytics code
-
     // Pie chart - status wise applied, interviewed, hired
     @GetMapping("/analytics/application-status")
     public ResponseEntity<Map<String, Long>> getApplicationStatusAnalytics() {

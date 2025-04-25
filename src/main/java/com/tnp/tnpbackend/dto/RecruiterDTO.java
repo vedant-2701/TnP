@@ -17,6 +17,7 @@ public class RecruiterDTO {
     private String companyName;
     private String companyWebsite;
     private String companyLogoUrl;
+    private String companyDescription;
     private String jobRole;
     private String jobDescription;
     private LocalDate deadline;
