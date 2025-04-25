@@ -9,12 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
@@ -111,36 +111,23 @@ public class TnpController {
         return ResponseEntity.ok(departments);
     }
 
-    // @PostMapping("/job-posting")
-    // public ResponseEntity<?> addRecruiter(@RequestBody RecruiterDTO recruiterDTO) {
-    //     try {
-    //         AddRecruiterResponse response = recruiterService.addRecruiter(recruiterDTO);
-    //         return ResponseEntity.ok(response);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(500).body("An error occurred while adding the recruiter: " + e.getMessage());
-    //     }
-    // }
-
-    @PostMapping(value = "/job-posting", consumes = "multipart/form-data")
-    public ResponseEntity<?> addRecruiter(@RequestPart(value = "RecruiterDTO", required = false) String recruiterDTOjson,
-            @RequestPart(value = "logo", required = false) MultipartFile logo) throws IOException  {
-
-        RecruiterDTO recruiterDTO = null;
-        if(recruiterDTOjson != null && !recruiterDTOjson.isEmpty()) {
-            recruiterDTO = new ObjectMapper().readValue(recruiterDTOjson, RecruiterDTO.class);
-        }
-        if (recruiterDTO == null) {
-            return ResponseEntity.badRequest().body("Invalid recruiter data provided.");
-        }
+    @PostMapping("/job-posting")
+    public ResponseEntity<?> addRecruiter(@RequestBody RecruiterDTO recruiterDTO) {
         try {
-            AddRecruiterResponse response = recruiterService.addRecruiter(recruiterDTO, logo);
-            if (response == null) {
-                return ResponseEntity.status(400).body("Invalid recruiter data provided.");
-            }
+            AddRecruiterResponse response = recruiterService.addRecruiter(recruiterDTO);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while adding the recruiter: " + e.getMessage());
         }
+    }
+
+    @PostMapping(value = "/add-logo", consumes = "multipart/form-data")
+    public ResponseEntity<?> addLogo(@RequestPart(value = "logo", required = false) MultipartFile logo) throws IOException  {
+        if (logo == null || logo.isEmpty()) {
+            return ResponseEntity.badRequest().body("Logo file is required.");
+        }
+        RecruiterDTO recruiterDTO = recruiterService.uploadLogo(logo);
+        return ResponseEntity.ok(recruiterDTO);
     }
 
     

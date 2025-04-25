@@ -65,7 +65,7 @@ public class RecruiterServiceImpl implements RecruiterService {
     @Autowired
     private DTOMapper dtoMapper;
 
-    public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO, MultipartFile file) throws IOException {
+    public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
         // Validate input
         if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
             throw new IllegalArgumentException("Company name cannot be empty");
@@ -74,24 +74,13 @@ public class RecruiterServiceImpl implements RecruiterService {
             throw new IllegalArgumentException("Job role cannot be empty");
         }
 
-        if(file != null && !file.isEmpty()) {
-            try {
-                String imageUrl = cloudinaryService.uploadImage(file);
-                System.out.println("File uploaded: " + file.getOriginalFilename());
-                recruiterDTO.setCompanyLogoUrl(imageUrl);
-            } catch (IOException e) {
-                throw new FileProcessingException("Failed to upload profile picture", e);
-            }
-           
-        } else {
-            throw new IllegalArgumentException("File cannot be empty");
-        }
+        
         // Map DTO to entity and set timestamps
         Recruiter recruiter = dtoMapper.toRecruiter(recruiterDTO);
         recruiter.setCreatedAt(java.time.LocalDateTime.now());
         recruiter.setUpdatedAt(java.time.LocalDateTime.now());
 
-        recruiter.setCompanyLogoUrl(recruiterDTO.getCompanyLogoUrl());
+       
         // Save recruiter to MongoDB
         Recruiter savedRecruiter = recruiterRepository.save(recruiter);
 
@@ -260,6 +249,18 @@ private void notifyStudents(List<Student> students, Recruiter recruiter) {
             throw new NoDataFoundException("No Recruiter data found");
         }
         return dtoMapper.toRecruiterDTOList(recruiters);
+    }
+
+    public RecruiterDTO uploadLogo(MultipartFile logo) {
+        Recruiter recruiter = new Recruiter();
+        try {
+            String imageUrl = cloudinaryService.uploadImage(logo);
+            recruiter.setCompanyLogoUrl(imageUrl);
+            recruiterRepository.save(recruiter); // Save the recruiter with the logo URL
+        } catch (IOException e) {
+            throw new FileProcessingException("Failed to upload logo", e);
+        }
+        return dtoMapper.toRecruiterDTO(recruiter);
     }
 
 }
