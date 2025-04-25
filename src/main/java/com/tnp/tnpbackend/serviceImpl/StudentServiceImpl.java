@@ -368,5 +368,49 @@ public class StudentServiceImpl implements StudentService {
                .orElseThrow(() -> new StudentNotFoundException("Student not found with username: " + username));
        return dtoMapper.toStudentDto(student);
     }
+
+    public List<StudentApplicationHistoryDTO> getAppliedJobs(String studentId) {
+        if (studentId == null || studentId.isEmpty()) {
+            throw new InvalidInputException("Invalid student ID provided");
+        }
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
+
+        List<StudentRecruiterRelation> relations = relationRepository.findByStudent(student);
+        if (relations.isEmpty())
+            throw new NoDataFoundException("No application history found for student with ID: " + studentId);
+        return relations.stream().map(relation -> {
+            StudentApplicationHistoryDTO dto = new StudentApplicationHistoryDTO();
+            dto.setRelationId(relation.getId());
+            dto.setRecruiterId(relation.getRecruiter().getRecruiterId());
+            dto.setCompanyName(relation.getRecruiter().getCompanyName());
+            dto.setJobRole(relation.getRecruiter().getJobRole());
+            dto.setStatus(relation.getStatus());
+            dto.setAppliedAt(relation.getAppliedAt().toString());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<StudentApplicationHistoryDTO> getNotAppliedJobs(String studentId) {
+        if (studentId == null || studentId.isEmpty()) {
+            throw new InvalidInputException("Invalid student ID provided");
+        }
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
+
+        List<StudentRecruiterRelation> relations = relationRepository.findByStudent(student);
+        if (relations.isEmpty())
+            throw new NoDataFoundException("No application history found for student with ID: " + studentId);
+        return relations.stream().filter(relation -> relation.getStatus().equals("NOT_APPLIED")).map(relation -> {
+            StudentApplicationHistoryDTO dto = new StudentApplicationHistoryDTO();
+            dto.setRelationId(relation.getId());
+            dto.setRecruiterId(relation.getRecruiter().getRecruiterId());
+            dto.setCompanyName(relation.getRecruiter().getCompanyName());
+            dto.setJobRole(relation.getRecruiter().getJobRole());
+            dto.setStatus(relation.getStatus());
+            dto.setAppliedAt(relation.getAppliedAt().toString());
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }
 
