@@ -95,3 +95,57 @@ export const getStudentByUsername = async (username) => {
     };
   }
 };
+
+export const updateProfile = async (data) => {
+  try {
+    const response = await api.post('/update-profile-complete', data);
+    return {
+      success: true,
+      data: response.data,
+      message: response.data.message || 'Profile updated successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error updating profile',
+    };
+  }
+};
+
+export const uploadProfilePic = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('profileImage', file);
+    const response = await api.post('/update-profile-complete', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return {
+      success: true,
+      data: response.data,
+      message: response.data.message || 'Profile picture updated successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error uploading profile picture',
+    };
+  }
+};
+
+export const updateProfileComplete = async (formData) => {
+  try {
+    const response = await api.post('/update-profile-complete', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return {
+      success: true,
+      data: response.data,
+      message: response.data.message || 'Profile updated successfully!',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Error updating profile',
+    };
+  }
+};
