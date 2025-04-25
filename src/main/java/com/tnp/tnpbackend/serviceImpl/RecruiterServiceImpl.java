@@ -60,9 +60,44 @@ public class RecruiterServiceImpl implements RecruiterService {
     @Autowired
     private DTOMapper dtoMapper;
 
+    // public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
+    //     System.out.println(recruiterDTO.toString());
+    //     // Validate input
+    //     if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
+    //         throw new IllegalArgumentException("Company name cannot be empty");
+    //     }
+    //     if (recruiterDTO.getJobRole() == null || recruiterDTO.getJobRole().isBlank()) {
+    //         throw new IllegalArgumentException("Job role cannot be empty");
+    //     }
+
+        
+    //     // Map DTO to entity and set timestamps
+    //     Recruiter recruiter = dtoMapper.toRecruiter(recruiterDTO);
+    //     recruiter.setCreatedAt(java.time.LocalDateTime.now());
+    //     recruiter.setUpdatedAt(java.time.LocalDateTime.now());
+
+    //    System.out.println("Recruiter: " + recruiter);
+    //     // Save recruiter to MongoDB
+    //     Recruiter savedRecruiter = recruiterRepository.save(recruiter);
+
+    //     // Filter and notify eligible students, get the list of selected students
+    //     List<StudentSummaryDTO> selectedStudents = filterAndNotifyEligibleStudents(savedRecruiter);
+
+    //     // Prepare response with recruiter and selected students
+    //     AddRecruiterResponse response = new AddRecruiterResponse();
+    //     response.setRecruiter(dtoMapper.toRecruiterDTO(savedRecruiter));
+    //     response.setSelectedStudents(selectedStudents); // Renamed for clarity
+
+    //     return response;
+    // }
+
     public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
+        //Recruiter existingRecruiter = recruiterRepository.findBycompanyWebsite(recruiterDTO.getCompanyWebsite());
         System.out.println(recruiterDTO.toString());
         // Validate input
+        if (recruiterDTO.getCompanyWebsite() == null || recruiterDTO.getCompanyWebsite().isBlank()) {
+            throw new IllegalArgumentException("Company website cannot be empty");
+        }
         if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
             throw new IllegalArgumentException("Company name cannot be empty");
         }
@@ -70,11 +105,24 @@ public class RecruiterServiceImpl implements RecruiterService {
             throw new IllegalArgumentException("Job role cannot be empty");
         }
 
-        
+        // Fetch the existing recruiter by companyWebsite
+        Recruiter recruiter = recruiterRepository.findBycompanyWebsite(recruiterDTO.getCompanyWebsite());
+        if (recruiter == null) {
+            throw new NoDataFoundException("Recruiter not found for the provided company website");
+        }
+        if(!recruiter.getCompanyWebsite().equals(recruiterDTO.getCompanyWebsite())) {
+            throw new IllegalArgumentException("Company website does not match the existing recruiter");
+        }
         // Map DTO to entity and set timestamps
-        Recruiter recruiter = dtoMapper.toRecruiter(recruiterDTO);
+        recruiter.setCompanyName(recruiterDTO.getCompanyName());
+        recruiter.setJobRole(recruiterDTO.getJobRole());
+        recruiter.setJobDescription(recruiterDTO.getJobDescription());
+        recruiter.setCriteria(recruiterDTO.getCriteria());
+        recruiter.setDeadline(recruiterDTO.getDeadline());
+
         recruiter.setCreatedAt(java.time.LocalDateTime.now());
         recruiter.setUpdatedAt(java.time.LocalDateTime.now());
+        
 
        System.out.println("Recruiter: " + recruiter);
         // Save recruiter to MongoDB
@@ -288,18 +336,45 @@ private void notifyStudents(List<Student> students, Recruiter recruiter) {
     }
 
     public RecruiterDTO uploadLogo(MultipartFile logo,String companyWebsite) {
-        Recruiter recruiter = recruiterRepository.findBycompanyWebsite(companyWebsite);
-        if (recruiter == null) {
-            throw new NoDataFoundException("Recruiter not found.");
+        // Recruiter recruiter = recruiterRepository.findBycompanyWebsite(companyWebsite);
+        // if (recruiter == null) {
+        //     throw new NoDataFoundException("Recruiter not found.");
+        // }
+        // try {
+        //     String imageUrl = cloudinaryService.uploadImage(logo);
+        //     recruiter.setCompanyLogoUrl(imageUrl);
+        //     recruiterRepository.save(recruiter); // Save the recruiter with the logo URL
+        // } catch (IOException e) {
+        //     throw new FileProcessingException("Failed to upload logo", e);
+        // }
+        // return dtoMapper.toRecruiterDTO(recruiter);
+        if (companyWebsite == null || companyWebsite.isBlank()) {
+            throw new IllegalArgumentException("Company website cannot be empty");
         }
+
+        // Check if recruiter with this website already exists
+        Recruiter existingRecruiter = recruiterRepository.findBycompanyWebsite(companyWebsite);
+        if (existingRecruiter != null) {
+            throw new IllegalArgumentException("Recruiter with this company website already exists");
+        }
+
+        // Create a new recruiter with only website and logo
+        Recruiter recruiter = new Recruiter();
+        recruiter.setCompanyWebsite(companyWebsite);
+        recruiter.setCreatedAt(java.time.LocalDateTime.now());
+        recruiter.setUpdatedAt(java.time.LocalDateTime.now());
+
+        // Upload logo to Cloudinary and set the URL
         try {
             String imageUrl = cloudinaryService.uploadImage(logo);
             recruiter.setCompanyLogoUrl(imageUrl);
-            recruiterRepository.save(recruiter); // Save the recruiter with the logo URL
         } catch (IOException e) {
             throw new FileProcessingException("Failed to upload logo", e);
         }
-        return dtoMapper.toRecruiterDTO(recruiter);
+
+        // Save the recruiter to MongoDB
+        Recruiter savedRecruiter = recruiterRepository.save(recruiter);
+        return dtoMapper.toRecruiterDTO(savedRecruiter);
     }
 
     public RecruiterDTO getRecruiterById(String id) {
