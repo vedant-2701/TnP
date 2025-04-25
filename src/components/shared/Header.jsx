@@ -7,8 +7,6 @@ import NotificationIcon from "../ui/NotificationIcon";
 
 export default function Header() {
 
-  
-
   const placeholders = [
       "Search Jobs",
       "Find alerts",
@@ -30,7 +28,7 @@ export default function Header() {
         {/* <Bell className="w-7 h-7"/> */}
         <NotificationIcon />
 
-        <span className="text-gray-500">Hi, Atharva Gaikwad</span>
+        {/* <span className="text-gray-500">Hi, Atharva Gaikwad</span> */}
       </div>
     </div>
   );

@@ -15,6 +15,7 @@ import JobDescription from "./details/JobDescription";
 import Skills from "./details/Skills";
 import Criteria from "./details/Criteria";
 import { getCompanyById } from "../../../../services/getCompanies";
+import Loading from "../../../Loading";
 
 export default function JobDetails() {
     
@@ -24,6 +25,7 @@ export default function JobDetails() {
     const [activeLink, setActiveLink] = useState();
     const [generalColor, setGeneralColor] = useState("#fff");
     const [job, setJob] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const { color, imgRef } = useImageColor(job.src, 0.8, setGeneralColor);
     const basePath = `/dashboard/job-postings/${id}`;
     const links = [
@@ -77,9 +79,9 @@ export default function JobDetails() {
             navigate(`overview`);
             setActiveLink("Overview");
         }
-
+        setIsLoading(true);
         fetchCompanyById(id);
-
+        setIsLoading(false);
         
     }, [id, location.pathname, navigate]);
     console.log(job);

@@ -9,7 +9,7 @@ import {
     IconUserBolt,
   } from "@tabler/icons-react";
 
-import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { BriefcaseIcon, SquaresPlusIcon } from "@heroicons/react/24/outline";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 
 export const studentNavigationLinks = [
@@ -86,7 +86,7 @@ export const tnpHeadNavigationLinks = [
       label: "Add Job",
       href: "/dashboard/add-job",
       icon: (
-        <HiOutlinePencilAlt className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
+        <SquaresPlusIcon className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
       ),
     },
     {

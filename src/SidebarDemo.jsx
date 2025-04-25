@@ -12,6 +12,7 @@ import { getNavigationByRole } from './config/navigation';
 // import AdminDashboard from "./components/admin/AdminDashboard";
 import MainDashboard from "./components/main-dashboard/MainDashboard";
 // import Header from "./components/shared/Header";
+import { CiLogout } from "react-icons/ci";
 
 export function SidebarDemo() {
 
@@ -58,7 +59,7 @@ export function SidebarDemo() {
         return;
       }
       
-      const matchingLink = links.find(link => link.href === currentPath);
+      const matchingLink = links.find(link => currentPath.startsWith(link.href));
       if (matchingLink) {
         setActiveLink(matchingLink.label); // Set the active link based on the current path
       } 
@@ -97,7 +98,7 @@ export function SidebarDemo() {
                 link={{
                   label: "Logout",
                   href: "#",
-                  icon: <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />,
+                  icon: <CiLogout className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />,
                 }} 
                 onClick={handleLogout}
                 />

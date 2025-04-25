@@ -29,7 +29,7 @@ export function Users() {
       username: student.username,
       contactNumber: student.contactNumber,
       email: student.email || "abc@xyz.com",
-      src: "https://images.unsplash.com/photo-1616701318247-e87eb43e79e3?q=80&w=1948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      src: student.profileImageURL || "https://images.unsplash.com/photo-1616701318247-e87eb43e79e3?q=80&w=1948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       ctaText: "View Profile",
     }));
   };
@@ -80,7 +80,7 @@ export function Users() {
           academicYear: response.data.academicYear,
           backlogs: response.data.backlogs || 0,
           graduationYear: response.data.graduationYear,
-          tenMarks: response.data.tenMarks,
+          tenMarks: response.data.tenthMarks,
           higherSecondaryMarks: response.data.higherSecondaryMarks,
           studentType: response.data.studentType,
           createdAt: response.data.createdAt || Date.now(),

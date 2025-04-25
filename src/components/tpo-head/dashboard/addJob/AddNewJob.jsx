@@ -1,264 +1,582 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Label } from "../../../ui/form/Label";
 import { Input } from "../../../ui/form/Input"; // Existing Input component
 import { Textarea } from "../../../ui/form/Textarea"; // Updated Textarea component
 import { cn } from "../../../../lib/utils";
 import axios from "axios";
 import { getToken } from "../../../../services/api";
-import { ToastContainer, toast } from "react-toastify";
-import {DatePicker} from "@heroui/date-picker";
+import { toast } from "react-toastify";
+import { DatePickerWithEffect } from "../../../ui/form/DatePickerEffect";
+import { Plus, X } from "lucide-react";
+import { getCompanyOverview } from "../../../../utils/companyOverview";
+import { api } from "../../../../helper/createApi";
+
+const criteriaOptions = [
+    { value: "gender", label: "Gender" },
+    { value: "10th", label: "10th Percentage" },
+    { value: "12th_diploma", label: "12th/Diploma Percentage" },
+    { value: "12th", label: "12th Percentage" },
+    { value: "diploma", label: "Diploma Percentage" },
+    { value: "academic_year", label: "Academic Year" },
+    { value: "cgpa", label: "CGPA" },
+];
 
 export default function JobPostingForm() {
-  const [formData, setFormData] = useState({
-    companyName: "",
-    jobRole: "",
-    jobDescription: "", // Store as string
-    deadline: "", // Store as string (YYYY-MM-DD)
-    companyLocation: "",
-    criteria: {
-      cgpa: "",
-      tenth: "",
-      twelfth: "",
-      diploma: ""
-    },
-    industryType: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [deadlineError, setDeadlineError] = useState("");
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleCriteriaChange = (key, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      criteria: {
-        ...prev.criteria,
-        [key]: value,
-      },
-    }));
-  };
-
-  const handleDateChange = (e) => {
-    const value = e.target.value; // Keep as string (YYYY-MM-DD)
-    setFormData((prev) => ({
-      ...prev,
-      deadline: value,
-    }));
-    if (value) {
-      setDeadlineError("");
-    } else {
-      setDeadlineError("Deadline is required!");
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.deadline || formData.deadline === "") {
-      setDeadlineError("Deadline is required!");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const deadlineDate = new Date(formData.deadline); // Convert string to Date at submission
-      if (isNaN(deadlineDate.getTime())) {
-        throw new Error("Invalid date format");
-      }
-
-      const response = await axios.post(
-        "http://localhost:8080/api/job-postings",
-        {
-          ...formData,
-          deadline: deadlineDate.toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      toast.success("Job posting created successfully!");
-      setFormData({
+    const [formData, setFormData] = useState({
         companyName: "",
+        companyWebsite: "",
         jobRole: "",
         jobDescription: "",
         deadline: "",
         companyLocation: "",
-        criteria: {
-          cgpa: "",
-          tenth: "",
-          twelfth: "",
-          diploma: ""
-        },
         industryType: "",
-      });
-      setDeadlineError("");
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [deadlineError, setDeadlineError] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
+    const [criteriaFields, setCriteriaFields] = useState([
+        { id: crypto.randomUUID(), type: "", value: "" },
+    ]);
+    const [domainURL, setDomainURL] = useState(null);
+    const [logoUrl, setLogoUrl] = useState("");
+    const [isLogoLoading, setIsLogoLoading] = useState(false);
+    const [isLogoUploading, setIsLogoUploading] = useState(false);
+    const [logoUploadStatus, setLogoUploadStatus] = useState(null);
+    const [companyDescription, setCompanyDescription] = useState("");
+
+
+    // Handle criteria fields
+  const handleAddCriteria = () => {
+    setCriteriaFields([
+      ...criteriaFields,
+      { id: crypto.randomUUID(), type: "", value: "" }
+    ]);
+  };
+  
+    const handleRemoveCriteria = (id) => {
+        setCriteriaFields(criteriaFields.filter((field) => field.id !== id));
+    };
+
+    const handleCriteriaChange = (id, field, value) => {
+        if (field === "value") {
+            if (
+                ["10th", "12th", "diploma", "12th_diploma"].includes(
+                    criteriaFields.find((f) => f.id === id).type
+                )
+            ) {
+                if (value && (isNaN(value) || value < 0 || value > 100)) {
+                    toast.error(
+                        "Percentage must be a number between 0 and 100"
+                    );
+                    return;
+                }
+            }
+        }
+        setCriteriaFields((fields) =>
+            fields.map((f) => (f.id === id ? { ...f, [field]: value } : f))
+        );
+    };
+
+    const getPlaceholder = (type) => {
+        switch (type) {
+            case "gender":
+                return "Enter gender requirement";
+            case "10th":
+            case "12th":
+            case "diploma":
+                return "Enter minimum percentage";
+            case "12th_diploma":
+                return "Enter minimum percentage for 12th/Diploma";
+            case "academic_year":
+                return "Enter academic year";
+            case "cgpa":
+                return "Enter minimum CGPA";
+            default:
+                return "Select a criteria type";
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    // Fetch company logo and upload to backend
+  const fetchAndUploadLogo = useCallback(async (url) => {
+    if (!url) return;
+    
+    setIsLogoLoading(true);
+    setLogoUploadStatus(null);
+    
+    try {
+      // Extract domain from URL
+      const domain = new URL(url).hostname.replace(/^www\./, "");
+      
+      // Construct Brandfetch API URL
+      const brandfetchUrl = `https://cdn.brandfetch.io/${domain}/w/400/h/400?c=1idtU2qD3KfPBuO5uVJ`;
+      
+      // Set the URL for displaying in UI
+      setLogoUrl(brandfetchUrl);
+      
+      // Automatically upload logo to backend
+      await uploadLogoToBackend(brandfetchUrl, domain);
+      
     } catch (error) {
-      toast.error("Failed to create job posting: " + (error.response?.data?.message || error.message));
+      console.error("Invalid URL or failed to fetch logo:", error);
+      setLogoUrl("");
+      setLogoUploadStatus("error");
     } finally {
-      setIsLoading(false);
+      setIsLogoLoading(false);
+    }
+  }, []);
+
+  // Upload logo to backend
+  const uploadLogoToBackend = async (logoUrl, domain) => {
+    if (!logoUrl) return;
+    
+    setIsLogoUploading(true);
+    
+    try {
+      // Fetch the image as blob
+      const response = await fetch(logoUrl);
+      const blob = await response.blob();
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append('logo', blob, `${domain}-logo.png`);
+      formData.append('companyDomain', domain);
+      
+      // Send to your backend
+      const uploadResponse = await api.post('/add-logo', formData);
+      
+      if (uploadResponse.ok) {
+        setLogoUploadStatus("success");
+        // You might want to save the returned logo URL or ID from the backend
+        // setFormData(prev => ({ ...prev, logoId: uploadResponse.data.logoId }));
+      } else {
+        setLogoUploadStatus("error");
+      }
+    } catch (error) {
+      console.error("Failed to upload logo:", error);
+      setLogoUploadStatus("error");
+    } finally {
+      setIsLogoUploading(false);
     }
   };
 
-  return (
-    <div className="mx-auto w-full p-8">
-      <form className="my-8 grid grid-cols-2 gap-4" onSubmit={handleSubmit}>
-        <LabelInputContainer className="mb-8">
-          <Label htmlFor="companyName">Company Name</Label>
-          <Input
-            id="companyName"
-            name="companyName"
-            placeholder="Enter company name"
-            type="text"
-            value={formData.companyName}
-            onChange={handleInputChange}
-            className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-          />
-        </LabelInputContainer>
+  // Debounce effect for URL changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.companyWebsite && isValidUrl(formData.companyWebsite)) {
+        fetchAndUploadLogo(formData.companyWebsite);
+      }
+    }, 1000);
 
-        <LabelInputContainer className="mb-8">
-          <Label htmlFor="jobRole">Job Role</Label>
-          <Input
-            id="jobRole"
-            name="jobRole"
-            placeholder="Enter job role"
-            type="text"
-            value={formData.jobRole}
-            onChange={handleInputChange}
-            className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-          />
-        </LabelInputContainer>
+    return () => clearTimeout(timer);
+  }, [formData.companyWebsite, fetchAndUploadLogo]);
 
-        <LabelInputContainer className="mb-8 col-span-2">
-          <Label htmlFor="jobDescription">Job Description</Label>
-          <Textarea
-            id="jobDescription"
-            name="jobDescription"
-            placeholder="Enter job description"
-            value={formData.jobDescription}
-            onChange={handleInputChange}
-            className="shadow-input w-full h-32 rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white resize-y"
-          />
-        </LabelInputContainer>
+  // Validate URL format
+  const isValidUrl = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
 
-        <LabelInputContainer className="mb-8">
-          <Label htmlFor="deadline">
-            Deadline <span className="text-red-500">*</span>
-          </Label>
-          {/* <Input
-            id="deadline"
-            name="deadline"
-            type="date"
-            value={formData.deadline || ""}
-            onChange={handleDateChange}
-            className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-            required
-          /> */}
-          <DatePicker isRequired showMonthAndYearPickers className="w-full rounded-xl" label="" variant="bordered" labelPlacement="outside" />
-          {deadlineError && <span className="text-red-500 text-sm">{deadlineError}</span>}
-        </LabelInputContainer>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-        <LabelInputContainer className="mb-8">
-          <Label htmlFor="companyLocation">Company Location</Label>
-          <Input
-            id="companyLocation"
-            name="companyLocation"
-            placeholder="Enter company location"
-            type="text"
-            value={formData.companyLocation}
-            onChange={handleInputChange}
-            className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-          />
-        </LabelInputContainer>
+        if (!selectedDate) {
+            setDeadlineError("Deadline is required!");
+            return;
+        }
 
-        <LabelInputContainer className="mb-8">
-          <Label>Criteria</Label>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="tenth">10th Percentage</Label>
-              <Input
-                id="tenth"
-                placeholder="Enter 10th %"
-                type="text"
-                value={formData.criteria.tenth || ""}
-                onChange={(e) => handleCriteriaChange("tenth", e.target.value)}
-                className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-              />
-            </div>
-            <div>
-              <Label htmlFor="twelfth">12th Percentage</Label>
-              <Input
-                id="twelfth"
-                placeholder="Enter 12th %"
-                type="text"
-                value={formData.criteria.twelfth || ""}
-                onChange={(e) => handleCriteriaChange("twelfth", e.target.value)}
-                className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-              />
-            </div>
-            <div>
-              <Label htmlFor="diploma">Diploma Percentage</Label>
-              <Input
-                id="diploma"
-                placeholder="Enter Diploma %"
-                type="text"
-                value={formData.criteria.diploma || ""}
-                onChange={(e) => handleCriteriaChange("diploma", e.target.value)}
-                className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-              />
-            </div>
-            <div>
-              <Label htmlFor="cgpa">CGPA</Label>
-              <Input
-                id="cgpa"
-                placeholder="Enter CGPA"
-                type="text"
-                value={formData.criteria.cgpa || ""}
-                onChange={(e) => handleCriteriaChange("cgpa", e.target.value)}
-                className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-              />
-            </div>
-          </div>
-        </LabelInputContainer>
+        // Validate required fields
+        const requiredFields = [
+            "companyWebsite",
+            "companyName",
+            "jobRole",
+            "jobDescription",
+            "companyLocation",
+            "industryType",
+        ];
+        const missingFields = requiredFields.filter(
+            (field) => !formData[field]
+        );
 
-        <LabelInputContainer className="mb-8">
-          <Label htmlFor="industryType">Industry Type</Label>
-          <Input
-            id="industryType"
-            name="industryType"
-            placeholder="Enter industry type"
-            type="text"
-            value={formData.industryType}
-            onChange={handleInputChange}
-            className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
-          />
-        </LabelInputContainer>
+        if (missingFields.length > 0) {
+            toast.error(
+                `Please fill in all required fields: ${missingFields.join(
+                    ", "
+                )}`
+            );
+            return;
+        }
 
-        <button
-          className="group/btn relative block h-10 w-fit px-12 mx-auto cursor-pointer rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-md disabled:opacity-50 col-start-2"
-          type="submit"
-          disabled={isLoading}
-        >
-          {isLoading ? "Submitting..." : "Create Job Posting"}
-        </button>
-      </form>
-      <ToastContainer />
-    </div>
-  );
+        // Validate criteria
+        const invalidCriteria = criteriaFields.some(
+            (field) => !field.type || !field.value
+        );
+        // if (invalidCriteria) {
+        //   toast.error('Please fill in all criteria fields or remove empty ones');
+        //   return;
+        // }
+
+        setIsLoading(true);
+
+        try {
+            // Transform criteria fields into the required format
+            const transformedCriteria = criteriaFields.reduce((acc, field) => {
+                acc[field.type] = field.value;
+                return acc;
+            }, {});
+
+            const companyOverview = await getCompanyOverview(
+                formData.companyWebsite
+            );
+
+            setFormData({
+                ...formData,
+                companyDescription: companyOverview,
+                deadline: selectedDate,
+                criteria: invalidCriteria ? { "": "" } : transformedCriteria,
+                // createdAt: new Date().toISOString(),
+                // updatedAt: new Date().toISOString(),
+            });
+
+            console.log({
+                ...formData,
+                companyDescription: companyOverview,
+                deadline: selectedDate,
+                criteria: invalidCriteria ? "" : transformedCriteria,
+                // createdAt: new Date().toISOString(),
+                // updatedAt: new Date().toISOString(),
+            });
+
+            const response = await api.post("/job-posting", formData);
+
+            if (response.ok) {
+                toast.success("Job posting created successfully!");
+
+                // Reset form
+                setFormData({
+                    companyName: "",
+                    companyWebsite: "",
+                    jobRole: "",
+                    jobDescription: "",
+                    deadline: "",
+                    companyLocation: "",
+                    industryType: "",
+                });
+                setSelectedDate(null);
+                setCriteriaFields([
+                    { id: crypto.randomUUID(), type: "", value: "" },
+                ]);
+                setDeadlineError("");
+                setLogoUrl("");
+                setLogoUploadStatus(null);
+                setCompanyDescription("");
+            } else {
+                toast.error("Job posting not created!");
+            }
+        } catch (error) {
+            if (error.response) {
+                toast.error(
+                    `Failed to create job posting: ${error.response.data.message}`
+                );
+            } else if (error.request) {
+                toast.error(
+                    "Failed to create job posting: No response from server"
+                );
+            } else {
+                toast.error(`Failed to create job posting: ${error.message}`);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchCompanyLogo = useCallback((url) => {
+        // console.log("inside f", url);
+        setIsLogoLoading(true);
+        try {
+            // Extract domain from URL (e.g., "apple.com" from "https://www.apple.com")
+            const domain = new URL(url).hostname.replace(`/^https://www./`, "");
+            // Construct Brandfetch API URL
+            const logoUrl = `https://cdn.brandfetch.io/${domain}/w/400/h/400?c=1idtU2qD3KfPBuO5uVJ`;
+            setDomainURL(logoUrl);
+        } catch (error) {
+            console.error("Invalid URL or failed to fetch logo:", error);
+            setDomainURL(""); // Clear logo if URL is invalid
+        } finally {
+            setIsLogoLoading(false);
+        }
+    }, []);
+
+    // Handle input change
+    const handleUrlInputChange = (e) => {
+        const url = e.target.value;
+        setFormData((prev) => ({
+            ...prev,
+            companyWebsite: url,
+        }));
+
+        console.log(formData);
+
+        setTimeout(() => {
+            if (url) {
+                fetchCompanyLogo(url);
+            }
+        }, 3000);
+
+        // if(url) {
+        //   setTimeout(() => fetchCompanyLogo(url), 5000);
+        // }
+        console.log(url);
+    };
+
+    return (
+        <div className="mx-auto w-full p-8">
+            <h1 className="text-xl">Create Job Posting</h1>
+
+            <form
+                className="mb-8 grid grid-cols-2 gap-4 place-items-center pb-10"
+                onSubmit={handleSubmit}
+            >
+                <div className="flex items-center my-8 col-span-2 place-self-stretch">
+                    <div className="w-1/2 flex justify-center items-center">
+                        <img
+                            src={
+                                logoUrl ||
+                                "https://cdn.brandfetch.io/apple.com/w/400/h/400?c=1idtU2qD3KfPBuO5uVJ"
+                            }
+                            alt="Company Logo"
+                            className={`w-30 h-30 rounded-full ${
+                                domainURL
+                                    ? "border-none"
+                                    : "border border-gray-300"
+                            } ${isLogoLoading ? "opacity-50" : ""}`}
+                            // onError={(e) => {
+                            //   e.target.onerror = null; // Prevent infinite loop
+                            //   e.target.src = "https://via.placeholder.com/150"; // Placeholder image
+                            // }}
+                        />
+                    </div>
+                    <LabelInputContainer className="mb-8">
+                        <Label htmlFor="companyUrl">
+                            Enter company website{" "}
+                            <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                            id="companyUrl"
+                            name="companyUrl"
+                            placeholder="Enter website url"
+                            type="url"
+                            value={formData.companyWebsite}
+                            onChange={handleUrlInputChange}
+                            className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
+                        />
+                    </LabelInputContainer>
+                </div>
+                <LabelInputContainer className="mb-8">
+                    <Label htmlFor="companyName">
+                        Company Name <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                        id="companyName"
+                        name="companyName"
+                        placeholder="Enter company name"
+                        type="text"
+                        value={formData.companyName}
+                        onChange={handleInputChange}
+                        className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
+                    />
+                </LabelInputContainer>
+
+                <LabelInputContainer className="mb-8">
+                    <Label htmlFor="jobRole">
+                        Job Role <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                        id="jobRole"
+                        name="jobRole"
+                        placeholder="Enter job role"
+                        type="text"
+                        value={formData.jobRole}
+                        onChange={handleInputChange}
+                        className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
+                    />
+                </LabelInputContainer>
+
+                <LabelInputContainer className="mb-8 col-span-2">
+                    <Label htmlFor="jobDescription">
+                        Job Description <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                        id="jobDescription"
+                        name="jobDescription"
+                        placeholder="Enter job description"
+                        value={formData.jobDescription}
+                        onChange={handleInputChange}
+                        className="shadow-input w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
+                    />
+                </LabelInputContainer>
+
+                <LabelInputContainer className="mb-8">
+                    <Label htmlFor="companyLocation">
+                        Deadline <span className="text-red-500">*</span>
+                    </Label>
+                    <DatePickerWithEffect
+                        label="Deadline"
+                        value={selectedDate}
+                        onChange={setSelectedDate}
+                        isRequired
+                        showMonthAndYearPickers
+                    />
+                    {deadlineError && (
+                        <span className="text-red-500 text-sm">
+                            {deadlineError}
+                        </span>
+                    )}
+                </LabelInputContainer>
+
+                <LabelInputContainer className="mb-8">
+                    <Label htmlFor="companyLocation">
+                        Company Location <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                        id="companyLocation"
+                        name="companyLocation"
+                        placeholder="Enter company location"
+                        type="text"
+                        value={formData.companyLocation}
+                        onChange={handleInputChange}
+                        className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
+                    />
+                </LabelInputContainer>
+
+                <LabelInputContainer className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                        <Label>Criteria</Label>
+                        <button
+                            type="button"
+                            onClick={handleAddCriteria}
+                            className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                        >
+                            <Plus size={16} />
+                            Add Criteria
+                        </button>
+                    </div>
+
+                    <div className="space-y-3">
+                        {criteriaFields.map((field, index) => (
+                            <div
+                                key={field.id}
+                                className="flex gap-3 items-start animate-in fade-in slide-in-from-top-4 duration-300"
+                            >
+                                <div className="flex-1">
+                                    <select
+                                        value={field.type}
+                                        onChange={(e) =>
+                                            handleCriteriaChange(
+                                                field.id,
+                                                "type",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full h-10 rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black shadow-input transition duration-200 dark:bg-zinc-800 dark:text-white dark:shadow-[0px_0px_1px_1px_#404040] focus-visible:ring-2 focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600"
+                                    >
+                                        <option value="">
+                                            Select Criteria
+                                        </option>
+                                        {criteriaOptions.map((option) => (
+                                            <option
+                                                key={option.value}
+                                                value={option.value}
+                                                disabled={criteriaFields.some(
+                                                    (f) =>
+                                                        f.id !== field.id &&
+                                                        f.type === option.value
+                                                )}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex-1">
+                                    <Input
+                                        value={field.value}
+                                        onChange={(e) =>
+                                            handleCriteriaChange(
+                                                field.id,
+                                                "value",
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder={getPlaceholder(field.type)}
+                                        disabled={!field.type}
+                                        className="shadow-input h-10 w-full"
+                                    />
+                                </div>
+
+                                {criteriaFields.length > 1 && (
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleRemoveCriteria(field.id)
+                                        }
+                                        className="mt-2 p-1 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                                    >
+                                        <X size={16} />
+                                        <span className="sr-only">
+                                            Remove criteria
+                                        </span>
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </LabelInputContainer>
+
+                <LabelInputContainer className="mt-1 mb-8">
+                    <Label htmlFor="industryType" className="mb-5">
+                        Industry Type <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                        id="industryType"
+                        name="industryType"
+                        placeholder="Enter industry type"
+                        type="text"
+                        value={formData.industryType}
+                        onChange={handleInputChange}
+                        className="shadow-input h-10 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black dark:bg-zinc-800 dark:text-white"
+                    />
+                </LabelInputContainer>
+
+                <button
+                    className="group/btn relative block h-10 w-fit px-12 cursor-pointer rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-md disabled:opacity-50 col-start-2 place-self-end"
+                    type="submit"
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Submitting..." : "Create Job Posting"}
+                </button>
+            </form>
+        </div>
+    );
 }
 
 const LabelInputContainer = ({ children, className }) => {
-  return <div className={cn("flex w-full flex-col space-y-2", className)}>{children}</div>;
+    return (
+        <div className={cn("flex w-full flex-col space-y-2", className)}>
+            {children}
+        </div>
+    );
 };
