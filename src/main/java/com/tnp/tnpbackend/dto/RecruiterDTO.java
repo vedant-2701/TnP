@@ -1,6 +1,7 @@
 package com.tnp.tnpbackend.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,6 @@ public class RecruiterDTO {
     private String companyLocation;
     private Map<String, String> criteria;
     private String industryType;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

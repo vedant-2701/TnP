@@ -1,20 +1,24 @@
 package com.tnp.tnpbackend.serviceImpl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.AddRecruiterResponse;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
+import com.tnp.tnpbackend.exception.FileProcessingException;
 import com.tnp.tnpbackend.exception.NoDataFoundException;
 import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.RecruiterCriteria;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.repository.RecruiterRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
+import com.tnp.tnpbackend.service.CloudinaryService;
 import com.tnp.tnpbackend.service.RecruiterService;
 import com.tnp.tnpbackend.utils.DTOMapper;
 import com.tnp.tnpbackend.utils.EmailService;
@@ -51,10 +55,13 @@ public class RecruiterServiceImpl implements RecruiterService {
     @Autowired
     private EmailService mailService;
 
+     @Autowired
+    private CloudinaryService cloudinaryService;
+
     @Autowired
     private DTOMapper dtoMapper;
 
-    public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
+    public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO, MultipartFile file) throws IOException {
         // Validate input
         if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
             throw new IllegalArgumentException("Company name cannot be empty");
@@ -63,11 +70,24 @@ public class RecruiterServiceImpl implements RecruiterService {
             throw new IllegalArgumentException("Job role cannot be empty");
         }
 
+        if(file != null && !file.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(file);
+                System.out.println("File uploaded: " + file.getOriginalFilename());
+                recruiterDTO.setCompanyLogoUrl(imageUrl);
+            } catch (IOException e) {
+                throw new FileProcessingException("Failed to upload profile picture", e);
+            }
+           
+        } else {
+            throw new IllegalArgumentException("File cannot be empty");
+        }
         // Map DTO to entity and set timestamps
         Recruiter recruiter = dtoMapper.toRecruiter(recruiterDTO);
-        recruiter.setCreatedAt(java.time.LocalDate.now());
-        recruiter.setUpdatedAt(java.time.LocalDate.now());
+        recruiter.setCreatedAt(java.time.LocalDateTime.now());
+        recruiter.setUpdatedAt(java.time.LocalDateTime.now());
 
+        recruiter.setCompanyLogoUrl(recruiterDTO.getCompanyLogoUrl());
         // Save recruiter to MongoDB
         Recruiter savedRecruiter = recruiterRepository.save(recruiter);
 

@@ -1,6 +1,7 @@
 package com.tnp.tnpbackend.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
@@ -28,6 +29,6 @@ public class Recruiter {
     private String companyLocation;
     private Map<String, String> criteria;
     private String industryType;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
