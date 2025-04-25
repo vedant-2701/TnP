@@ -61,6 +61,7 @@ public class RecruiterServiceImpl implements RecruiterService {
     private DTOMapper dtoMapper;
 
     public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
+        System.out.println(recruiterDTO.toString());
         // Validate input
         if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
             throw new IllegalArgumentException("Company name cannot be empty");
@@ -75,7 +76,7 @@ public class RecruiterServiceImpl implements RecruiterService {
         recruiter.setCreatedAt(java.time.LocalDateTime.now());
         recruiter.setUpdatedAt(java.time.LocalDateTime.now());
 
-       
+       System.out.println("Recruiter: " + recruiter);
         // Save recruiter to MongoDB
         Recruiter savedRecruiter = recruiterRepository.save(recruiter);
 

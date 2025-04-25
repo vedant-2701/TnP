@@ -113,8 +113,10 @@ public class TnpController {
 
     @PostMapping("/job-posting")
     public ResponseEntity<?> addRecruiter(@RequestBody RecruiterDTO recruiterDTO) {
+        System.out.println(recruiterDTO);
         try {
             AddRecruiterResponse response = recruiterService.addRecruiter(recruiterDTO);
+            System.out.println(response);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while adding the recruiter: " + e.getMessage());
