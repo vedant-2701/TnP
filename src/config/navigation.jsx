@@ -9,8 +9,9 @@ import {
     IconUserBolt,
   } from "@tabler/icons-react";
 
-import { BriefcaseIcon, SquaresPlusIcon } from "@heroicons/react/24/outline";
+import { BriefcaseIcon, SquaresPlusIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { HiOutlinePencilAlt } from "react-icons/hi";
+import { MdOutlineSwitchAccount, MdPendingActions } from "react-icons/md";
 
 export const studentNavigationLinks = [
   // {
@@ -22,23 +23,23 @@ export const studentNavigationLinks = [
   // },
   {
     label: 'Upcoming Drives',
-    href: '/dashboard/drives', // Update with actual route when implemented
+    href: '/dashboard/upcoming-drives', // Update with actual route when implemented
     icon: (
-      <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      <MdPendingActions className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
     ),
   },
   {
     label: 'View Applications',
     href: '/dashboard/applications', // Update with actual route when implemented
     icon: (
-      <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      <ArchiveBoxIcon className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
     ),
   },
   {
     label: 'Profile',
     href: '/dashboard/profile', // Update with actual route when implemented
     icon: (
-      <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      <MdOutlineSwitchAccount className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
     ),
   },
 ];

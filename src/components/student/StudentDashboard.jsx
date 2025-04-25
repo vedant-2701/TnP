@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getStudentByUsername, updateProfile, uploadProfilePic, updateProfileComplete } from '../../services/getStudents';
 import { getUser } from '../../utils/userStorage';
-import { EnvelopeIcon, PhoneIcon, AcademicCapIcon, DocumentArrowDownIcon, IdentificationIcon } from '@heroicons/react/24/outline';
+import { EnvelopeIcon, PhoneIcon, AcademicCapIcon, DocumentArrowDownIcon, IdentificationIcon, CakeIcon } from '@heroicons/react/24/outline';
 import { FaAward } from 'react-icons/fa6';
 import Loading from '../Loading';
 import { motion } from 'motion/react';
@@ -12,6 +12,7 @@ import { LuDot } from 'react-icons/lu';
 import { formatDate } from '../../helper/formatDate';
 import { Label } from '../ui/form/Label';
 import { Input } from '../ui/form/Input';
+import { DatePickerWithEffect } from '../ui/form/DatePickerEffect';
 
 export default function StudentDashboard() {
   const [studentData, setStudentData] = useState(null);
@@ -35,6 +36,7 @@ export default function StudentDashboard() {
     studentType: '', // Added for student type
   });
   const [newSkill, setNewSkill] = useState(''); // State for new skill input
+  const [selectedDate, setSelectedDate] = useState(null); // State for date picker
   const navigate = useNavigate();
   const user = getUser();
 
@@ -221,10 +223,11 @@ export default function StudentDashboard() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h2 className="text-3xl font-bold text-gray-800">{studentData?.studentName}</h2>
-                      <p className="text-gray-500 mt-1">
-                        <LuDot className="inline" /> {studentData?.username} <LuDot className="inline" />{' '}
+                      <p className="text-gray-500 mt-1 flex justify-center items-center gap-2">{studentData?.username} <LuDot className="inline" />{' '}
                         {studentData?.gender} <LuDot className="inline" />{' '}
-                        {formatDate(studentData?.dateOfBirth)}
+                        <span className='inline-flex justify-center items-center gap-1'>
+                          <CakeIcon className='w-5 h-5'/>{formatDate(studentData?.dateOfBirth)}
+                        </span>
                       </p>
                     </div>
                     <span className="px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
@@ -430,6 +433,14 @@ export default function StudentDashboard() {
                   onChange={handleInputChange}
                   placeholder="Select date of birth"
                 />
+
+                {/* <DatePickerWithEffect
+                  label="Date of Birth"
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                  isRequired
+                  showMonthAndYearPickers
+              /> */}
               </div>
 
               {/* Student Type */}

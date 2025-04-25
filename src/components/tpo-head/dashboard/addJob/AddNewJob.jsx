@@ -470,6 +470,7 @@ export default function JobPostingForm() {
                         onChange={setSelectedDate}
                         isRequired
                         showMonthAndYearPickers
+                        disablePreviousDates
                     />
                     {deadlineError && (
                         <span className="text-red-500 text-sm">

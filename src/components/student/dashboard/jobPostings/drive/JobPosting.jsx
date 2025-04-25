@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useOutsideClick } from "../../../../../hooks/useOutsideClick";
 import { AnimatePresence, motion } from "motion/react";
-import { getAllCompanies } from "../../../../../services/getCompanies";
 import { ClockIcon, CalendarDaysIcon, GlobeAltIcon, TagIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { LiaIndustrySolid } from "react-icons/lia";
 import { CiLocationOn } from "react-icons/ci";
@@ -12,6 +11,7 @@ import JobPostingRoutes from "../../../../../routes/tnp-head/dashboard/jobPostin
 import { useNavigate } from "react-router-dom";
 import JobCard from "./JobCard";
 import Loading from "../../../../Loading";
+import { getUpcomingCompanies } from "../../../../../services/student/getUpcomingCompanies";
 
 export default function JobPosting() {
 
@@ -42,7 +42,7 @@ export default function JobPosting() {
     };
 
     const fetchCompanies = async () => {
-        const response = await getAllCompanies();
+        const response = await getUpcomingCompanies();
         if (response.success) {
             setJobs(mapCompanyData(response.data));
         } else {

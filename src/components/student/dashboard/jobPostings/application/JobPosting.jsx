@@ -8,7 +8,6 @@ import { CiLocationOn } from "react-icons/ci";
 import { LinkPreview } from "../../../../ui/LinkPreview";
 import { FaMapPin } from "react-icons/fa";
 import JobDetails from "./JobDetails";
-import JobPostingRoutes from "../../../../../routes/tnp-head/dashboard/jobPostings/JobPostingRoutes";
 import { useNavigate } from "react-router-dom";
 import JobCard from "./JobCard";
 import Loading from "../../../../Loading";

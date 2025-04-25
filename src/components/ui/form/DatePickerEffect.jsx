@@ -17,6 +17,7 @@ export function DatePickerWithEffect({
   variant = "bordered",
   labelPlacement = "outside",
   showMonthAndYearPickers = false,
+  disablePreviousDates = false,
 }) {
   const [inputValue, setInputValue] = useState(value || "");
   const [selectedDate, setSelectedDate] = useState(parseDate(value || ""));
@@ -121,7 +122,8 @@ export function DatePickerWithEffect({
       const date = new Date(year, month, day);
       const isToday = today.getTime() === date.getTime();
       const isSelected = selectedDate?.toDateString() === date.toDateString();
-      const isDisabled = date < today;
+      const isDisabled = disablePreviousDates ? date < today : false;
+      // const isDisabled = disablePreviousDates ? date < today : true;
       
       days.push(
         <button

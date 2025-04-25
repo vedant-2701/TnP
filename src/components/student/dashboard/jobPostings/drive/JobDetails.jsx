@@ -13,8 +13,10 @@ import { useState, useEffect } from "react";
 import Overview from "./details/Overview";
 import JobDescription from "./details/JobDescription";
 import Criteria from "./details/Criteria";
+// import { EligibleStudents } from "./details/EligibleStudents";
 import { getCompanyById } from "../../../../../services/getCompanies";
-import Loading from "../../../../Loading";
+import { api } from "../../../../../helper/createApi";
+import { toast } from "react-toastify";
 
 export default function JobDetails() {
     
@@ -48,7 +50,7 @@ export default function JobDetails() {
             location: company.companyLocation,
             industryType: company.industryType,
             jobDescription: company.jobDescription,
-            deadline: company.deadline,
+            deadline: company.deadline || Date.now(),
             ctaText: "Details",
             companyDescription: company.companyDescription,
             createdAt: company.createdAt,
@@ -106,6 +108,18 @@ export default function JobDetails() {
     `,
     };
 
+    const handleNotify = async () => {
+        const response = await api.post(`/recruiter/${id}/notify`);
+
+        console.log(response);
+
+        if(response.status === 200) {
+            toast.success("Notification sent successfully!");
+        } else {
+            toast.error("Error sending notification:", response.error.message);
+        }
+    }
+
     const handleBack = () => {
         // setActiveJob(null);
         navigate("/dashboard/job-postings");
@@ -152,6 +166,7 @@ export default function JobDetails() {
                                 variants={{
                                     hover: { backgroundColor: generalColor, color: "#fff" },
                                 }}
+                                onClick={handleNotify}
                             >
                                 <BellAlertIcon className="w-4 h-4" /> Notify
                             </motion.span>
@@ -362,6 +377,7 @@ export default function JobDetails() {
                                     <Route path="/overview" element={<Overview description={job.companyDescription} />} />
                                     <Route path="/jobDescription" element={<JobDescription description={job.jobDescription} />} />
                                     <Route path="/criteria" element={<Criteria criteria={job.criteria} />} />
+                                    {/* <Route path="/eligibleStudents" element={<EligibleStudents />} /> */}
                                 </Routes>
                             </div>
                         </motion.div>
@@ -371,17 +387,3 @@ export default function JobDetails() {
         </>
     );
 }
-
-// const job = {
-//     companyId: company.recruiterId || "67ee248889969c512f092cd9",
-//     companyName: company.companyName || "Google",
-//     src: company.companyLogoUrl || "https://cdn.brandfetch.io/google.com/w/400/h/400?c=1idtU2qD3KfPBuO5uVJ",
-//     jobRole: company.jobRole || "Data Scientist",
-//     location: company.companyLocation || "Bangalore",
-//     industryType: company.industryType || "Data Analytics",
-//     jobDescription: company.jobDescription || "We are looking for a Data Scientist to join our team.",
-//     deadline: company.deadline || "2025-08-11",
-//     ctaText: "Details",
-//     createdAt: company.createdAt || "2025-04-01",
-//     criteria: company.criteria || ["Python", "TensorFlow", "SQL"]
-// }
