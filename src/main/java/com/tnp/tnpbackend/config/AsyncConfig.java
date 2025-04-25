@@ -12,9 +12,9 @@ public class AsyncConfig {
     @Bean(name = "emailTaskExecutor")
     public Executor emailTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10); // Increased core pool size
-        executor.setMaxPoolSize(20); // Increased max pool size
-        executor.setQueueCapacity(200); // Increased queue capacity
+        executor.setCorePoolSize(15); // Increased to handle more concurrent tasks
+        executor.setMaxPoolSize(30); // Increased to handle peak load
+        executor.setQueueCapacity(200); // Sufficient for 50+ students
         executor.setThreadNamePrefix("EmailSender-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(30);

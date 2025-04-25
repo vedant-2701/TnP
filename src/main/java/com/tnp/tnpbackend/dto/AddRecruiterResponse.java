@@ -8,4 +8,5 @@ import lombok.Data;
 public class AddRecruiterResponse {
     private RecruiterDTO recruiter;
     private List<StudentSummaryDTO> selectedStudents; // Changed to "selectedStudents"
+    
 }

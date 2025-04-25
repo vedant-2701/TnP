@@ -341,6 +341,8 @@ public class DTOMapper {
         dto.setIndustryType(recruiter.getIndustryType());
         dto.setCompanyWebsite(recruiter.getCompanyWebsite());
         dto.setCompanyLogoUrl(recruiter.getCompanyLogoUrl());
+        dto.setEligibleStudentIds(recruiter.getEligibleStudentIds());
+        dto.setNotified(recruiter.isNotified());
         dto.setCreatedAt(recruiter.getCreatedAt());
         dto.setUpdatedAt(recruiter.getUpdatedAt());
         return dto;
@@ -361,6 +363,8 @@ public class DTOMapper {
         recruiter.setIndustryType(dto.getIndustryType());
         recruiter.setCompanyWebsite(dto.getCompanyWebsite());
         recruiter.setCompanyLogoUrl(dto.getCompanyLogoUrl());
+        recruiter.setEligibleStudentIds(dto.getEligibleStudentIds());
+        recruiter.setNotified(dto.isNotified());
         recruiter.setCreatedAt(dto.getCreatedAt());
         recruiter.setUpdatedAt(dto.getUpdatedAt());
         return recruiter;
