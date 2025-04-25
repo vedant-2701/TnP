@@ -117,6 +117,9 @@ public class RecruiterServiceImpl implements RecruiterService {
         recruiter.setCompanyName(recruiterDTO.getCompanyName());
         recruiter.setJobRole(recruiterDTO.getJobRole());
         recruiter.setJobDescription(recruiterDTO.getJobDescription());
+        recruiter.setCompanyLocation(recruiterDTO.getCompanyLocation());
+        recruiter.setCompanyDescription(recruiterDTO.getCompanyDescription());
+        recruiter.setIndustryType(recruiterDTO.getIndustryType());
         recruiter.setCriteria(recruiterDTO.getCriteria());
         recruiter.setDeadline(recruiterDTO.getDeadline());
 
