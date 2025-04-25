@@ -88,6 +88,7 @@ public class AdminController {
             studentDTO.setPassword(password);
             studentDTO.setGraduationYear(graduationYear);
             studentDTO.setDepartment(department);
+            studentDTO.setEmailVerified(true);
             System.out.println(studentDTO);
             StudentDTO savedStudentDTO = studentService.addStudent(studentDTO);
             return ResponseEntity.ok(savedStudentDTO);

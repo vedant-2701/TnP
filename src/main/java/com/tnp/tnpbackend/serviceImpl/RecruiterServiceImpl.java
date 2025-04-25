@@ -3,6 +3,10 @@ package com.tnp.tnpbackend.serviceImpl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,51 +106,128 @@ public class RecruiterServiceImpl implements RecruiterService {
         return response;
     }
 
+    // private List<StudentSummaryDTO> filterAndNotifyEligibleStudents(Recruiter recruiter) {
+    //     RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
+    //     List<Student> allStudents = studentRepository.findAll();
+    //     if (allStudents.isEmpty()) {
+    //         throw new NoDataFoundException("No Student data found");
+    //     }
+    //     List<Student> selectedStudents = new ArrayList<>();
+
+    //     for (Student student : allStudents) {
+    //         if (criteria.isStudentEligible(student)) {
+    //             // Add recruiterId to student's shortlistedFor list
+    //             if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
+    //                 student.getShortlistedFor().add(recruiter.getRecruiterId());
+    //                 studentRepository.save(student); // Update student in DB
+    //             }
+    //             selectedStudents.add(student);
+    //         }
+    //     }
+
+    //     notifyStudents(selectedStudents, recruiter);
+
+    //     return dtoMapper.toStudentSummaryDTOList(selectedStudents);
+    // }
+
+    // private void notifyStudents(List<Student> students, Recruiter recruiter) {
+    //     String subject = "Job Opportunity at " + recruiter.getCompanyName();
+    //     String bodyTemplate = "Dear %s,\nYou are eligible for the %s role at %s.\nDescription: %s\nDeadline: %s\nApply now!";
+
+    //     for (Student student : students) {
+    //         String body = String.format(bodyTemplate,
+    //             student.getStudentName(),
+    //             recruiter.getJobRole(),
+    //             recruiter.getCompanyName(),
+    //             recruiter.getJobDescription(),
+    //             recruiter.getDeadline());
+    //         mailService.sendEmail(student.getEmail(), subject, body);
+    //     }
+    // }
+    // public List<Recruiter> getAllRecruiters() {
+    //     List<Recruiter> recruiters = recruiterRepository.findAll();
+    //     if(recruiters.isEmpty()) {
+    //         throw new NoDataFoundException("No Recruiter data found");
+    //     }
+    //     return recruiters;
+    // }
+
     private List<StudentSummaryDTO> filterAndNotifyEligibleStudents(Recruiter recruiter) {
-        RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
-        List<Student> allStudents = studentRepository.findAll();
-        if (allStudents.isEmpty()) {
-            throw new NoDataFoundException("No Student data found");
-        }
-        List<Student> selectedStudents = new ArrayList<>();
+    RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
+    List<Student> allStudents = studentRepository.findAll();
+    if (allStudents.isEmpty()) {
+        throw new NoDataFoundException("No Student data found");
+    }
+    List<Student> selectedStudents = new ArrayList<>();
 
-        for (Student student : allStudents) {
-            if (criteria.isStudentEligible(student)) {
-                // Add recruiterId to student's shortlistedFor list
-                if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
-                    student.getShortlistedFor().add(recruiter.getRecruiterId());
-                    studentRepository.save(student); // Update student in DB
-                }
-                selectedStudents.add(student);
+    for (Student student : allStudents) {
+        if (criteria.isStudentEligible(student)) {
+            // Add recruiterId to student's shortlistedFor list
+            if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
+                student.getShortlistedFor().add(recruiter.getRecruiterId());
+                studentRepository.save(student); // Update student in DB
             }
-        }
-
-        notifyStudents(selectedStudents, recruiter);
-
-        return dtoMapper.toStudentSummaryDTOList(selectedStudents);
-    }
-
-    private void notifyStudents(List<Student> students, Recruiter recruiter) {
-        String subject = "Job Opportunity at " + recruiter.getCompanyName();
-        String bodyTemplate = "Dear %s,\nYou are eligible for the %s role at %s.\nDescription: %s\nDeadline: %s\nApply now!";
-
-        for (Student student : students) {
-            String body = String.format(bodyTemplate,
-                student.getStudentName(),
-                recruiter.getJobRole(),
-                recruiter.getCompanyName(),
-                recruiter.getJobDescription(),
-                recruiter.getDeadline());
-            mailService.sendEmail(student.getEmail(), subject, body);
+            selectedStudents.add(student);
         }
     }
-    public List<Recruiter> getAllRecruiters() {
-        List<Recruiter> recruiters = recruiterRepository.findAll();
-        if(recruiters.isEmpty()) {
-            throw new NoDataFoundException("No Recruiter data found");
-        }
-        return recruiters;
+
+    notifyStudents(selectedStudents, recruiter);
+
+    return dtoMapper.toStudentSummaryDTOList(selectedStudents);
+}
+
+private void notifyStudents(List<Student> students, Recruiter recruiter) {
+    String subject = "Job Opportunity at " + recruiter.getCompanyName();
+    String bodyTemplate = "Dear %s,\nYou are eligible for the %s role at %s.\nDescription: %s\nDeadline: %s\nApply now!";
+
+    // Create a thread pool with a fixed number of threads
+    int threadPoolSize = Math.min(students.size(), 10); // Limit to 10 threads or number of students
+    ExecutorService executorService = Executors.newFixedThreadPool(threadPoolSize);
+    List<Future<?>> futures = new ArrayList<>();
+
+    for (Student student : students) {
+        // Submit email sending task and collect the Future
+        Future<?> future = executorService.submit(() -> {
+            try {
+                String body = String.format(bodyTemplate,
+                    student.getStudentName(),
+                    recruiter.getJobRole(),
+                    recruiter.getCompanyName(),
+                    recruiter.getJobDescription(),
+                    recruiter.getDeadline());
+                mailService.sendEmail(student.getEmail(), subject, body);
+            } catch (Exception e) {
+                // Log the error to avoid thread failure affecting others
+                System.err.println("Failed to send email to " + student.getEmail() + ": " + e.getMessage());
+            }
+        });
+        futures.add(future);
     }
+
+    // Shutdown the executor to prevent new tasks
+    executorService.shutdown();
+
+    // Wait for all tasks to complete
+    for (Future<?> future : futures) {
+        try {
+            future.get(); // Blocks until the task completes
+        } catch (Exception e) {
+            System.err.println("Error waiting for email task: " + e.getMessage());
+        }
+    }
+
+    // Ensure the executor is fully terminated
+    try {
+        if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+            executorService.shutdownNow(); // Force shutdown if any tasks are still running
+            System.err.println("Some email tasks did not terminate cleanly");
+        }
+    } catch (InterruptedException e) {
+        executorService.shutdownNow();
+        Thread.currentThread().interrupt(); // Restore interrupted status
+        System.err.println("Email sending interrupted: " + e.getMessage());
+    }
+}
 
     public List<StudentSummaryDTO> getAppliedStudents(String recruiterId) {
         List<Student> students = studentRepository.findByShortlistedFor(recruiterId);
@@ -171,4 +252,14 @@ public class RecruiterServiceImpl implements RecruiterService {
         }
         return  dtoMapper.toStudentSummaryDTOList(students);
     }
+
+    @Override
+    public List<RecruiterDTO> getAllRecruiters() {
+        List<Recruiter> recruiters = recruiterRepository.findAll();
+        if(recruiters.isEmpty()) {
+            throw new NoDataFoundException("No Recruiter data found");
+        }
+        return dtoMapper.toRecruiterDTOList(recruiters);
+    }
+
 }

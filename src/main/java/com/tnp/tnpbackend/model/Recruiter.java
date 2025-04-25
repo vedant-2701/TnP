@@ -24,7 +24,7 @@ public class Recruiter {
     private String companyDescription;
     private String jobRole;
     private String jobDescription;
-    private boolean isActive;
+    //private boolean isActive;
     private LocalDate deadline;
     private String companyLocation;
     private Map<String, String> criteria;

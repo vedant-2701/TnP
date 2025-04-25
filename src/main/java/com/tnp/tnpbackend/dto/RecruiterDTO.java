@@ -19,7 +19,6 @@ public class RecruiterDTO {
     private String companyLogoUrl;
     private String jobRole;
     private String jobDescription;
-    private boolean isActive;
     private LocalDate deadline;
     private String companyLocation;
     private Map<String, String> criteria;

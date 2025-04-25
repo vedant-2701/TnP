@@ -21,4 +21,8 @@ public class EmailService {
         System.out.println("Email sent successfully to " + to);
     }
 
+   
+    public JavaMailSender getMailSender() {
+        return mailSender;
+    }
 }

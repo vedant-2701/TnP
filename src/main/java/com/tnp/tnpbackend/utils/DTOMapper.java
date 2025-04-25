@@ -334,7 +334,6 @@ public class DTOMapper {
         dto.setCompanyName(recruiter.getCompanyName());
         dto.setJobRole(recruiter.getJobRole());
         dto.setJobDescription(recruiter.getJobDescription());
-        dto.setActive(recruiter.isActive());
         dto.setDeadline(recruiter.getDeadline());
         dto.setCompanyLocation(recruiter.getCompanyLocation());
         dto.setCriteria(recruiter.getCriteria());
@@ -353,7 +352,6 @@ public class DTOMapper {
         recruiter.setCompanyName(dto.getCompanyName());
         recruiter.setJobRole(dto.getJobRole());
         recruiter.setJobDescription(dto.getJobDescription());
-        recruiter.setActive(dto.isActive());
         recruiter.setDeadline(dto.getDeadline());
         recruiter.setCompanyLocation(dto.getCompanyLocation());
         recruiter.setCriteria(dto.getCriteria());
