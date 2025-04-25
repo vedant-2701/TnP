@@ -298,19 +298,28 @@ public class RecruiterServiceImpl implements RecruiterService {
             throw new IllegalArgumentException("Job role cannot be empty");
         }
 
-        // Create new recruiter (instead of updating existing)
-        Recruiter recruiter = new Recruiter();
-        recruiter.setCompanyWebsite(recruiterDTO.getCompanyWebsite());
+        // Fetch the existing recruiter by companyWebsite
+        Recruiter recruiter = recruiterRepository.findBycompanyWebsite(recruiterDTO.getCompanyWebsite());
+        if (recruiter == null) {
+            throw new NoDataFoundException("Recruiter not found for the provided company website");
+        }
+        if(!recruiter.getCompanyWebsite().equals(recruiterDTO.getCompanyWebsite())) {
+            throw new IllegalArgumentException("Company website does not match the existing recruiter");
+        }
+        // Map DTO to entity and set timestamps
         recruiter.setCompanyName(recruiterDTO.getCompanyName());
         recruiter.setJobRole(recruiterDTO.getJobRole());
         recruiter.setJobDescription(recruiterDTO.getJobDescription());
         recruiter.setCompanyLocation(recruiterDTO.getCompanyLocation());
         recruiter.setCompanyDescription(recruiterDTO.getCompanyDescription());
         recruiter.setIndustryType(recruiterDTO.getIndustryType());
+        recruiter.setNotified(false); // Set notified to false initially
         recruiter.setCriteria(recruiterDTO.getCriteria());
         recruiter.setDeadline(recruiterDTO.getDeadline());
+
         recruiter.setCreatedAt(java.time.LocalDateTime.now());
         recruiter.setUpdatedAt(java.time.LocalDateTime.now());
+
 
         // Filter eligible students
         RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
