@@ -213,6 +213,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.AddRecruiterResponse;
+import com.tnp.tnpbackend.dto.EligibleStudentDTO;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
@@ -341,7 +342,7 @@ public class TnpController {
 
     @GetMapping("/getEligibleStudents/{recruiterId}")
     public ResponseEntity<?> getEligibleStudents(@PathVariable("recruiterId") String recruiterId) {
-        List<StudentSummaryDTO> students = recruiterService.getEligibleStudents(recruiterId);
+        List<EligibleStudentDTO> students = recruiterService.getEligibleStudents(recruiterId);
         if (students.isEmpty()) {
             return ResponseEntity.status(404).body("No eligible students found for the specified recruiter.");
         }

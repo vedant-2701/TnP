@@ -253,6 +253,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tnp.tnpbackend.dto.AddRecruiterResponse;
+import com.tnp.tnpbackend.dto.EligibleStudentDTO;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.exception.FileProcessingException;
@@ -260,7 +261,9 @@ import com.tnp.tnpbackend.exception.NoDataFoundException;
 import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.RecruiterCriteria;
 import com.tnp.tnpbackend.model.Student;
+import com.tnp.tnpbackend.model.StudentRecruiterRelation;
 import com.tnp.tnpbackend.repository.RecruiterRepository;
+import com.tnp.tnpbackend.repository.StudentRecruiterRelationRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.service.CloudinaryService;
 import com.tnp.tnpbackend.service.RecruiterService;
@@ -284,6 +287,9 @@ public class RecruiterServiceImpl implements RecruiterService {
 
     @Autowired
     private DTOMapper dtoMapper;
+
+    @Autowired
+    private StudentRecruiterRelationRepository studentRecruiterRelationRepository;
 
     public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
         System.out.println(recruiterDTO.toString());
@@ -474,16 +480,53 @@ public class RecruiterServiceImpl implements RecruiterService {
         return dtoMapper.toRecruiterDTO(recruiter);
     }
 
-    public List<StudentSummaryDTO> getEligibleStudents(String recruiterId) {
-        Recruiter recruiter = recruiterRepository.findById(recruiterId)
-                .orElseThrow(() -> new NoDataFoundException("Recruiter not found with id: " + recruiterId));
+    // public List<EligibleStudentDTO> getEligibleStudents(String recruiterId) {
+    //     Recruiter recruiter = recruiterRepository.findById(recruiterId)
+    //             .orElseThrow(() -> new NoDataFoundException("Recruiter not found with id: " + recruiterId));
 
-        List<String> eligibleStudentIds = recruiter.getEligibleStudentIds();
-        if (eligibleStudentIds == null || eligibleStudentIds.isEmpty()) {
-            throw new NoDataFoundException("No eligible students for this recruiter.");
-        }
+    //     List<String> eligibleStudentIds = recruiter.getEligibleStudentIds();
+    //     if (eligibleStudentIds == null || eligibleStudentIds.isEmpty()) {
+    //         throw new NoDataFoundException("No eligible students for this recruiter.");
+    //     }
 
-        List<Student> eligibleStudents = studentRepository.findAllById(eligibleStudentIds);
-        return dtoMapper.toStudentSummaryDTOList(eligibleStudents);
+    //     List<Student> eligibleStudents = studentRepository.findAllById(eligibleStudentIds);
+    //     return dtoMapper.toEligibleStudentDTOList(eligibleStudents);
+    // }
+    public List<EligibleStudentDTO> getEligibleStudents(String recruiterId) {
+    Recruiter recruiter = recruiterRepository.findById(recruiterId)
+            .orElseThrow(() -> new NoDataFoundException("Recruiter not found with id: " + recruiterId));
+
+    List<String> eligibleStudentIds = recruiter.getEligibleStudentIds();
+    if (eligibleStudentIds == null || eligibleStudentIds.isEmpty()) {
+        throw new NoDataFoundException("No eligible students for this recruiter.");
     }
+
+    List<Student> eligibleStudents = studentRepository.findAllById(eligibleStudentIds);
+    if (eligibleStudents.isEmpty()) {
+        throw new NoDataFoundException("No eligible students found.");
+    }
+
+    // Fetch student-recruiter relations for this recruiter
+    List<StudentRecruiterRelation> relations = studentRecruiterRelationRepository.findByRecruiter(recruiter);
+
+    // Map students to DTOs with their status
+    List<EligibleStudentDTO> eligibleStudentDTOs = eligibleStudents.stream()
+            .map(student -> {
+                EligibleStudentDTO dto = dtoMapper.toEligibleStudentDTO(student);
+                // Set status based on the relation
+                StudentRecruiterRelation relation = relations.stream()
+                        .filter(r -> r.getStudent().getStudentId().equals(student.getStudentId()))
+                        .findFirst()
+                        .orElse(null);
+                if (relation != null) {
+                    dto.setStatus(relation.getStatus());
+                } else {
+                    dto.setStatus("Not Applied"); // Default status if no relation found
+                }
+                return dto;
+            })
+            .collect(Collectors.toList());
+
+    return eligibleStudentDTOs;
+}
 }

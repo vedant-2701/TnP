@@ -207,6 +207,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import com.tnp.tnpbackend.dto.EligibleStudentDTO;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentExcelDTO;
@@ -325,6 +326,24 @@ public class DTOMapper {
     public List<StudentSummaryDTO> toStudentSummaryDTOList(List<Student> students) {
         if (students == null) return null;
         return students.stream().map(this::toStudentSummaryDto).collect(Collectors.toList());
+    }
+
+    public EligibleStudentDTO toEligibleStudentDTO(Student student) {
+        if (student == null) return null;
+        EligibleStudentDTO dto = new EligibleStudentDTO();
+        dto.setStudentId(student.getStudentId());
+        dto.setUsername(student.getUsername());
+        dto.setStudentName(student.getStudentName());
+        dto.setContactNumber(student.getContactNumber());
+        dto.setEmail(student.getEmail());
+        dto.setProfileImageURL(student.getProfileImageURL());
+        dto.setEmailVerified(student.isEmailVerified());
+        return dto;
+    }
+
+    public List<EligibleStudentDTO> toEligibleStudentDTOList(List<Student> students) {
+        if (students == null) return null;
+        return students.stream().map(this::toEligibleStudentDTO).collect(Collectors.toList());
     }
 
     public RecruiterDTO toRecruiterDTO(Recruiter recruiter) {
