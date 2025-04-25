@@ -263,4 +263,12 @@ private void notifyStudents(List<Student> students, Recruiter recruiter) {
         return dtoMapper.toRecruiterDTO(recruiter);
     }
 
+    public RecruiterDTO getRecruiterById(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("Invalid ID provided.");
+        }
+        Recruiter recruiter = recruiterRepository.findById(id).orElseThrow(() -> new NoDataFoundException("Recruiter not found."));
+        return dtoMapper.toRecruiterDTO(recruiter);
+    }
+
 }

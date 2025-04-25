@@ -130,7 +130,17 @@ public class TnpController {
         return ResponseEntity.ok(recruiterDTO);
     }
 
-    
+    @GetMapping("/getCompany/{id}")
+    public ResponseEntity<?> getRecruiter(@PathVariable("id")String id){
+        if (id == null || id.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid ID provided.");
+        }
+        RecruiterDTO recruiter = recruiterService.getRecruiterById(id);
+        if (recruiter == null) {
+            return ResponseEntity.status(404).body("Recruiter not found.");
+        }
+        return ResponseEntity.ok(recruiter);
+    }
     // analytics code
 
     // Pie chart - status wise applied, interviewed, hired
