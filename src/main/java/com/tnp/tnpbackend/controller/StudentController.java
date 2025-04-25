@@ -141,4 +141,22 @@ public class StudentController {
         studentService.updateApplicationStatus(relationId, status);
         return ResponseEntity.ok("Status updated to " + status);
     }
+
+    @GetMapping("/Appplied/{studentId}")
+    public ResponseEntity<List<StudentApplicationHistoryDTO>> getAppliedJobs(@PathVariable String studentId) {
+        List<StudentApplicationHistoryDTO> appliedJobs = studentService.getAppliedJobs(studentId);
+        if (appliedJobs.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(appliedJobs);
+    }
+
+    @GetMapping("/NotApplied/{studentId}")
+    public ResponseEntity<List<StudentApplicationHistoryDTO>> getNotAppliedJobs(@PathVariable String studentId) {
+        List<StudentApplicationHistoryDTO> notAppliedJobs = studentService.getNotAppliedJobs(studentId);
+        if (notAppliedJobs.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(notAppliedJobs);
+    }
 }
