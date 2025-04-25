@@ -12,13 +12,19 @@ import { useNavigate } from "react-router-dom";
 import JobCard from "./JobCard";
 import Loading from "../../../../Loading";
 import { getUpcomingCompanies } from "../../../../../services/student/getUpcomingCompanies";
+import { getStudentByUsername } from "../../../../../services/getStudents";
+import { getUser } from "../../../../../utils/userStorage";
 
 export default function JobPosting() {
 
     const [jobs, setJobs] = useState([]);
     const [active, setActive] = useState(null);
+    const [id, setId] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
     const ref = useRef(null);
+    const user = getUser();
 
     const activeStyle = `bg-radial-[at_25%_25%] from-white to-green-600 to-30%`;
     const inActiveStyle = `bg-radial-[at_25%_25%] from-white to-red-600 to-30%`;
@@ -42,7 +48,7 @@ export default function JobPosting() {
     };
 
     const fetchCompanies = async () => {
-        const response = await getUpcomingCompanies();
+        const response = await getUpcomingCompanies(id);
         if (response.success) {
             setJobs(mapCompanyData(response.data));
         } else {
@@ -52,8 +58,35 @@ export default function JobPosting() {
     };
 
     useEffect(() => {
-        fetchCompanies();
+        if (!user || user.role !== 'STUDENT') {
+              toast.error('Unauthorized access');
+              navigate('/');
+              return;
+            }
+        
+            const fetchStudentData = async () => {
+              try {
+                const response = await getStudentByUsername(user.username);
+                if (response.success) {
+                  setId(response.data.studentId);
+                  
+                } else {
+                  throw new Error(response.message);
+                }
+              } catch (err) {
+                setError(err.message || 'Failed to load student data');
+                toast.error(err.message || 'Failed to load student data');
+              } finally {
+                setLoading(false);
+              }
+            };
+        
+            fetchStudentData();
     }, []);
+
+    useEffect(() => {
+      fetchCompanies();
+    }, [id]);
 
     useEffect(() => {
         if (active && typeof active === "object") {

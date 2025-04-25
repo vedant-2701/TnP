@@ -1,23 +1,30 @@
 import { useEffect, useState, useRef } from "react";
 import { useOutsideClick } from "../../../../../hooks/useOutsideClick";
 import { AnimatePresence, motion } from "motion/react";
-import { getAllCompanies } from "../../../../../services/getCompanies";
 import { ClockIcon, CalendarDaysIcon, GlobeAltIcon, TagIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { LiaIndustrySolid } from "react-icons/lia";
 import { CiLocationOn } from "react-icons/ci";
 import { LinkPreview } from "../../../../ui/LinkPreview";
 import { FaMapPin } from "react-icons/fa";
 import JobDetails from "./JobDetails";
+import JobPostingRoutes from "../../../../../routes/tnp-head/dashboard/jobPostings/JobPostingRoutes";
 import { useNavigate } from "react-router-dom";
 import JobCard from "./JobCard";
 import Loading from "../../../../Loading";
+import { getAppliedCompanies } from "../../../../../services/student/getAppliedCompanies";
+import { getStudentByUsername } from "../../../../../services/getStudents";
+import { getUser } from "../../../../../utils/userStorage";
 
 export default function JobPosting() {
 
     const [jobs, setJobs] = useState([]);
     const [active, setActive] = useState(null);
+    const [id, setId] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
     const ref = useRef(null);
+    const user = getUser();
 
     const activeStyle = `bg-radial-[at_25%_25%] from-white to-green-600 to-30%`;
     const inActiveStyle = `bg-radial-[at_25%_25%] from-white to-red-600 to-30%`;
@@ -41,7 +48,7 @@ export default function JobPosting() {
     };
 
     const fetchCompanies = async () => {
-        const response = await getAllCompanies();
+        const response = await getAppliedCompanies(id);
         if (response.success) {
             setJobs(mapCompanyData(response.data));
         } else {
@@ -51,6 +58,30 @@ export default function JobPosting() {
     };
 
     useEffect(() => {
+        if (!user || user.role !== 'STUDENT') {
+              toast.error('Unauthorized access');
+              navigate('/');
+              return;
+            }
+        
+            const fetchStudentData = async () => {
+              try {
+                const response = await getStudentByUsername(user.username);
+                if (response.success) {
+                  setId(response.data.studentId);
+                  
+                } else {
+                  throw new Error(response.message);
+                }
+              } catch (err) {
+                setError(err.message || 'Failed to load student data');
+                toast.error(err.message || 'Failed to load student data');
+              } finally {
+                setLoading(false);
+              }
+            };
+        
+            fetchStudentData();
         fetchCompanies();
     }, []);
 

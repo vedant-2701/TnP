@@ -28,7 +28,7 @@ export default function JobDetails() {
     const [job, setJob] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const { color, imgRef } = useImageColor(job.src, 0.8, setGeneralColor);
-    const basePath = `/dashboard/job-postings/${id}`;
+    const basePath = `/dashboard/applications/${id}`;
     const links = [
         { label: "Overview", href: `${basePath}/overview` },
         { label: "Job Description", href: `${basePath}/jobDescription` },

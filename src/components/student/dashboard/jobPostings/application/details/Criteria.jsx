@@ -16,7 +16,7 @@ export default function Criteria({ criteria }) {
   const criteriaGroups = getCriteriaGroups(criteria);
 
   return (
-    <div className="w-full">
+    <div className="w-full px-4 py-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Eligibility Criteria</h2>
         <p className="text-gray-600">The following criteria must be met to qualify.</p>

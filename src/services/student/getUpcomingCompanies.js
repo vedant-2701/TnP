@@ -1,8 +1,9 @@
 import { api } from "../../helper/createApi";
 
-export const getUpcomingCompanies = async () => {
+export const getUpcomingCompanies = async (id) => {
+    console.log(id);
     try {
-        const response = await api.get('/get-companies');
+        const response = await api.get(`/notApplied/${id}`);
         // console.log(response); // Uncomment for debugging
         return {
             success: true,
