@@ -11,6 +11,7 @@ import { DatePickerWithEffect } from "../../../ui/form/DatePickerEffect";
 import { Plus, X } from "lucide-react";
 import { getCompanyOverview } from "../../../../utils/companyOverview";
 import { api } from "../../../../helper/createApi";
+import { some } from "d3";
 
 const criteriaOptions = [
     { value: "gender", label: "Gender" },
@@ -53,7 +54,7 @@ export default function JobPostingForm() {
       { id: crypto.randomUUID(), type: "", value: "" }
     ]);
   };
-  
+
     const handleRemoveCriteria = (id) => {
         setCriteriaFields(criteriaFields.filter((field) => field.id !== id));
     };
@@ -123,7 +124,7 @@ export default function JobPostingForm() {
       setLogoUrl(brandfetchUrl);
       
       // Automatically upload logo to backend
-      await uploadLogoToBackend(brandfetchUrl, domain);
+      await uploadLogoToBackend(brandfetchUrl, url);
       
     } catch (error) {
       console.error("Invalid URL or failed to fetch logo:", error);
@@ -148,7 +149,7 @@ export default function JobPostingForm() {
       // Create form data
       const formData = new FormData();
       formData.append('logo', blob, `${domain}-logo.png`);
-      formData.append('companyDomain', domain);
+      formData.append('companyWebsite', domain);
       
       // Send to your backend
       const uploadResponse = await api.post('/add-logo', formData);
@@ -240,6 +241,10 @@ export default function JobPostingForm() {
             const companyOverview = await getCompanyOverview(
                 formData.companyWebsite
             );
+
+            console.log(companyOverview);
+            setCompanyDescription(companyOverview);
+            console.log(companyDescription);
 
             setFormData({
                 ...formData,

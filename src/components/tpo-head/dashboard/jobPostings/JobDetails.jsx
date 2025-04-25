@@ -3,7 +3,7 @@ import { HiOutlinePencilAlt } from "react-icons/hi";
 import { ArrowLongLeftIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, Link, useLocation, Routes, Route, useParams, Outlet } from "react-router-dom";
-import { ClockIcon, CalendarDaysIcon, GlobeAltIcon, TagIcon, ArrowTopRightOnSquareIcon, BriefcaseIcon } from "@heroicons/react/24/outline";
+import { ClockIcon, CalendarDaysIcon, GlobeAltIcon, TagIcon, ArrowTopRightOnSquareIcon, BriefcaseIcon, BellAlertIcon } from "@heroicons/react/24/outline";
 import { LiaIndustrySolid } from "react-icons/lia";
 import { CiLocationOn } from "react-icons/ci";
 import { LinkPreview } from "../../../ui/LinkPreview";
@@ -12,7 +12,6 @@ import { useImageColor } from "../../../../hooks/useImageColor";
 import { useState, useEffect } from "react";
 import Overview from "./details/Overview";
 import JobDescription from "./details/JobDescription";
-import Skills from "./details/Skills";
 import Criteria from "./details/Criteria";
 import { getCompanyById } from "../../../../services/getCompanies";
 import Loading from "../../../Loading";
@@ -51,9 +50,10 @@ export default function JobDetails() {
             jobDescription: company.jobDescription,
             deadline: company.deadline,
             ctaText: "Details",
+            companyDescription: company.companyDescription,
             createdAt: company.createdAt,
-            criteria: company.criteria,
-            webiste: company.companyWebsite,
+            criteria: company.criteria || {},
+            website: company.companyWebsite,
         }
     }
 
@@ -61,11 +61,7 @@ export default function JobDetails() {
         const response = await getCompanyById(id);
 
         if(response.success) {
-            console.log(response.data);
-            console.log(mapJobData(response.data));
-            console.log(mapJobData(response.data).webiste);
             setJob(mapJobData(response.data));
-            console.log(job);
         } else {
             console.log(response.error);
         }
@@ -145,7 +141,7 @@ export default function JobDetails() {
                             </button>
                         </motion.div>
 
-                        <motion.div className="cursor-pointer" role="button">
+                        <motion.div className="cursor-pointer flex gap-4" role="button">
                             <motion.span
                                 className="flex items-center gap-2 border px-4 py-2 rounded-lg"
                                 whileHover={"hover"}
@@ -157,8 +153,21 @@ export default function JobDetails() {
                                     hover: { backgroundColor: generalColor, color: "#fff" },
                                 }}
                             >
-                                <HiOutlinePencilAlt className="w-4 h-4" /> Edit
+                                <BellAlertIcon className="w-4 h-4" /> Notify
                             </motion.span>
+                            {/* <motion.span
+                                className="flex items-center gap-2 border px-4 py-2 rounded-lg"
+                                whileHover={"hover"}
+                                style={{
+                                    borderColor: generalColor,
+                                    color: generalColor,
+                                }}
+                                variants={{
+                                    hover: { backgroundColor: generalColor, color: "#fff" },
+                                }}
+                            >
+                                <HiOutlinePencilAlt className="w-4 h-4" /> Edit
+                            </motion.span> */}
                         </motion.div>
                     </div>
 
@@ -350,10 +359,9 @@ export default function JobDetails() {
                             <div>
                                 {/* <Outlet /> */}
                                 <Routes>
-                                    <Route path="/overview" element={<Overview />} />
-                                    <Route path="/jobDescription" element={<JobDescription />} />
-                                    <Route path="/skills" element={<Skills skills={job.skills} />} />
-                                    <Route path="/criteria" element={<Criteria />} />
+                                    <Route path="/overview" element={<Overview description={job.companyDescription} />} />
+                                    <Route path="/jobDescription" element={<JobDescription description={job.jobDescription} />} />
+                                    <Route path="/criteria" element={<Criteria criteria={job.criteria} />} />
                                 </Routes>
                             </div>
                         </motion.div>

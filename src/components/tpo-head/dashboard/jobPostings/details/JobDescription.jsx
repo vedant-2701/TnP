@@ -1,5 +1,7 @@
-export default function JobDescription() {
+export default function JobDescription({ description }) {
     return (
-        <h1>This is JD</h1>
+        <div className="px-4 py-6">
+            <h1 className="text-lg">{description}</h1>
+        </div>
     );
 };

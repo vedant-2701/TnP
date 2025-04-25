@@ -1,5 +1,8 @@
-export default function Overview() {
+export default function Overview({ description }) {
+    console.log(description);
     return (
-        <h1>This is Overview</h1>
+        <div className="px-4 py-6">
+            <h1 className="text-lg">{description}</h1>
+        </div>
     );
 };
