@@ -13,8 +13,11 @@ import { useState, useEffect } from "react";
 import Overview from "./details/Overview";
 import JobDescription from "./details/JobDescription";
 import Criteria from "./details/Criteria";
+import { EligibleStudents } from "./details/EligibleStudents";
 import { getCompanyById } from "../../../../services/getCompanies";
 import Loading from "../../../Loading";
+import { api } from "../../../../helper/createApi";
+import { toast } from "react-toastify";
 
 export default function JobDetails() {
     
@@ -48,7 +51,7 @@ export default function JobDetails() {
             location: company.companyLocation,
             industryType: company.industryType,
             jobDescription: company.jobDescription,
-            deadline: company.deadline,
+            deadline: company.deadline || Date.now(),
             ctaText: "Details",
             companyDescription: company.companyDescription,
             createdAt: company.createdAt,
@@ -106,6 +109,18 @@ export default function JobDetails() {
     `,
     };
 
+    const handleNotify = async () => {
+        const response = await api.post(`/recruiter/${id}/notify`);
+
+        console.log(response);
+
+        if(response.status === 200) {
+            toast.success("Notification sent successfully!");
+        } else {
+            toast.error("Error sending notification:", response.error.message);
+        }
+    }
+
     const handleBack = () => {
         // setActiveJob(null);
         navigate("/dashboard/job-postings");
@@ -152,6 +167,7 @@ export default function JobDetails() {
                                 variants={{
                                     hover: { backgroundColor: generalColor, color: "#fff" },
                                 }}
+                                onClick={handleNotify}
                             >
                                 <BellAlertIcon className="w-4 h-4" /> Notify
                             </motion.span>
@@ -362,6 +378,7 @@ export default function JobDetails() {
                                     <Route path="/overview" element={<Overview description={job.companyDescription} />} />
                                     <Route path="/jobDescription" element={<JobDescription description={job.jobDescription} />} />
                                     <Route path="/criteria" element={<Criteria criteria={job.criteria} />} />
+                                    <Route path="/eligibleStudents" element={<EligibleStudents />} />
                                 </Routes>
                             </div>
                         </motion.div>

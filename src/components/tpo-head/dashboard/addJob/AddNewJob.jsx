@@ -12,6 +12,7 @@ import { Plus, X } from "lucide-react";
 import { getCompanyOverview } from "../../../../utils/companyOverview";
 import { api } from "../../../../helper/createApi";
 import { some } from "d3";
+import { useNavigate } from "react-router-dom";
 
 const criteriaOptions = [
     { value: "gender", label: "Gender" },
@@ -45,6 +46,8 @@ export default function JobPostingForm() {
     const [isLogoUploading, setIsLogoUploading] = useState(false);
     const [logoUploadStatus, setLogoUploadStatus] = useState(null);
     const [companyDescription, setCompanyDescription] = useState("");
+
+    const navigate = useNavigate();
 
 
     // Handle criteria fields
@@ -238,17 +241,35 @@ export default function JobPostingForm() {
                 return acc;
             }, {});
 
-            const companyOverview = await getCompanyOverview(
-                formData.companyWebsite
-            );
+            // const companyOverview = await getCompanyOverview(
+            //     formData.companyWebsite
+            // );
 
-            console.log(companyOverview);
-            setCompanyDescription(companyOverview);
-            console.log(companyDescription);
+            // console.log(companyOverview);
+            // setCompanyDescription(companyOverview);
+            // console.log(companyDescription);
+
+            // Fetch company overview
+      let companyDesc = formData.companyDescription;
+      if (!companyDesc && formData.companyWebsite) {
+        try {
+          companyDesc = await getCompanyOverview(formData.companyWebsite);
+        } catch (error) {
+          console.error('Failed to fetch company overview:', error);
+        }
+      }
+
+      // Prepare final form data with all required fields
+      const finalFormData = {
+        ...formData,
+        companyDescription: companyDesc,
+        deadline: selectedDate,
+        criteria: Object.keys(transformedCriteria).length > 0 ? transformedCriteria : {}
+      };
 
             setFormData({
                 ...formData,
-                companyDescription: companyOverview,
+                companyDescription: companyDesc,
                 deadline: selectedDate,
                 criteria: invalidCriteria ? { "": "" } : transformedCriteria,
                 // createdAt: new Date().toISOString(),
@@ -257,16 +278,21 @@ export default function JobPostingForm() {
 
             console.log({
                 ...formData,
-                companyDescription: companyOverview,
+                companyDescription: companyDesc,
                 deadline: selectedDate,
                 criteria: invalidCriteria ? "" : transformedCriteria,
                 // createdAt: new Date().toISOString(),
                 // updatedAt: new Date().toISOString(),
             });
 
-            const response = await api.post("/job-posting", formData);
+            console.log(formData);
+            console.log(finalFormData);
 
-            if (response.ok) {
+            const response = await api.post("/job-posting", finalFormData);
+
+            console.log(response);
+
+            if (response.status === 200) {
                 toast.success("Job posting created successfully!");
 
                 // Reset form
@@ -287,6 +313,7 @@ export default function JobPostingForm() {
                 setLogoUrl("");
                 setLogoUploadStatus(null);
                 setCompanyDescription("");
+                navigate("/dashboard/job-postings")
             } else {
                 toast.error("Job posting not created!");
             }

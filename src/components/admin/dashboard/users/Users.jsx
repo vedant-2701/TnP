@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useOutsideClick } from "../../../../hooks/useOutsideClick";
 import { useLazyLoadedIcons } from "../../../../hooks/useLazyLoadedIcons";
 import { getAllStudents, getStudentById, getStudentByDepartmentAndId, getStudentsByDepartment } from "../../../../services/getStudents";
-import { formatDate } from "../../../../helper/formatDate";
+import { formatDateAndTime } from "../../../../helper/formatDate";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import Loading from "../../../Loading";
 import Department from "./Department";
@@ -308,14 +308,14 @@ export function Users() {
                     <div>
                       <span className="flex items-center gap-2 text-sm pl-4 pr-6 space-x-2">
                         <icons.ClockIcon className="w-7 h-7 text-blue-500" /> 
-                        <span className="text-neutral-500">{formatDate(active.createdAt)}</span>
+                        <span className="text-neutral-500">{formatDateAndTime(active.createdAt)}</span>
                       </span>
                     </div>
 
                     <div>
                       <span className="flex items-center gap-2 text-sm pl-6 space-x-2">
                         <icons.ArrowPathIcon className="w-7 h-7 text-blue-500" /> 
-                        <span className="text-neutral-500">{formatDate(active.updatedAt)}</span>
+                        <span className="text-neutral-500">{formatDateAndTime(active.updatedAt)}</span>
                       </span>
                     </div>
                   </div>
