@@ -339,6 +339,15 @@ public class TnpController {
         }
     }
 
+    @GetMapping("/getEligibleStudents/{recruiterId}")
+    public ResponseEntity<?> getEligibleStudents(@PathVariable("recruiterId") String recruiterId) {
+        List<StudentSummaryDTO> students = recruiterService.getEligibleStudents(recruiterId);
+        if (students.isEmpty()) {
+            return ResponseEntity.status(404).body("No eligible students found for the specified recruiter.");
+        }
+        return ResponseEntity.ok(students);
+    }
+
     @GetMapping("/getCompany/{id}")
     public ResponseEntity<?> getRecruiter(@PathVariable("id") String id) {
         if (id == null || id.isEmpty()) {

@@ -473,4 +473,17 @@ public class RecruiterServiceImpl implements RecruiterService {
         Recruiter recruiter = recruiterRepository.findById(id).orElseThrow(() -> new NoDataFoundException("Recruiter not found."));
         return dtoMapper.toRecruiterDTO(recruiter);
     }
+
+    public List<StudentSummaryDTO> getEligibleStudents(String recruiterId) {
+        Recruiter recruiter = recruiterRepository.findById(recruiterId)
+                .orElseThrow(() -> new NoDataFoundException("Recruiter not found with id: " + recruiterId));
+
+        List<String> eligibleStudentIds = recruiter.getEligibleStudentIds();
+        if (eligibleStudentIds == null || eligibleStudentIds.isEmpty()) {
+            throw new NoDataFoundException("No eligible students for this recruiter.");
+        }
+
+        List<Student> eligibleStudents = studentRepository.findAllById(eligibleStudentIds);
+        return dtoMapper.toStudentSummaryDTOList(eligibleStudents);
+    }
 }
