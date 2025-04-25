@@ -286,8 +286,11 @@ private void notifyStudents(List<Student> students, Recruiter recruiter) {
         return dtoMapper.toRecruiterDTOList(recruiters);
     }
 
-    public RecruiterDTO uploadLogo(MultipartFile logo) {
-        Recruiter recruiter = new Recruiter();
+    public RecruiterDTO uploadLogo(MultipartFile logo,String companyWebsite) {
+        Recruiter recruiter = recruiterRepository.findBycompanyWebsite(companyWebsite);
+        if (recruiter == null) {
+            throw new NoDataFoundException("Recruiter not found.");
+        }
         try {
             String imageUrl = cloudinaryService.uploadImage(logo);
             recruiter.setCompanyLogoUrl(imageUrl);

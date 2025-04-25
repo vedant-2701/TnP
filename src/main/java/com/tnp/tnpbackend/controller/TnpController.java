@@ -122,11 +122,11 @@ public class TnpController {
     }
 
     @PostMapping(value = "/add-logo", consumes = "multipart/form-data")
-    public ResponseEntity<?> addLogo(@RequestPart(value = "logo", required = false) MultipartFile logo) throws IOException  {
+    public ResponseEntity<?> addLogo(@RequestPart(value = "logo", required = false) MultipartFile logo , String companyWebsite) throws IOException  {
         if (logo == null || logo.isEmpty()) {
             return ResponseEntity.badRequest().body("Logo file is required.");
         }
-        RecruiterDTO recruiterDTO = recruiterService.uploadLogo(logo);
+        RecruiterDTO recruiterDTO = recruiterService.uploadLogo(logo,companyWebsite);
         return ResponseEntity.ok(recruiterDTO);
     }
 
