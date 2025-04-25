@@ -521,7 +521,7 @@ public class RecruiterServiceImpl implements RecruiterService {
                 if (relation != null) {
                     dto.setStatus(relation.getStatus());
                 } else {
-                    dto.setStatus("Not Applied"); // Default status if no relation found
+                    dto.setStatus("Pending"); // Default status if no relation found
                 }
                 return dto;
             })
