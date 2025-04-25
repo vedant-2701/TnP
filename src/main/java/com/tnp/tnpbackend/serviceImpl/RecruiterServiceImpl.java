@@ -313,6 +313,7 @@ public class RecruiterServiceImpl implements RecruiterService {
         recruiter.setCompanyLocation(recruiterDTO.getCompanyLocation());
         recruiter.setCompanyDescription(recruiterDTO.getCompanyDescription());
         recruiter.setIndustryType(recruiterDTO.getIndustryType());
+        recruiter.setDeadline(recruiterDTO.getDeadline());
         recruiter.setNotified(false); // Set notified to false initially
         recruiter.setCriteria(recruiterDTO.getCriteria());
         recruiter.setDeadline(recruiterDTO.getDeadline());
@@ -348,7 +349,7 @@ public class RecruiterServiceImpl implements RecruiterService {
 
         // Save recruiter to MongoDB
         Recruiter savedRecruiter = recruiterRepository.save(recruiter);
-
+        System.out.println("Recruiter: " + savedRecruiter);
         // Prepare response
         AddRecruiterResponse response = new AddRecruiterResponse();
         response.setRecruiter(dtoMapper.toRecruiterDTO(savedRecruiter));
