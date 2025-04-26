@@ -23,6 +23,6 @@ public class StudentRecruiterRelation {
     private Student student;
     @DBRef
     private Recruiter recruiter;
-    private String status; // e.g., "APPLIED", "INTERVIEWED", "HIRED"
+    private String status="Pending"; // e.g., "APPLIED", "INTERVIEWED", "HIRED"
     private LocalDateTime appliedAt;
 }
