@@ -25,21 +25,21 @@ export const studentNavigationLinks = [
     label: 'Upcoming Drives',
     href: '/dashboard/upcoming-drives', // Update with actual route when implemented
     icon: (
-      <MdPendingActions className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      <MdPendingActions className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
     ),
   },
   {
     label: 'View Applications',
     href: '/dashboard/applications', // Update with actual route when implemented
     icon: (
-      <ArchiveBoxIcon className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      <ArchiveBoxIcon className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
     ),
   },
   {
     label: 'Profile',
     href: '/dashboard/profile', // Update with actual route when implemented
     icon: (
-      <MdOutlineSwitchAccount className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      <MdOutlineSwitchAccount className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
     ),
   },
 ];

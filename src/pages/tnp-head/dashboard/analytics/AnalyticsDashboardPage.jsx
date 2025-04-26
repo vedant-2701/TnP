@@ -56,7 +56,7 @@ const AnalyticsDashboardPage = () => {
         <StudentsByDepartmentChart data={studeByDep} />
 
         {/* 3rd Row */}
-        <TopRecruitersChart data={recruiters} />
+        {/* <TopRecruitersChart data={recruiters} />
         <TopRecruitersChart data={[
               {
                   "hiredCount": 1,
@@ -66,9 +66,9 @@ const AnalyticsDashboardPage = () => {
                   "hiredCount": 10,
                   "companyName": "Atlas Copco"
               }
-          ]} />
+          ]} /> */}
         <RecruiterApplicationsChart data={recruiterApp} />
-        <RecruiterApplicationsChart data={{
+        {/* <RecruiterApplicationsChart data={{
           "AutoMation": {
               "INTERVIEWED": 4,
               "HIRED": 2,
@@ -84,7 +84,7 @@ const AnalyticsDashboardPage = () => {
               "HIRED": 2,
               "APPLIED": 3
           },
-        }} />
+        }} /> */}
       </div>
     </div>
   );

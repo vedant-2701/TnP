@@ -6,14 +6,25 @@ import {
 export default function Criteria({ criteria }) {
     console.log(criteria);
   // Check if criteria is empty
-  const isEmpty = !criteria || Object.keys(criteria).length === 0;
+  const isEmpty = !criteria || Object.keys(criteria).length === 0 || Object.entries(criteria).every(([key, value]) => key === '' && !value);
+
+  console.log("isEmpty", isEmpty);
   
   if (isEmpty) {
     return <EmptyCriteria />;
   }
   
-  // Group criteria for better organization
-  const criteriaGroups = getCriteriaGroups(criteria);
+  // // Group criteria for better organization
+  // const criteriaGroups = getCriteriaGroups(criteria);
+
+  let criteriaGroups;
+  try {
+    criteriaGroups = getCriteriaGroups(criteria);
+    console.log("Criteria groups:", criteriaGroups);
+  } catch (error) {
+    console.error("Error in getCriteriaGroups:", error);
+    return <EmptyCriteria />; // Fallback to EmptyCriteria on error
+  }
 
   return (
     <div className="w-full px-4 py-6">

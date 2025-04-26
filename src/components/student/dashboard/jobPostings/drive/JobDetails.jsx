@@ -121,9 +121,8 @@ export default function JobDetails() {
                 throw new Error(studentRes.message);
             }
             const response = await api.post(`/apply`, {
-                recruiterId: id,
                 studentId: sId,
-                status: "applied",
+                recruiterId: id,
             });
     
             console.log(response);

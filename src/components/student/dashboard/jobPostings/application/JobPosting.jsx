@@ -148,11 +148,17 @@ export default function JobPosting() {
         <div className="w-full">        
           <ul className="mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4 lg:p-8 items-stretch">
             {jobs.length > 0 ? jobs.map((job, index) => (
-              <JobCard  
-                key={job.companyId || `job-${index}`} 
-                job={job} 
-                onClick={handleClick} 
-              />
+              <>
+                {job.status === "APPLIED" ? (
+                  <JobCard  
+                  key={job.companyId || `job-${index}`} 
+                  job={job} 
+                  onClick={handleClick} 
+                />
+                ) : (
+                  setIsCompanyLoaded(false)
+                )}
+              </>
             )) : (
               <Loading />
             )
