@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tnp.tnpbackend.dto.ApplicationRequest;
+import com.tnp.tnpbackend.dto.ApplyRequestDTO;
 import com.tnp.tnpbackend.dto.RecruiterDTO;
 import com.tnp.tnpbackend.dto.StudentApplicationHistoryDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
@@ -110,10 +111,16 @@ public class StudentController {
         return ResponseEntity.ok(updatedStudentDTO);
     }
 
+    // @PostMapping("/apply")
+    // public ResponseEntity<String> applyToRecruiter(@RequestBody ApplicationRequest request) {
+    //     placementService.applyToRecruiter(request.getStudentId(), request.getRecruiterId());
+    //     return ResponseEntity.ok("Application submitted");
+    // }
+
     @PostMapping("/apply")
-    public ResponseEntity<String> applyToRecruiter(@RequestBody ApplicationRequest request) {
-        placementService.applyToRecruiter(request.getStudentId(), request.getRecruiterId());
-        return ResponseEntity.ok("Application submitted");
+    public ResponseEntity<String> applyToRecruiter(@RequestBody ApplyRequestDTO applyRequest) {
+        studentService.applyToRecruiter(applyRequest.getStudentId(), applyRequest.getRecruiterId());
+        return ResponseEntity.ok("Application submitted successfully");
     }
 
     @GetMapping("/recruiter/{recruiterId}/students")

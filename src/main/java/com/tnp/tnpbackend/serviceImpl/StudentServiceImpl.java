@@ -4,9 +4,11 @@ import com.tnp.tnpbackend.dto.StudentApplicationHistoryDTO;
 import com.tnp.tnpbackend.dto.StudentDTO;
 import com.tnp.tnpbackend.dto.StudentSummaryDTO;
 import com.tnp.tnpbackend.exception.*;
+import com.tnp.tnpbackend.model.Recruiter;
 import com.tnp.tnpbackend.model.Role;
 import com.tnp.tnpbackend.model.Student;
 import com.tnp.tnpbackend.model.StudentRecruiterRelation;
+import com.tnp.tnpbackend.repository.RecruiterRepository;
 import com.tnp.tnpbackend.repository.StudentRecruiterRelationRepository;
 import com.tnp.tnpbackend.repository.StudentRepository;
 import com.tnp.tnpbackend.service.CloudinaryService;
@@ -44,6 +46,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRecruiterRelationRepository relationRepository;
+
+    @Autowired
+    private RecruiterRepository recruiterRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -412,5 +417,64 @@ public class StudentServiceImpl implements StudentService {
             return dto;
         }).collect(Collectors.toList());
     }
+    // public void applyToRecruiter(String studentId, String recruiterId) {
+    //     Student student = studentRepository.findById(studentId)
+    //             .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
+    //     if (!student.isEmailVerified()) {
+    //         throw new InvalidInputException("Email not verified. Please verify your email before applying.");
+    //     }
+    //     StudentRecruiterRelation relation = new StudentRecruiterRelation();
+    //     relation.setStudent(student);
+    //     relation.setRecruiter(relation.getRecruiter());
+    //     relation.setStatus("APPLIED");
+    //     relation.setAppliedAt(LocalDateTime.now());
+    //     relationRepository.save(relation);
+    // }
+    public List<StudentRecruiterRelation> getStudentRecruiterRelations(String studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
+        return relationRepository.findByStudent(student);
+    }
+
+@Override
+public void applyToRecruiter(String studentId, String recruiterId) {
+    // Validate inputs
+    if (studentId == null || studentId.isEmpty()) {
+        throw new InvalidInputException("Invalid student ID provided");
+    }
+    if (recruiterId == null || recruiterId.isEmpty()) {
+        throw new InvalidInputException("Invalid recruiter ID provided");
+    }
+
+    // Fetch student
+    Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
+
+    // Ensure the student's email is verified
+    if (!student.isEmailVerified()) {
+        throw new InvalidInputException("Email not verified. Please verify your email before applying.");
+    }
+
+    // Fetch recruiter
+    Recruiter recruiter = recruiterRepository.findById(recruiterId).orElse(null);
+
+    // Verify eligibility (recruiterId must be in shortlistedFor)
+    if (student.getShortlistedFor() == null || !student.getShortlistedFor().contains(recruiterId)) {
+        throw new IllegalArgumentException("Student is not eligible to apply for this recruiter");
+    }
+
+    // Find the StudentRecruiterRelation
+    StudentRecruiterRelation relation = relationRepository.findByStudentAndRecruiter(student, recruiter).orElse(null);
+
+    // Check if the student has already applied or progressed beyond NOT_APPLIED status
+    if (!"Pending".equals(relation.getStatus())) {
+        throw new IllegalStateException("Student has already applied or progressed beyond NOT_APPLIED status");
+    }
+
+    // Update status to APPLIED
+    relation.setStatus("APPLIED");
+    relation.setAppliedAt(LocalDateTime.now());
+    relationRepository.save(relation);
+}
 }
 

@@ -41,4 +41,6 @@ public interface StudentService {
             throws InvalidStatusException, ApplicationNotFoundException;
 
     StudentDTO getStudentByUsername(String username);
+
+    void applyToRecruiter(String studentId, String recruiterId);
 }

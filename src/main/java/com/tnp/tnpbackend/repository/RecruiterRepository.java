@@ -9,4 +9,5 @@ import com.tnp.tnpbackend.model.Recruiter;
 public interface RecruiterRepository extends MongoRepository<Recruiter, String>{
 
     Recruiter findBycompanyWebsite(String companyWEbsite);
+    
 }
