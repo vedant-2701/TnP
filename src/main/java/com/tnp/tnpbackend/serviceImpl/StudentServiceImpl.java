@@ -392,6 +392,14 @@ public class StudentServiceImpl implements StudentService {
             dto.setCompanyName(relation.getRecruiter().getCompanyName());
             dto.setJobRole(relation.getRecruiter().getJobRole());
             dto.setStatus(relation.getStatus());
+            dto.setCompanyDescription(relation.getRecruiter().getCompanyDescription());
+            dto.setJobDescription(relation.getRecruiter().getJobDescription());
+            dto.setCompanyLocation(relation.getRecruiter().getCompanyLocation());
+            dto.setDeadline(relation.getRecruiter().getDeadline());
+            dto.setCompanyLogoUrl(relation.getRecruiter().getCompanyLogoUrl());
+            dto.setCriteria(relation.getRecruiter().getCriteria());
+            dto.setIndustryType(relation.getRecruiter().getIndustryType());
+            dto.setUpdatedAt(LocalDateTime.now());
             dto.setAppliedAt(relation.getAppliedAt().toString());
             return dto;
         }).collect(Collectors.toList());
