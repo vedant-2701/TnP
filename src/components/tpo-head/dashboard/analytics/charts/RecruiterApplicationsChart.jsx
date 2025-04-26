@@ -34,9 +34,9 @@ const RecruiterApplicationsChart = ({ data }) => {
       ...statuses,
     }));
 
-    const statuses = ['APPLIED', 'INTERVIEWED', 'HIRED'];
+    const statuses = ['APPLIED', 'HIRED'];
     // const colors = ['#2b7fff', '#006d88', '#00bba7'];
-    const colors = ['#2b7fff', '#00b8db', '#00bba7'];
+    const colors = ['#2b7fff', '#00bba7'];
 
     const x0 = d3.scaleBand()
       .domain(recruiters.map(d => d.company))

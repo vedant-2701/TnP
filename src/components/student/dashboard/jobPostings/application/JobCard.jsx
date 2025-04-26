@@ -147,7 +147,7 @@ export default function JobCard({ job, onClick }) {
                     layoutId={`button-${job.username}-${job.companyId}`}
                     className="px-4 py-2 rounded-full bg-gray-100 hover:bg-blue-500 hover:text-white hover:cursor-pointer text-black"
                 >
-                    {job.ctaText}
+                    {job.status}
                 </motion.button>
             </motion.div>
         </motion.div>

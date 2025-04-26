@@ -1,6 +1,6 @@
 import { IconArrowLeft } from "@tabler/icons-react";
 import { HiOutlinePencilAlt } from "react-icons/hi";
-import { ArrowLongLeftIcon } from "@heroicons/react/24/outline";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, Link, useLocation, Routes, Route, useParams, Outlet } from "react-router-dom";
 import { ClockIcon, CalendarDaysIcon, GlobeAltIcon, TagIcon, ArrowTopRightOnSquareIcon, BriefcaseIcon, BellAlertIcon } from "@heroicons/react/24/outline";
@@ -17,6 +17,8 @@ import Criteria from "./details/Criteria";
 import { getCompanyById } from "../../../../../services/getCompanies";
 import { api } from "../../../../../helper/createApi";
 import { toast } from "react-toastify";
+import { getUser } from "../../../../../utils/userStorage";
+import { getStudentByUsername } from "../../../../../services/getStudents";
 
 export default function JobDetails() {
     
@@ -28,13 +30,14 @@ export default function JobDetails() {
     const [job, setJob] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const { color, imgRef } = useImageColor(job.src, 0.8, setGeneralColor);
-    const basePath = `/dashboard/upcoming-drives/${id}`;
+    const basePath = `/dashboard/applications/${id}`;
     const links = [
         { label: "Overview", href: `${basePath}/overview` },
         { label: "Job Description", href: `${basePath}/jobDescription` },
         { label: "Criteria", href: `${basePath}/criteria` },
-        { label: "Eligible Students", href: `${basePath}/eligibleStudents` },
     ];
+    const [studentId, setStudentId] = useState(null);
+    const user = getUser();
 
     console.log(color);
     console.log(activeLink);
@@ -108,21 +111,33 @@ export default function JobDetails() {
     `,
     };
 
-    const handleNotify = async () => {
-        const response = await api.post(`/recruiter/${id}/notify`);
+    const handleApply = async () => {
+        const studentRes = await getStudentByUsername(user.username);
+        let sId;
+        if (studentRes.success) {
+            setStudentId(studentRes.data.studentId); 
+            sId = studentRes.data.studentId;   
+        } else {
+            throw new Error(studentRes.message);
+        }
+        const response = await api.post(`/apply`, {
+            recruiterId: id,
+            studentId: sId,
+            status: "applied",
+        });
 
         console.log(response);
 
         if(response.status === 200) {
-            toast.success("Notification sent successfully!");
+            toast.success("Applied successfully!");
         } else {
-            toast.error("Error sending notification:", response.error.message);
+            toast.error("Error Applying for the job:", response.error.message);
         }
     }
 
     const handleBack = () => {
         // setActiveJob(null);
-        navigate("/dashboard/job-postings");
+        navigate("/dashboard/applications");
     };
 
     const handleLinkClick = (label) => {
@@ -138,7 +153,7 @@ export default function JobDetails() {
                     layoutId={`container-job-${job.companyId}`}
                 >
                     {/* Navigation */}
-                    <div className="w-full flex justify-between items-center px-6 py-4">
+                    <div className="w-full flex justify-start items-center px-6 py-4">
                         {/* Back */}
                         <motion.div>
                             <button
@@ -156,7 +171,7 @@ export default function JobDetails() {
                         </motion.div>
 
                         <motion.div className="cursor-pointer flex gap-4" role="button">
-                            <motion.span
+                            {/* <motion.span
                                 className="flex items-center gap-2 border px-4 py-2 rounded-lg"
                                 whileHover={"hover"}
                                 style={{
@@ -166,10 +181,10 @@ export default function JobDetails() {
                                 variants={{
                                     hover: { backgroundColor: generalColor, color: "#fff" },
                                 }}
-                                onClick={handleNotify}
+                                onClick={handleApply}
                             >
-                                <BellAlertIcon className="w-4 h-4" /> Notify
-                            </motion.span>
+                                <PaperAirplaneIcon className="w-4 h-4" /> Apply
+                            </motion.span> */}
                             {/* <motion.span
                                 className="flex items-center gap-2 border px-4 py-2 rounded-lg"
                                 whileHover={"hover"}

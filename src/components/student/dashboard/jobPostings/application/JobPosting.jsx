@@ -51,6 +51,7 @@ export default function JobPosting() {
             criteria: company.criteria || "N/A",
             industryType: company.industryType || "General",
             ctaText: "Details",
+            status: company.status || "Applied",
             createdAt: company.createdAt || Date.now(),
             updatedAt: company.updatedAt,
         }));
