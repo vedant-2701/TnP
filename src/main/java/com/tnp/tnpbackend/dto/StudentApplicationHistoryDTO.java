@@ -19,7 +19,6 @@ public class StudentApplicationHistoryDTO {
     private LocalDate deadline;
     private String companyLocation;
     private Map<String, String> criteria;
-    private boolean isNotified = false;
     private String industryType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
