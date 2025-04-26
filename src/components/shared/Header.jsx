@@ -14,7 +14,12 @@ export default function Header() {
     // Fetch user data from localStorage
     const user = getUser();
     if (user && user.username) {
-      setUsername(user.username); // Set dynamic username
+      // Customize greeting based on username
+      const displayName = 
+        user.username === "admin123" ? "Admin" :
+        user.username === "headtnp12" ? "TnPHead" :
+        user.username;
+      setUsername(displayName);
     }
   }, []);
 
@@ -32,18 +37,44 @@ export default function Header() {
     console.log("submitted");
   };
 
-  const handleLogout = () => {
-    logout(); // Clear token and user data
-    navigate("/", { replace: true }); // Redirect to login page
-  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="flex justify-evenly items-center px-4">
-      <div className="w-1/2"
+      <div className="w-1/2">
        
-        />
+      </div>
       <div className="w-1/2 flex justify-end items-center gap-20 px-4">
         <span className="text-gray-500">Hi, {username}</span>
+      
       </div>
     </div>
   );

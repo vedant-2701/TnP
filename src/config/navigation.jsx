@@ -66,13 +66,13 @@ export const adminNavigationLinks = [
         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
       ),
     },
-    {
-      label: "Logs",
-      href: "#",
-      icon: (
-        <IconFileText className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
-      ),
-    },
+    // {
+    //   label: "Logs",
+    //   href: "#",
+    //   icon: (
+    //     <IconFileText className="text-neutral-700 dark:text-neutral-200 h-6 w-6 shrink-0" />
+    //   ),
+    // },
 ];
 
 export const tnpHeadNavigationLinks = [
