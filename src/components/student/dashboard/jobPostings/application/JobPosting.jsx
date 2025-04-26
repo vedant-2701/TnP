@@ -14,6 +14,7 @@ import Loading from "../../../../Loading";
 import { getAppliedCompanies } from "../../../../../services/student/getAppliedCompanies";
 import { getStudentByUsername } from "../../../../../services/getStudents";
 import { getUser } from "../../../../../utils/userStorage";
+import NoCompaniesFound from "../../../../shared/NoCompaniesFound";
 
 export default function JobPosting() {
 
@@ -22,6 +23,7 @@ export default function JobPosting() {
     const [id, setId] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isCompanyLoaded, setIsCompanyLoaded] = useState(false);
     const navigate = useNavigate();
     const ref = useRef(null);
     const user = getUser();
@@ -30,6 +32,13 @@ export default function JobPosting() {
     const inActiveStyle = `bg-radial-[at_25%_25%] from-white to-red-600 to-30%`;
 
     const mapCompanyData = (companies) => {
+      if (!Array.isArray(companies)) {
+        console.error("Invalid data format:", companies);
+        return [];
+      } else {
+        console.log("Valid data format:", companies);
+        setIsCompanyLoaded(true);
+
         return companies.map(company => ({
             companyId: company.recruiterId, // Using recruiterId as a unique identifier
             companyName: company.companyName || "Unknown Company",
@@ -45,6 +54,7 @@ export default function JobPosting() {
             createdAt: company.createdAt || Date.now(),
             updatedAt: company.updatedAt,
         }));
+      }
     };
 
     const fetchCompanies = async () => {
@@ -82,8 +92,13 @@ export default function JobPosting() {
             };
         
             fetchStudentData();
-        fetchCompanies();
     }, []);
+
+    useEffect(() => {
+      if(id) {
+        fetchCompanies();
+      }
+    }, [id]);
 
     useEffect(() => {
         if (active && typeof active === "object") {
@@ -106,6 +121,12 @@ export default function JobPosting() {
         setActive(job);
         navigate(`${job.companyId}`);
         console.log(job);
+    }
+
+    if(!isCompanyLoaded) {
+      return (
+        <NoCompaniesFound />
+      );
     }
 
     return (
