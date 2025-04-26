@@ -30,12 +30,11 @@ export default function JobDetails() {
     const [job, setJob] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const { color, imgRef } = useImageColor(job.src, 0.8, setGeneralColor);
-    const basePath = `/dashboard/applications/${id}`;
+    const basePath = `/dashboard/upcoming-drives/${id}`;
     const links = [
         { label: "Overview", href: `${basePath}/overview` },
         { label: "Job Description", href: `${basePath}/jobDescription` },
         { label: "Criteria", href: `${basePath}/criteria` },
-        { label: "Eligible Students", href: `${basePath}/eligibleStudents` },
     ];
     const [studentId, setStudentId] = useState(null);
     const user = getUser();
@@ -138,7 +137,7 @@ export default function JobDetails() {
 
     const handleBack = () => {
         // setActiveJob(null);
-        navigate("/dashboard/job-postings");
+        navigate("/dashboard/upcoming-drives");
     };
 
     const handleLinkClick = (label) => {

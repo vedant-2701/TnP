@@ -238,7 +238,8 @@ export function Users() {
                         </motion.h3>
                       </div>
 
-                      <motion.div
+                      {active.backlogs === 0 && (
+                        <motion.div
                         layoutId={`button-${active.username}-${active.studentId}`}
                         title="CGPA"
                         whileHover={{ scale: 1.15, transition: { duration: 0.6, type: "spring" } }}
@@ -248,14 +249,15 @@ export function Users() {
                           layoutId={`cgpa-${active.cgpa}-${active.studentId}`}
                           className="flex items-center gap-2"
                         >
-                          {icons.FaAward ? (
-                            <icons.FaAward className="w-6 h-6" />
-                          ) : (
-                            <span className="w-6 h-6">🏆</span>
-                          )}{" "}
-                          {active.cgpa}
+                            {icons.FaAward ? (
+                              <icons.FaAward className="w-6 h-6" />
+                            ) : (
+                              <span className="w-6 h-6">🏆</span>
+                            )}{" "}
+                            {active.cgpa}
                         </motion.span>
                       </motion.div>
+                      )}
                     </div>
                     <div className="pt-4 relative px-4">
                       <motion.div

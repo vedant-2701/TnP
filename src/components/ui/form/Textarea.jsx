@@ -7,15 +7,30 @@ import { useMotionTemplate, useMotionValue, motion } from "motion/react";
 const Textarea = React.forwardRef(({ className, value, onChange = null, ...props }, ref) => {
   const radius = 50; // Smaller radius for localized effect
   const [visible, setVisible] = React.useState(false);
-
+  const textareaRef = React.useRef(null); // Ref for textarea element
+  
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  // Auto-resize function
+  const autoResize = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // Reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set to content height
+    }
+  };
 
   const handleMouseMove = ({ currentTarget, clientX, clientY }) => {
     const { left, top } = currentTarget.getBoundingClientRect();
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
   };
+
+  // Run auto-resize on mount and when value changes
+  React.useEffect(() => {
+    autoResize();
+  }, [value]);
 
   return (
     <motion.div
@@ -37,9 +52,13 @@ const Textarea = React.forwardRef(({ className, value, onChange = null, ...props
         className={cn(
           `shadow-input dark:placeholder-text-neutral-600 flex min-h-[80px] w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black transition duration-400 group-hover/textarea:shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:ring-[2px] focus-visible:ring-neutral-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-800 dark:text-white dark:shadow-[0px_0px_1px_1px_#404040] dark:focus-visible:ring-neutral-600`,
           className,
-          "relative z-10" // Ensure textarea stays above the gradient
+          "relative z-10 resize-none" // Ensure textarea stays above the gradient
         )}
-        ref={ref}
+        ref={(node) => {
+          textareaRef.current = node; // Set internal ref
+          if (typeof ref === "function") ref(node); // Support callback refs
+          else if (ref) ref.current = node; // Support object refs
+        }}
         value={value}
         onChange={onChange}
         {...props}
