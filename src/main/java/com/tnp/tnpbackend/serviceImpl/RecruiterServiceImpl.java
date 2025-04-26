@@ -245,8 +245,10 @@
 package com.tnp.tnpbackend.serviceImpl;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -291,78 +293,166 @@ public class RecruiterServiceImpl implements RecruiterService {
     @Autowired
     private StudentRecruiterRelationRepository studentRecruiterRelationRepository;
 
+    // public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
+    //     System.out.println(recruiterDTO.toString());
+    //     // Validate input
+    //     if (recruiterDTO.getCompanyWebsite() == null || recruiterDTO.getCompanyWebsite().isBlank()) {
+    //         throw new IllegalArgumentException("Company website cannot be empty");
+    //     }
+    //     if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
+    //         throw new IllegalArgumentException("Company name cannot be empty");
+    //     }
+    //     if (recruiterDTO.getJobRole() == null || recruiterDTO.getJobRole().isBlank()) {
+    //         throw new IllegalArgumentException("Job role cannot be empty");
+    //     }
+
+    //     // Fetch the existing recruiter by companyWebsite
+    //     Recruiter recruiter = recruiterRepository.findBycompanyWebsite(recruiterDTO.getCompanyWebsite());
+    //     if (recruiter == null) {
+    //         throw new NoDataFoundException("Recruiter not found for the provided company website");
+    //     }
+    //     if(!recruiter.getCompanyWebsite().equals(recruiterDTO.getCompanyWebsite())) {
+    //         throw new IllegalArgumentException("Company website does not match the existing recruiter");
+    //     }
+    //     // Map DTO to entity and set timestamps
+    //     recruiter.setCompanyName(recruiterDTO.getCompanyName());
+    //     recruiter.setJobRole(recruiterDTO.getJobRole());
+    //     recruiter.setJobDescription(recruiterDTO.getJobDescription());
+    //     recruiter.setCompanyLocation(recruiterDTO.getCompanyLocation());
+    //     recruiter.setCompanyDescription(recruiterDTO.getCompanyDescription());
+    //     recruiter.setIndustryType(recruiterDTO.getIndustryType());
+    //     recruiter.setDeadline(recruiterDTO.getDeadline());
+    //     recruiter.setNotified(false); // Set notified to false initially
+    //     recruiter.setCriteria(recruiterDTO.getCriteria());
+    //     recruiter.setDeadline(recruiterDTO.getDeadline());
+
+    //     recruiter.setCreatedAt(java.time.LocalDateTime.now());
+    //     recruiter.setUpdatedAt(java.time.LocalDateTime.now());
+
+
+    //     // Filter eligible students
+    //     RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
+    //     List<Student> allStudents = studentRepository.findAll();
+    //     if (allStudents.isEmpty()) {
+    //         throw new NoDataFoundException("No student data found");
+    //     }
+    //     List<Student> selectedStudents = new ArrayList<>();
+
+    //     for (Student student : allStudents) {
+    //         if (criteria.isStudentEligible(student)) {
+    //             // Add recruiterId to student's shortlistedFor list
+    //             if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
+    //                 student.getShortlistedFor().add(recruiter.getRecruiterId());
+    //                 studentRepository.save(student);
+    //             }
+    //             selectedStudents.add(student);
+    //         }
+    //     }
+
+    //     // Store eligible student IDs
+    //     List<String> eligibleStudentIds = selectedStudents.stream()
+    //             .map(Student::getStudentId)
+    //             .collect(Collectors.toList());
+    //     recruiter.setEligibleStudentIds(eligibleStudentIds);
+
+    //     // Save recruiter to MongoDB
+    //     Recruiter savedRecruiter = recruiterRepository.save(recruiter);
+    //     System.out.println("Recruiter: " + savedRecruiter);
+    //     // Prepare response
+    //     AddRecruiterResponse response = new AddRecruiterResponse();
+    //     response.setRecruiter(dtoMapper.toRecruiterDTO(savedRecruiter));
+    //     response.setSelectedStudents(dtoMapper.toStudentSummaryDTOList(selectedStudents));
+
+    //     return response;
+    // }
+
     public AddRecruiterResponse addRecruiter(RecruiterDTO recruiterDTO) {
-        System.out.println(recruiterDTO.toString());
-        // Validate input
-        if (recruiterDTO.getCompanyWebsite() == null || recruiterDTO.getCompanyWebsite().isBlank()) {
-            throw new IllegalArgumentException("Company website cannot be empty");
-        }
-        if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
-            throw new IllegalArgumentException("Company name cannot be empty");
-        }
-        if (recruiterDTO.getJobRole() == null || recruiterDTO.getJobRole().isBlank()) {
-            throw new IllegalArgumentException("Job role cannot be empty");
-        }
-
-        // Fetch the existing recruiter by companyWebsite
-        Recruiter recruiter = recruiterRepository.findBycompanyWebsite(recruiterDTO.getCompanyWebsite());
-        if (recruiter == null) {
-            throw new NoDataFoundException("Recruiter not found for the provided company website");
-        }
-        if(!recruiter.getCompanyWebsite().equals(recruiterDTO.getCompanyWebsite())) {
-            throw new IllegalArgumentException("Company website does not match the existing recruiter");
-        }
-        // Map DTO to entity and set timestamps
-        recruiter.setCompanyName(recruiterDTO.getCompanyName());
-        recruiter.setJobRole(recruiterDTO.getJobRole());
-        recruiter.setJobDescription(recruiterDTO.getJobDescription());
-        recruiter.setCompanyLocation(recruiterDTO.getCompanyLocation());
-        recruiter.setCompanyDescription(recruiterDTO.getCompanyDescription());
-        recruiter.setIndustryType(recruiterDTO.getIndustryType());
-        recruiter.setDeadline(recruiterDTO.getDeadline());
-        recruiter.setNotified(false); // Set notified to false initially
-        recruiter.setCriteria(recruiterDTO.getCriteria());
-        recruiter.setDeadline(recruiterDTO.getDeadline());
-
-        recruiter.setCreatedAt(java.time.LocalDateTime.now());
-        recruiter.setUpdatedAt(java.time.LocalDateTime.now());
-
-
-        // Filter eligible students
-        RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
-        List<Student> allStudents = studentRepository.findAll();
-        if (allStudents.isEmpty()) {
-            throw new NoDataFoundException("No student data found");
-        }
-        List<Student> selectedStudents = new ArrayList<>();
-
-        for (Student student : allStudents) {
-            if (criteria.isStudentEligible(student)) {
-                // Add recruiterId to student's shortlistedFor list
-                if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
-                    student.getShortlistedFor().add(recruiter.getRecruiterId());
-                    studentRepository.save(student);
-                }
-                selectedStudents.add(student);
-            }
-        }
-
-        // Store eligible student IDs
-        List<String> eligibleStudentIds = selectedStudents.stream()
-                .map(Student::getStudentId)
-                .collect(Collectors.toList());
-        recruiter.setEligibleStudentIds(eligibleStudentIds);
-
-        // Save recruiter to MongoDB
-        Recruiter savedRecruiter = recruiterRepository.save(recruiter);
-        System.out.println("Recruiter: " + savedRecruiter);
-        // Prepare response
-        AddRecruiterResponse response = new AddRecruiterResponse();
-        response.setRecruiter(dtoMapper.toRecruiterDTO(savedRecruiter));
-        response.setSelectedStudents(dtoMapper.toStudentSummaryDTOList(selectedStudents));
-
-        return response;
+    System.out.println(recruiterDTO.toString());
+    // Validate input
+    if (recruiterDTO.getCompanyWebsite() == null || recruiterDTO.getCompanyWebsite().isBlank()) {
+        throw new IllegalArgumentException("Company website cannot be empty");
     }
+    if (recruiterDTO.getCompanyName() == null || recruiterDTO.getCompanyName().isBlank()) {
+        throw new IllegalArgumentException("Company name cannot be empty");
+    }
+    if (recruiterDTO.getJobRole() == null || recruiterDTO.getJobRole().isBlank()) {
+        throw new IllegalArgumentException("Job role cannot be empty");
+    }
+
+    // Fetch the existing recruiter by companyWebsite
+    Recruiter recruiter = recruiterRepository.findBycompanyWebsite(recruiterDTO.getCompanyWebsite());
+    if (recruiter == null) {
+        throw new NoDataFoundException("Recruiter not found for the provided company website");
+    }
+    if (!recruiter.getCompanyWebsite().equals(recruiterDTO.getCompanyWebsite())) {
+        throw new IllegalArgumentException("Company website does not match the existing recruiter");
+    }
+
+    // Map DTO to entity and set timestamps
+    recruiter.setCompanyName(recruiterDTO.getCompanyName());
+    recruiter.setJobRole(recruiterDTO.getJobRole());
+    recruiter.setJobDescription(recruiterDTO.getJobDescription());
+    recruiter.setCompanyLocation(recruiterDTO.getCompanyLocation());
+    recruiter.setCompanyDescription(recruiterDTO.getCompanyDescription());
+    recruiter.setIndustryType(recruiterDTO.getIndustryType());
+    recruiter.setDeadline(recruiterDTO.getDeadline());
+    recruiter.setNotified(false); // Set notified to false initially
+    recruiter.setCriteria(recruiterDTO.getCriteria());
+    recruiter.setDeadline(recruiterDTO.getDeadline());
+    recruiter.setCreatedAt(java.time.LocalDateTime.now());
+    recruiter.setUpdatedAt(java.time.LocalDateTime.now());
+
+    // Filter eligible students
+    RecruiterCriteria criteria = new RecruiterCriteria(recruiter.getCriteria(), recruiter.getJobDescription());
+    List<Student> allStudents = studentRepository.findAll();
+    if (allStudents.isEmpty()) {
+        throw new NoDataFoundException("No student data found");
+    }
+    List<Student> selectedStudents = new ArrayList<>();
+
+    for (Student student : allStudents) {
+        if (criteria.isStudentEligible(student)) {
+            // Initialize shortlistedFor if null
+            if (student.getShortlistedFor() == null) {
+                student.setShortlistedFor(new ArrayList<>());
+            }
+            // Add recruiterId to student's shortlistedFor list
+            if (!student.getShortlistedFor().contains(recruiter.getRecruiterId())) {
+                student.getShortlistedFor().add(recruiter.getRecruiterId());
+                studentRepository.save(student);
+            }
+            // Create NOT_APPLIED relation if it doesn't exist
+            Optional<StudentRecruiterRelation> existingRelation = studentRecruiterRelationRepository
+                    .findByStudentAndRecruiter(student, recruiter);
+            if (existingRelation.isEmpty()) {
+                StudentRecruiterRelation relation = new StudentRecruiterRelation();
+                relation.setStudent(student);
+                relation.setRecruiter(recruiter);
+                relation.setStatus("Pending");
+                relation.setAppliedAt(LocalDateTime.now());
+                studentRecruiterRelationRepository.save(relation);
+            }
+            selectedStudents.add(student);
+        }
+    }
+
+    // Store eligible student IDs
+    List<String> eligibleStudentIds = selectedStudents.stream()
+            .map(Student::getStudentId)
+            .collect(Collectors.toList());
+    recruiter.setEligibleStudentIds(eligibleStudentIds);
+
+    // Save recruiter to MongoDB
+    Recruiter savedRecruiter = recruiterRepository.save(recruiter);
+    System.out.println("Recruiter: " + savedRecruiter);
+
+    // Prepare response
+    AddRecruiterResponse response = new AddRecruiterResponse();
+    response.setRecruiter(dtoMapper.toRecruiterDTO(savedRecruiter));
+    response.setSelectedStudents(dtoMapper.toStudentSummaryDTOList(selectedStudents));
+
+    return response;
+}
 
     public void notifyStudentsByRecruiterId(String recruiterId) {
         Recruiter recruiter = recruiterRepository.findById(recruiterId)

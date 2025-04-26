@@ -397,11 +397,11 @@ public class StudentServiceImpl implements StudentService {
         }
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
-
+        System.out.println(student);
         List<StudentRecruiterRelation> relations = relationRepository.findByStudent(student);
         if (relations.isEmpty())
             throw new NoDataFoundException("No application history found for student with ID: " + studentId);
-        return relations.stream().filter(relation -> relation.getStatus().equals("NOT_APPLIED")).map(relation -> {
+        return relations.stream().filter(relation -> relation.getStatus().equals("Pending")).map(relation -> {
             StudentApplicationHistoryDTO dto = new StudentApplicationHistoryDTO();
             dto.setRelationId(relation.getId());
             dto.setRecruiterId(relation.getRecruiter().getRecruiterId());
