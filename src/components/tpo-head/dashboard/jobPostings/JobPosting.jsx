@@ -24,6 +24,7 @@ export default function JobPosting() {
     const inActiveStyle = `bg-radial-[at_25%_25%] from-white to-red-600 to-30%`;
 
     const mapCompanyData = (companies) => {
+      console.log(companies);
         return companies.map(company => ({
             companyId: company.recruiterId, // Using recruiterId as a unique identifier
             companyName: company.companyName || "Unknown Company",
@@ -44,6 +45,7 @@ export default function JobPosting() {
     const fetchCompanies = async () => {
         const response = await getAllCompanies();
         if (response.success) {
+          console.log(response);
             setJobs(mapCompanyData(response.data));
         } else {
             setJobs([]);

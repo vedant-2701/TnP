@@ -32,14 +32,8 @@ export default function JobPosting() {
     const inActiveStyle = `bg-radial-[at_25%_25%] from-white to-red-600 to-30%`;
 
     const mapCompanyData = (companies) => {
-      if (!Array.isArray(companies)) {
-        console.error("Invalid data format:", companies);
-        return [];
-      } else {
-        console.log("Valid data format:", companies);
-        setIsCompanyLoaded(true);
-
-        return companies.map(company => ({
+      console.log(companies);
+          return companies.map(company => ({
             companyId: company.recruiterId, // Using recruiterId as a unique identifier
             companyName: company.companyName || "Unknown Company",
             webiste: company.companyWebsite,
@@ -51,15 +45,16 @@ export default function JobPosting() {
             criteria: company.criteria || "N/A",
             industryType: company.industryType || "General",
             ctaText: "Details",
-            status: company.status || "Applied",
+            status: company.status || "APPLIED",
             createdAt: company.createdAt || Date.now(),
             updatedAt: company.updatedAt,
         }));
-      }
+      
     };
 
     const fetchCompanies = async () => {
         const response = await getAppliedCompanies(id);
+        console.log(response);
         if (response.success) {
             setJobs(mapCompanyData(response.data));
         } else {
@@ -124,11 +119,11 @@ export default function JobPosting() {
         console.log(job);
     }
 
-    if(!isCompanyLoaded) {
-      return (
-        <NoCompaniesFound />
-      );
-    }
+    // if(!isCompanyLoaded) {
+    //   return (
+    //     <NoCompaniesFound />
+    //   );
+    // }
 
     return (
         <>
