@@ -90,7 +90,7 @@ export function EligibleStudents() {
               <motion.button
                 layoutId={`button-${card.username}-${card.studentId}`}
                 className={`px-4 py-3 rounded-full font-bold text-white hover:cursor-pointer mt-4 md:mt-0
-                ${card.status === "Applied" ? "bg-green-400" : "bg-yellow-400"}`}>
+                ${card.status === "APPLIED" ? "bg-green-400" : "bg-yellow-400"}`}>
                 <span className="flex justify-center items-center gap-2">
                     {card.status === "APPLIED" ? <CheckIcon className="text-white w-5 h-5"/> : <ClockIcon className="text-white w-5 h-5"/>} {card.status}
                 </span>
